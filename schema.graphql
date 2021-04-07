@@ -112,7 +112,6 @@ type Pool @entity {
   # Fields used to help derived relationship
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # derived fields
-  poolMinuteData: [PoolMinuteData!]! @derivedFrom(field: "pool")
   poolHourData: [PoolHourData!]! @derivedFrom(field: "pool")
   poolDayData: [PoolDayData!]! @derivedFrom(field: "pool")
   mints: [Mint!]! @derivedFrom(field: "pool")
@@ -303,30 +302,6 @@ type UniswapDayData @entity {
   txCount: BigInt!
 }
 
-type PoolMinuteData @entity {
-  # format: <pool address>-<timestamp>
-  id: ID!
-  periodStartUnix: Int! # unix timestamp for start of minute
-  pool: Pool!
-  token0: Token!
-  token1: Token!
-
-  # reserves at end of period
-  liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
-  reserve0: BigDecimal!
-  reserve1: BigDecimal!
-
-  # derived liquidity
-  reserveUSD: BigDecimal!
-
-  # volume stats
-  periodVolumeToken0: BigDecimal!
-  periodVolumeToken1: BigDecimal!
-  periodVolumeUSD: BigDecimal!
-  periodTxCount: BigInt!
-}
-
 type PoolHourData @entity {
   # format: <pool address>-<timestamp>
   id: ID!
@@ -357,31 +332,6 @@ type PoolDayData @entity {
   id: ID!
   date: Int!
   pool: Pool!
-  token0: Token!
-  token1: Token!
-
-  # reserves at end of period
-  liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
-  reserve0: BigDecimal!
-  reserve1: BigDecimal!
-
-  # derived liquidity
-  reserveUSD: BigDecimal!
-
-  # volume stats
-  periodVolumeToken0: BigDecimal!
-  periodVolumeToken1: BigDecimal!
-  periodVolumeUSD: BigDecimal!
-  periodTxCount: BigInt!
-}
-
-type TickMinuteData @entity {
-  # format: <pool address>-<tick index>-<timestamp>
-  id: ID!
-  periodStartUnix: Int! # unix timestamp for start of minute
-  pool: Pool!
-  tick: Tick!
   token0: Token!
   token1: Token!
 
