@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: testnet
     source:
-      address: '0xB1c59e8Ae4B72f63a5a9CB9c25A9253096A4b126'
+      address: '0x2e52A6ed50aeD4396BdC5889ACB9D04F6804D150'
       abi: Factory
-      startBlock: 12635
+      startBlock: 4574137
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -61,7 +61,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: testnet
     source:
       abi: Pool
     mapping:
