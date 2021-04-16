@@ -9,4 +9,4 @@ export function handlePoolMint(event: PoolMint): void {
 }
 
 export function handlePoolBurn(event: PoolBurn): void {
-s}
+}
