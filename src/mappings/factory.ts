@@ -2,7 +2,7 @@
 import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD } from './../utils/constants'
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
-import { Pool, Token } from '../types/schema'
+import { Pool, Token, Bundle } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt } from '@graphprotocol/graph-ts'
@@ -20,6 +20,11 @@ export function handlePoolCreated(event: PoolCreated): void {
     factory.combinedVolumeUSD = ZERO_BD
     factory.totalLiquidityUSD = ZERO_BD
     factory.txCount = ZERO_BI
+
+    // create new bundle
+    let bundle = new Bundle('1')
+    bundle.ethPrice = ZERO_BD
+    bundle.save()
   }
 
   factory.poolCount = factory.poolCount.plus(ONE_BI);
