@@ -74,7 +74,7 @@ type Pool @entity {
   # base values of liquidity and sqrtPrice across entire pool
   liquidity: BigInt!
   sqrtPrice: BigInt!
-  currentTick: BigInt!
+  currentTick: BigInt
 
   # Reserves across entire liquidity distribution - derived from liquidity and sqrtPrice
   reserve0: BigDecimal!
