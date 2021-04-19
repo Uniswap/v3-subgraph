@@ -1,9 +1,18 @@
-import { Bundle, Pool, Token } from '../types/schema'
-import { log, BigDecimal } from '@graphprotocol/graph-ts'
+import { 
+    Bundle,
+    Pool,
+    Token,
+    Transaction,
+    Factory,
+    Mint as MintEvent,
+    Burn as BurnEvent,
+    Swap as SwapEvent
+} from '../types/schema'
+import { log, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 import { Swap, Mint as PoolMint, Burn as PoolBurn, Initialize } from '../types/templates/Pool/Pool'
 
-import { convertTokenToDecimal } from './helpers';
+import { convertTokenToDecimal, ONE_BI, FACTORY_ADDRESS } from './helpers';
 
 export function handleSwap(event: Swap): void {
     // let pool = Pool.load(event.address.toHexString())
@@ -44,12 +53,52 @@ export function handleInitialize(event: Initialize): void {
 
     let pool = Pool.load(event.address.toHexString());
     pool.sqrtPrice = event.params.sqrtPriceX96;
+    pool.currentTick = BigInt.fromI32(event.params.tick);
     pool.save();
 }
 
 
 export function handlePoolMint(event: PoolMint): void {
     log.info(`Saw a pool mint! {}`, [event.block.number.toString()]);
+
+    let transaction = Transaction.load(event.transaction.hash.toHexString())
+    let mints = transaction.mints
+    let mint = MintEvent.load(mints[mints.length - 1])
+
+    let pool = Pool.load(event.address.toHexString())
+    let uniswap = Factory.load(FACTORY_ADDRESS)
+
+    let token0 = Token.load(pool.token0)
+    let token1 = Token.load(pool.token1)
+    let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+    let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)    
+
+    // update txn counts
+    token0.txCount = token0.txCount.plus(ONE_BI)
+    token1.txCount = token1.txCount.plus(ONE_BI)
+
+    pool.liquidity = pool.liquidity.plus(event.params.amount);
+    pool.reserve0 = pool.reserve0.plus(amount0);
+    pool.reserve1 = pool.reserve1.plus(amount1);
+
+    token0.save()
+    token1.save()
+    pool.save()
+    uniswap.save()
+    // Calculate new reserveUSD
+    // Calculate amount of liquidity to distribute to each tick
+
+    // Create mint entity
+    mint.sender = event.params.sender
+    mint.tickLower = BigInt.fromI32(event.params.tickLower)
+    mint.tickUpper = BigInt.fromI32(event.params.tickUpper)
+    mint.amount0 = amount0 as BigDecimal
+    mint.amount1 = amount1 as BigDecimal
+    mint.logIndex = event.logIndex
+    // mint.amountUSD = amountTotalUSD as BigDecimal
+    mint.save()
+
+    // Update hourly and daily datas
 }
 
 export function handlePoolBurn(event: PoolBurn): void {

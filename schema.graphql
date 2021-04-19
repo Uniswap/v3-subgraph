@@ -72,8 +72,9 @@ type Pool @entity {
   tickSpacing: BigInt!
 
   # base values of liquidity and sqrtPrice across entire pool
-  liquidity: BigDecimal!
+  liquidity: BigInt!
   sqrtPrice: BigInt!
+  currentTick: BigInt!
 
   # Reserves across entire liquidity distribution - derived from liquidity and sqrtPrice
   reserve0: BigDecimal!
@@ -190,10 +191,11 @@ type Mint @entity {
 
   # populated from the primary Transfer event
   to: Bytes!
-  liquidity: BigDecimal!
+  liquidity: BigInt!
 
   # populated from the Mint event
   sender: Bytes
+  recipient: Bytes
   amount0: BigDecimal!
   amount1: BigDecimal!
   tickLower: BigInt!
@@ -215,10 +217,11 @@ type Burn @entity {
   pool: Pool!
 
   # populated from the primary Transfer event
-  liquidity: BigDecimal!
+  liquidity: BigInt!
 
   # populated from the Burn event
   sender: Bytes
+  recipient: Bytes
   amount0: BigDecimal!
   amount1: BigDecimal!
   tickLower: BigInt!
@@ -311,7 +314,7 @@ type PoolHourData @entity {
   token1: Token!
   
   # reserves at end of period
-  liquidity: BigDecimal!
+  liquidity: BigInt!
   sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
@@ -336,7 +339,7 @@ type PoolDayData @entity {
   token1: Token!
 
   # reserves at end of period
-  liquidity: BigDecimal!
+  liquidity: BigInt!
   sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
@@ -361,8 +364,8 @@ type TickHourData @entity {
   token1: Token!
   
   # reserves at end of period
-  liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
+  liquidity: BigInt!
+  sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
 
@@ -387,8 +390,8 @@ type TickDayData @entity {
   token1: Token!
 
   # reserves at end of period
-  liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
+  liquidity: BigInt!
+  sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
 
