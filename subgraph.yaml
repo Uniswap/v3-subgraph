@@ -78,6 +78,8 @@ templates:
         - name: Factory
           file: ./abis/factory.json
       eventHandlers:
+        - event: initialize(uint160,int24)
+          handler: handleInitialize
         - event: Swap(indexed address,indexed address,int256,int256,uint160,int24)
           handler: handleSwap
         - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)

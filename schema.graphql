@@ -312,7 +312,7 @@ type PoolHourData @entity {
   
   # reserves at end of period
   liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
+  sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
 

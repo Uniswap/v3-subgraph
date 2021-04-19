@@ -91,7 +91,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.createdAtBlockNumber = event.block.number
 
   pool.liquidity = ZERO_BD
-  pool.sqrtPrice = ZERO_BD
+  pool.sqrtPrice = ZERO_BI
 
   pool.liquidityProviderCount = ZERO_BI
   pool.txCount = ZERO_BI
