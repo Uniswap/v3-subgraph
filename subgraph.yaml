@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: testnet
+    network: rinkeby
     source:
       address: '0xB08c2b143B636dC294cD76Ff81CD0d788B95f146'
       abi: Factory
-      startBlock: 4574137
+      startBlock: 8372175
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -33,7 +33,7 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: testnet
+    network: rinkeby
     source:
       address: '0x048A595f1605BdC9732eBb967a1B9d9D9EE7E6Ff'
       abi: NonfungiblePositionManager
@@ -61,7 +61,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: testnet
+    network: rinkeby
     source:
       abi: Pool
     mapping:
