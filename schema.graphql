@@ -73,7 +73,7 @@ type Pool @entity {
 
   # base values of liquidity and sqrtPrice across entire pool
   liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
+  sqrtPrice: BigInt!
 
   # Reserves across entire liquidity distribution - derived from liquidity and sqrtPrice
   reserve0: BigDecimal!
@@ -337,7 +337,7 @@ type PoolDayData @entity {
 
   # reserves at end of period
   liquidity: BigDecimal!
-  sqrtPrice: BigDecimal!
+  sqrtPrice: BigInt!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
 

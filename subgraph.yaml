@@ -8,7 +8,7 @@ dataSources:
     name: Factory
     network: testnet
     source:
-      address: '0x2e52A6ed50aeD4396BdC5889ACB9D04F6804D150'
+      address: '0xB08c2b143B636dC294cD76Ff81CD0d788B95f146'
       abi: Factory
       startBlock: 4574137
     mapping:
@@ -33,11 +33,11 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: mainnet
+    network: testnet
     source:
       address: '0x048A595f1605BdC9732eBb967a1B9d9D9EE7E6Ff'
       abi: NonfungiblePositionManager
-      startBlock: 12635
+      startBlock: 8372189
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -78,7 +78,7 @@ templates:
         - name: Factory
           file: ./abis/factory.json
       eventHandlers:
-        - event: initialize(uint160,int24)
+        - event: Initialize(uint160,int24)
           handler: handleInitialize
         - event: Swap(indexed address,indexed address,int256,int256,uint160,int24)
           handler: handleSwap
