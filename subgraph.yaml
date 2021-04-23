@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: rinkeby
     source:
-      address: '0xB1c59e8Ae4B72f63a5a9CB9c25A9253096A4b126'
+      address: '0xB08c2b143B636dC294cD76Ff81CD0d788B95f146'
       abi: Factory
-      startBlock: 12635
+      startBlock: 8372175
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -33,11 +33,11 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: mainnet
+    network: rinkeby
     source:
       address: '0x048A595f1605BdC9732eBb967a1B9d9D9EE7E6Ff'
       abi: NonfungiblePositionManager
-      startBlock: 12635
+      startBlock: 8372189
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -61,7 +61,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: rinkeby
     source:
       abi: Pool
     mapping:
@@ -77,7 +77,11 @@ templates:
           file: ./abis/pool.json
         - name: Factory
           file: ./abis/factory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
+        - event: Initialize(uint160,int24)
+          handler: handleInitialize
         - event: Swap(indexed address,indexed address,int256,int256,uint160,int24)
           handler: handleSwap
         - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
