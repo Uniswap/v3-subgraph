@@ -14,20 +14,19 @@ export function handlePoolCreated(event: PoolCreated): void {
     factory = new Factory(FACTORY_ADDRESS)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
-    factory.totalLiquidityETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
     factory.untrackedVolumeUSD = ZERO_BD
-    factory.combinedVolumeUSD = ZERO_BD
-    factory.totalLiquidityUSD = ZERO_BD
-    factory.txCount = ZERO_BI
+    factory.totalValueLockedETH = ZERO_BD
+    factory.totalValueLockedUSD = ZERO_BD
+    factory.transactionCount = ZERO_BI
 
-    // create new bundle
+    // create new bundle for tracking eth price
     let bundle = new Bundle('1')
-    bundle.ethPrice = ZERO_BD
+    bundle.ethPriceUSD = ZERO_BD
     bundle.save()
   }
 
-  factory.poolCount = factory.poolCount.plus(ONE_BI);
+  factory.poolCount = factory.poolCount.plus(ONE_BI)
 
   let pool = new Pool(event.params.pool.toHexString()) as Pool
   let token0 = Token.load(event.params.token0.toHexString())
@@ -49,11 +48,11 @@ export function handlePoolCreated(event: PoolCreated): void {
 
     token0.decimals = decimals
     token0.derivedETH = ZERO_BD
-    token0.tradeVolume = ZERO_BD
-    token0.tradeVolumeUSD = ZERO_BD
+    token0.volume = ZERO_BD
+    token0.volumeUSD = ZERO_BD
     token0.untrackedVolumeUSD = ZERO_BD
-    token0.combinedVolumeUSD = ZERO_BD
-    token0.totalLiquidity = ZERO_BD
+    token0.totalValueLocked = ZERO_BD
+    token0.totalValueLockedUSD = ZERO_BD
     token0.txCount = ZERO_BI
     token0.poolCount = ZERO_BI
   }
@@ -73,50 +72,38 @@ export function handlePoolCreated(event: PoolCreated): void {
 
     token1.decimals = decimals
     token1.derivedETH = ZERO_BD
-    token1.tradeVolume = ZERO_BD
-    token1.tradeVolumeUSD = ZERO_BD
+    token1.volume = ZERO_BD
+    token1.volumeUSD = ZERO_BD
     token1.untrackedVolumeUSD = ZERO_BD
-    token1.combinedVolumeUSD = ZERO_BD
-    token1.totalLiquidity = ZERO_BD
+    token1.totalValueLocked = ZERO_BD
+    token1.totalValueLockedUSD = ZERO_BD
     token1.txCount = ZERO_BI
     token1.poolCount = ZERO_BI
   }
 
   pool.token0 = token0.id
   pool.token1 = token1.id
-
-  pool.feeTier = BigInt.fromI32(event.params.fee);
-  pool.tickSpacing = BigInt.fromI32(event.params.tickSpacing);
+  pool.feeTier = BigInt.fromI32(event.params.fee)
   pool.createdAtTimestamp = event.block.timestamp
   pool.createdAtBlockNumber = event.block.number
-
-  pool.liquidity = ZERO_BI
-  pool.sqrtPrice = ZERO_BI
-
   pool.liquidityProviderCount = ZERO_BI
   pool.txCount = ZERO_BI
-
-  pool.reserve0 = ZERO_BD
-  pool.reserve1 = ZERO_BD
-  pool.trackedReserveETH = ZERO_BD
-  pool.reserveETH = ZERO_BD
-  pool.reserveUSD = ZERO_BD
-
+  pool.liquidity = ZERO_BI
+  pool.sqrtPrice = ZERO_BI
+  pool.token0Price = ZERO_BD
+  pool.token1Price = ZERO_BD
+  pool.observationIndex = ZERO_BI
+  pool.totalValueLockedToken0 = ZERO_BD
+  pool.totalValueLockedToken1 = ZERO_BD
+  pool.totalValueLockedUSD = ZERO_BD
   pool.volumeToken0 = ZERO_BD
   pool.volumeToken1 = ZERO_BD
   pool.volumeUSD = ZERO_BD
-  pool.combinedVolumeUSD = ZERO_BD // SOMMELIER: tracked and untracked volume combined
   pool.untrackedVolumeUSD = ZERO_BD
 
-  pool.uncollectedFeesToken0 = ZERO_BD
-  pool.uncollectedFeesToken1 = ZERO_BD
-  pool.uncollectedFeesUSD = ZERO_BD
   pool.collectedFeesToken0 = ZERO_BD
   pool.collectedFeesToken1 = ZERO_BD
   pool.collectedFeesUSD = ZERO_BD
-
-  pool.token0Price = ZERO_BD
-  pool.token1Price = ZERO_BD
 
   // create the tracked contract based on the template
   PoolTemplate.create(event.params.pool)
