@@ -1,18 +1,11 @@
 /* eslint-disable prefer-const */
-import { BigInt, BigDecimal, Address } from '@graphprotocol/graph-ts'
+import { BigInt, BigDecimal, Address, EthereumEvent } from '@graphprotocol/graph-ts'
 import { ERC20 } from '../types/Factory/ERC20'
 import { ERC20SymbolBytes } from '../types/Factory/ERC20SymbolBytes'
 import { ERC20NameBytes } from '../types/Factory/ERC20NameBytes'
 import { Factory as FactoryContract } from '../types/templates/Pool/Factory'
-
-export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
-export const FACTORY_ADDRESS = '0xB08c2b143B636dC294cD76Ff81CD0d788B95f146'
-
-export let ZERO_BI = BigInt.fromI32(0)
-export let ONE_BI = BigInt.fromI32(1)
-export let ZERO_BD = BigDecimal.fromString('0')
-export let ONE_BD = BigDecimal.fromString('1')
-export let BI_18 = BigInt.fromI32(18)
+import { Transaction } from '../types/schema'
+import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 
 export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADDRESS))
 
@@ -136,4 +129,15 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt {
     decimalValue = decimalResult.value
   }
   return BigInt.fromI32(decimalValue as i32)
+}
+
+export function loadTransaction(event: EthereumEvent): Transaction {
+  let transaction = Transaction.load(event.transaction.hash.toString())
+  if (transaction === null) {
+    transaction = new Transaction(event.transaction.hash.toString())
+  }
+  transaction.blockNumber = event.block.number
+  transaction.timestamp = event.block.timestamp
+  transaction.save()
+  return transaction as Transaction
 }
