@@ -45,14 +45,16 @@ type Token @entity {
   untrackedVolumeUSD: BigDecimal!
   # transactions across all pools that include this token
   txCount: BigInt!
-  # numebr of pools containing this token
+  # number of pools containing this token
   poolCount: BigInt!
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
   totalValueLockedUSD: BigDecimal!
   # derived price in ETH
-  derivedETH: BigDecimal
+  derivedETH: BigDecimal!
+  # pools token is in that are white listed for USD pricing
+  whitelistPools: [Pool!]!
   # derived fields
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
@@ -74,9 +76,9 @@ type Pool @entity {
   liquidity: BigInt!
   # current price tracker
   sqrtPrice: BigInt!
-  # price of token0 - derived from sqrtPrice
+  # token0 per token1
   token0Price: BigDecimal!
-  # price of token1 - derived from sqrtPrice
+  # token1 per token0
   token1Price: BigDecimal!
   # current tick
   tick: BigInt
@@ -102,6 +104,8 @@ type Pool @entity {
   totalValueLockedToken0: BigDecimal!
   # total token 1 across all ticks
   totalValueLockedToken1: BigDecimal!
+  # tvl derived ETH
+  totalValueLockedETH: BigDecimal!
   # tvl USD
   totalValueLockedUSD: BigDecimal!
   # Fields used to help derived relationship

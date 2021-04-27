@@ -1,3 +1,4 @@
+import { WHITELIST_TOKENS } from './../utils/pricing'
 /* eslint-disable prefer-const */
 import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
 import { Factory } from '../types/schema'
@@ -56,6 +57,7 @@ export function handlePoolCreated(event: PoolCreated): void {
     token0.totalValueLockedUSD = ZERO_BD
     token0.txCount = ZERO_BI
     token0.poolCount = ZERO_BI
+    token0.whitelistPools = []
   }
 
   if (token1 === null) {
@@ -80,6 +82,19 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.totalValueLockedUSD = ZERO_BD
     token1.txCount = ZERO_BI
     token1.poolCount = ZERO_BI
+    token1.whitelistPools = []
+  }
+
+  // update white listed pools
+  if (WHITELIST_TOKENS.includes(token0.id)) {
+    let newPools = token1.whitelistPools
+    newPools.push(pool.id)
+    token1.whitelistPools = newPools
+  }
+  if (WHITELIST_TOKENS.includes(token1.id)) {
+    let newPools = token0.whitelistPools
+    newPools.push(pool.id)
+    token0.whitelistPools = newPools
   }
 
   pool.token0 = token0.id
@@ -97,6 +112,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.totalValueLockedToken0 = ZERO_BD
   pool.totalValueLockedToken1 = ZERO_BD
   pool.totalValueLockedUSD = ZERO_BD
+  pool.totalValueLockedETH = ZERO_BD
   pool.volumeToken0 = ZERO_BD
   pool.volumeToken1 = ZERO_BD
   pool.volumeUSD = ZERO_BD
