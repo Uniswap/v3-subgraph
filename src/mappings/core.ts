@@ -219,12 +219,12 @@ export function handleSwap(event: SwapEvent): void {
   pool.txCount = pool.txCount.plus(ONE_BI)
 
   // update token0 data
-  token0.volume = token0.volume.plus(amount0)
+  token0.volume = token0.volume.plus(amount0Abs)
   token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
   token0.volumeUSD = token0.volumeUSD.plus(amountTotalUSD)
 
   // update token1 data
-  token1.volume = token1.volume.plus(amount1)
+  token1.volume = token1.volume.plus(amount1Abs)
   token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
   token1.volumeUSD = token1.volumeUSD.plus(amountTotalUSD)
 
