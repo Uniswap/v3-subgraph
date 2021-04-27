@@ -1,27 +1,8 @@
 /* eslint-disable prefer-const */
-import {
-  Bundle,
-  Pool,
-  Token,
-  Transaction,
-  Factory,
-  Mint as MintEvent,
-  Burn as BurnEvent,
-  Swap as SwapEvent,
-  Mint,
-  Burn
-} from '../types/schema'
-import { log, store, BigDecimal, BigInt, EthereumTransaction } from '@graphprotocol/graph-ts'
-
-import {
-  Pool as PoolContract,
-  Swap,
-  Mint as PoolMint,
-  Burn as PoolBurn,
-  Initialize
-} from '../types/templates/Pool/Pool'
-
-import { convertTokenToDecimal, loadTransaction, priceToDecimal, tokenAmountToDecimal } from '../utils'
+import { Bundle, Pool, Token, Factory, Mint, Burn, Swap } from '../types/schema'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
+import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 
@@ -43,13 +24,14 @@ export function handleInitialize(event: Initialize): void {
   // update token prices
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
-  // token0.derivedETH = findEthPerToken(token0 as Token)
-  // token1.derivedETH = findEthPerToken(token1 as Token)
+  token0.derivedETH = findEthPerToken(token0 as Token)
+  token1.derivedETH = findEthPerToken(token1 as Token)
   token0.save()
   token1.save()
 }
 
-export function handleMint(event: PoolMint): void {
+export function handleMint(event: MintEvent): void {
+  let bundle = Bundle.load('1')
   let pool = Pool.load(event.address.toHexString())
   let factory = Factory.load(FACTORY_ADDRESS)
 
@@ -58,27 +40,41 @@ export function handleMint(event: PoolMint): void {
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
+  let amountUSD = amount0
+    .times(token0.derivedETH.times(bundle.ethPriceUSD))
+    .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
+
+  // reset tvl aggregates until new amounts calculated
+  factory.totalValueLockedETH = factory.totalValueLockedETH.minus(pool.totalValueLockedETH)
+
   // update globals
   factory.transactionCount = factory.transactionCount.plus(ONE_BI)
 
   // update token0 data
   token0.txCount = token0.txCount.plus(ONE_BI)
   token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
-  // todo - usd + derived prices
+  token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH.times(bundle.ethPriceUSD))
 
   // update token1 data
   token1.txCount = token1.txCount.plus(ONE_BI)
   token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
-  // todo - usd + derived prices
+  token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
 
   // pool data
   pool.txCount = pool.txCount.plus(ONE_BI)
   pool.liquidity = pool.liquidity.plus(event.params.amount)
   pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
   pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
+  pool.totalValueLockedETH = pool.totalValueLockedToken0
+    .times(token0.derivedETH)
+    .plus(pool.totalValueLockedToken1.times(token1.derivedETH))
+  pool.totalValueLockedUSD = pool.totalValueLockedETH.times(bundle.ethPriceUSD)
+
+  // reset aggregates with new amounts
+  factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
+  factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
   let transaction = loadTransaction(event)
-
   let mint = new Mint(transaction.id.toString() + pool.txCount.toString())
   mint.transaction = transaction.id
   mint.timestamp = transaction.timestamp
@@ -89,14 +85,10 @@ export function handleMint(event: PoolMint): void {
   mint.amount = event.params.amount
   mint.amount0 = amount0
   mint.amount1 = amount1
-  // @todo replace this with real USD
-  mint.amountUSD = ZERO_BD
+  mint.amountUSD = amountUSD
   mint.tickLower = BigInt.fromI32(event.params.tickLower as i32)
   mint.tickUpper = BigInt.fromI32(event.params.tickUpper as i32)
   mint.logIndex = event.logIndex
-
-  log.debug('mybug handled a mint', [])
-  // @todo need LP stuff
 
   token0.save()
   token1.save()
@@ -105,7 +97,8 @@ export function handleMint(event: PoolMint): void {
   mint.save()
 }
 
-export function handleBurn(event: PoolBurn): void {
+export function handleBurn(event: BurnEvent): void {
+  let bundle = Bundle.load('1')
   let pool = Pool.load(event.address.toHexString())
   let factory = Factory.load(FACTORY_ADDRESS)
 
@@ -114,27 +107,42 @@ export function handleBurn(event: PoolBurn): void {
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
+  let amountUSD = amount0
+    .times(token0.derivedETH.times(bundle.ethPriceUSD))
+    .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
+
+  // reset tvl aggregates until new amounts calculated
+  factory.totalValueLockedETH = factory.totalValueLockedETH.minus(pool.totalValueLockedETH)
+
   // update globals
   factory.transactionCount = factory.transactionCount.plus(ONE_BI)
 
   // update token0 data
   token0.txCount = token0.txCount.plus(ONE_BI)
   token0.totalValueLocked = token0.totalValueLocked.minus(amount0)
-  // todo - usd + derived prices
+  token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH.times(bundle.ethPriceUSD))
 
   // update token1 data
   token1.txCount = token1.txCount.plus(ONE_BI)
   token1.totalValueLocked = token1.totalValueLocked.minus(amount1)
-  // todo - usd + derived prices
+  token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
 
   // pool data
   pool.txCount = pool.txCount.plus(ONE_BI)
   pool.liquidity = pool.liquidity.minus(event.params.amount)
   pool.totalValueLockedToken0 = pool.totalValueLockedToken0.minus(amount0)
   pool.totalValueLockedToken1 = pool.totalValueLockedToken1.minus(amount1)
+  pool.totalValueLockedETH = pool.totalValueLockedToken0
+    .times(token0.derivedETH)
+    .plus(pool.totalValueLockedToken1.times(token1.derivedETH))
+  pool.totalValueLockedUSD = pool.totalValueLockedETH.times(bundle.ethPriceUSD)
 
+  // reset aggregates with new amounts
+  factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
+  factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
+
+  // burn entity
   let transaction = loadTransaction(event)
-
   let burn = new Burn(transaction.id + pool.txCount.toString())
   burn.transaction = transaction.id
   burn.timestamp = transaction.timestamp
@@ -144,14 +152,10 @@ export function handleBurn(event: PoolBurn): void {
   burn.amount = event.params.amount
   burn.amount0 = amount0
   burn.amount1 = amount1
-  // @todo replace this with real USD
-  burn.amountUSD = ZERO_BD
+  burn.amountUSD = amountUSD
   burn.tickLower = BigInt.fromI32(event.params.tickLower as i32)
   burn.tickUpper = BigInt.fromI32(event.params.tickUpper as i32)
   burn.logIndex = event.logIndex
-
-  // @todo need LP stuff
-  log.debug('mybug handled a burn', [])
 
   token0.save()
   token1.save()
@@ -160,25 +164,47 @@ export function handleBurn(event: PoolBurn): void {
   burn.save()
 }
 
-export function handleSwap(event: Swap): void {
+export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
+  let factory = Factory.load(FACTORY_ADDRESS)
   let pool = Pool.load(event.address.toHexString())
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
-  // amounts - 0/1 are token deltas
+  // amounts - 0/1 are token deltas: can be positive or negative
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-  let amount0USD = amount0.times(token0.derivedETH).times(bundle.ethPriceUSD)
-  let amount1USD = amount1.times(token1.derivedETH).times(bundle.ethPriceUSD)
+
+  // need absolute amounts for volume
+  let amount0Abs = amount0
+  if (amount0.lt(ZERO_BD)) {
+    amount0Abs = amount0.times(BigDecimal.fromString('-1'))
+  }
+  let amount1Abs = amount1
+  if (amount1.lt(ZERO_BD)) {
+    amount1Abs = amount1.times(BigDecimal.fromString('-1'))
+  }
+
+  let amount0ETH = amount0Abs.times(token0.derivedETH)
+  let amount1ETH = amount1Abs.times(token1.derivedETH)
+  let amount0USD = amount0ETH.times(bundle.ethPriceUSD)
+  let amount1USD = amount1ETH.times(bundle.ethPriceUSD)
+  /**
+   * @todo
+   * need to account for if either amount is more reliable
+   */
   let amountTotalUSD = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
-  log.debug('mybug amount0: {}', [event.params.amount0.toString()])
-  log.debug('mybug amount1: {}', [event.params.amount1.toString()])
+  // global updates
+  factory.transactionCount = factory.transactionCount.plus(ONE_BI)
+  factory.totalVolumeETH = factory.totalVolumeETH.plus(amount0ETH).plus(amount1ETH)
+  factory.totalVolumeUSD = factory.totalVolumeUSD.plus(amountTotalUSD)
 
-  /**
-   *  need to get absolute value of amounts
-   */
+  // reset aggregate tvl before individual pool tvl updates
+  let currentPoolTvlETH = pool.totalValueLockedETH
+  let currentPoolTvlUSD = currentPoolTvlETH.times(bundle.ethPriceUSD)
+  factory.totalValueLockedETH = factory.totalValueLockedETH.minus(currentPoolTvlETH)
+  factory.totalValueLockedUSD = factory.totalValueLockedUSD.minus(currentPoolTvlUSD)
 
   // static updates
   pool.tick = BigInt.fromI32(event.params.tick as i32)
@@ -202,22 +228,51 @@ export function handleSwap(event: Swap): void {
   token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
   token1.volumeUSD = token1.volumeUSD.plus(amountTotalUSD)
 
-  // updated rates
+  // updated pool rates
   let prices = sqrtPriceX96ToTokenPrices(pool.sqrtPrice)
   pool.token0Price = prices[0]
   pool.token1Price = prices[1]
   pool.save()
+
+  // update eth price
   bundle.ethPriceUSD = getEthPriceInUSD()
   bundle.save()
-  token0.derivedETH = findEthPerToken(token0 as Token)
-  // token1.derivedETH = findEthPerToken(token1 as Token)
 
-  // update tvl now that rates have changed
+  // update token derived rates
+  token0.derivedETH = findEthPerToken(token0 as Token)
+  token1.derivedETH = findEthPerToken(token1 as Token)
+
+  /**
+   * Things afffected by new USD rates
+   */
   pool.totalValueLockedETH = pool.totalValueLockedToken0
     .times(token0.derivedETH)
     .plus(pool.totalValueLockedToken1.times(token1.derivedETH))
   pool.totalValueLockedUSD = pool.totalValueLockedETH.times(bundle.ethPriceUSD)
 
+  factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
+  factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
+
+  token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH).times(bundle.ethPriceUSD)
+  token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH).times(bundle.ethPriceUSD)
+
+  // create Swap event
+  let transaction = loadTransaction(event)
+  let swap = new Swap(transaction.id + pool.txCount.toString())
+  swap.transaction = transaction.id
+  swap.timestamp = transaction.timestamp
+  swap.pool = pool.id
+  swap.sender = event.params.sender
+  swap.origin = event.transaction.from
+  swap.recipient = event.params.recipient
+  swap.amount0 = amount0
+  swap.amount1 = amount1
+  swap.amountUSD = amountTotalUSD
+  swap.tick = BigInt.fromI32(event.params.tick as i32)
+  swap.sqrtPriceX96 = event.params.sqrtPriceX96
+  swap.logIndex = event.logIndex
+
+  factory.save()
   pool.save()
   token0.save()
   token1.save()

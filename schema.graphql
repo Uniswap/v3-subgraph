@@ -156,7 +156,7 @@ type Tick @entity {
   # Fields used to help derived relationship
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # derived fields
-  swaps: [Swap!]! @derivedFrom(field: "tick")
+  # swaps: [Swap!]! @derivedFrom(field: "tick")
 }
 
 type Transaction @entity {
@@ -256,9 +256,9 @@ type Swap @entity {
   # derived info
   amountUSD: BigDecimal!
   # The sqrt(price) of the pool after the swap, as a Q64.96
-  sqrtPriceX96: BigDecimal!
+  sqrtPriceX96: BigInt!
   # the tick after the swap
-  tick: Tick!
+  tick: BigInt!
   # index within the txn
   logIndex: BigInt
 }

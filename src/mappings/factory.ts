@@ -66,13 +66,11 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.name = fetchTokenName(event.params.token1)
     token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
     let decimals = fetchTokenDecimals(event.params.token1)
-
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
       log.debug('mybug the decimal on token 0 was null', [])
       return
     }
-
     token1.decimals = decimals
     token1.derivedETH = ZERO_BD
     token1.volume = ZERO_BD

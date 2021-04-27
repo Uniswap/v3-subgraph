@@ -1,6 +1,5 @@
-import { Address } from '@graphprotocol/graph-ts'
 /* eslint-disable prefer-const */
-import { ADDRESS_ZERO, factoryContract, ONE_BD, ZERO_BD } from './constants'
+import { ONE_BD, ZERO_BD } from './constants'
 import { Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
@@ -18,9 +17,9 @@ const DAI_WETH_03_POOL = '0x8ffb36fe19aaa22bf11f6a4f3dbcd4ae13842a67'
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let daiPool = Pool.load(DAI_WETH_03_POOL) // dai is token0
+  let daiPool = Pool.load(DAI_WETH_03_POOL) // dai is token1
   if (daiPool !== null) {
-    return daiPool.token0Price
+    return daiPool.token1Price
   } else {
     return ZERO_BD
   }
