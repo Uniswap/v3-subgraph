@@ -4,7 +4,7 @@ type Factory @entity {
   # amount of pools created
   poolCount: BigInt!
   # amoutn of transactions all time
-  transactionCount: BigInt!
+  txCount: BigInt!
   # total volume all time in derived USD
   totalVolumeUSD: BigDecimal!
   # total volume all time in derived ETH
@@ -322,11 +322,11 @@ type UniswapDayData @entity {
   # timestamp rounded to current day by dividing by 86400
   date: Int!
   # total daily volume in Uniswap derived in terms of ETH
-  dailyVolumeETH: BigDecimal!
+  volumeETH: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD
-  dailyVolumeUSD: BigDecimal!
+  volumeUSD: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD untracked
-  dailyVolumeUntracked: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # number of daily transactions
   txCount: BigInt!
   # tvl in terms of USD
@@ -452,7 +452,7 @@ type TokenDayData @entity {
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
-  totalValueUSD: BigDecimal!
+  totalValueLockedUSD: BigDecimal!
   # price at end of period in USD
   priceUSD: BigDecimal!
 }
