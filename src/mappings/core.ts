@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
@@ -95,55 +95,53 @@ export function handleMint(event: MintEvent): void {
   mint.logIndex = event.logIndex
 
   // tick entities
-  let tickLowerIdx: i32 = event.params.tickLower
-  let tickUpperIdx: i32 = event.params.tickUpper
+  let tickLowerIdx = event.params.tickLower
+  // let tickUpperIdx: i32 = event.params.tickUpper
 
   let lowerTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickLower).toString()
-  let upperTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickUpper).toString()
+  // let upperTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickUpper).toString()
   
   let lowerTick = Tick.load(lowerTickId)
-  let upperTick = Tick.load(upperTickId)
-  
-  let createTick = (id: string, tickIndex: i32): Tick => {
-    let tick = new Tick(id)
-    tick.createdAtTimestamp = event.block.timestamp
-    tick.createdAtBlockNumber = event.block.number
-    tick.liquidityGross = ZERO_BD
-    tick.liquidityNet = ZERO_BD
-    tick.liquidityProviderCount = ZERO_BI
-
-    // 1.0001^tick is token1/token0.
-    let price0F64 = f64(1.0001) ** f64(tickIndex)
-    let price1F64 = f64(1) / f64(price0F64)
-    tick.price0 = BigDecimal.fromString(price0F64.toString())
-    tick.price1 = BigDecimal.fromString(price1F64.toString())
-    
-    tick.volumeToken0 = ZERO_BD
-    tick.volumeToken1 = ZERO_BD
-    tick.volumeUSD = ZERO_BD
-    tick.untrackedVolumeUSD = ZERO_BD
-    tick.collectedFeesToken0 = ZERO_BD
-    tick.collectedFeesToken1 = ZERO_BD
-    tick.collectedFeesUSD = ZERO_BD
-    tick.liquidityProviderCount = ZERO_BI
-    return tick
-  }
+  log.info(`Loaded a tick with id `, [lowerTickId])
   
   if (lowerTick === null) {
-    lowerTick = createTick(lowerTickId, tickLowerIdx)
+    lowerTick = new Tick(lowerTickId);
+    lowerTick.pool = pool.id;
+    
+    lowerTick.createdAtTimestamp = event.block.timestamp
+    lowerTick.createdAtBlockNumber = event.block.number
+    lowerTick.liquidityGross = ZERO_BD
+    lowerTick.liquidityNet = ZERO_BD
+    lowerTick.liquidityProviderCount = ZERO_BI
+    
+    lowerTick.price0 = ZERO_BD
+    lowerTick.price1 = ZERO_BD
+
+    // 1.0001^tick is token1/token0.
+    let price0Float = 1.0001 ** tickLowerIdx
+    let price1Float = 1.0 / price0Float
+    lowerTick.price0 = BigDecimal.fromString(price0Float.toString())
+    lowerTick.price1 = BigDecimal.fromString(price1Float.toString())
+
+    log.info(`Creating a tick with id {} index {} price0 {} price1 {}`, [lowerTickId, tickLowerIdx as string, price0Float.toString(), price1Float.toString()]);
+
+    lowerTick.volumeToken0 = ZERO_BD
+    lowerTick.volumeToken1 = ZERO_BD
+    lowerTick.volumeUSD = ZERO_BD
+    lowerTick.untrackedVolumeUSD = ZERO_BD
+    lowerTick.collectedFeesToken0 = ZERO_BD
+    lowerTick.collectedFeesToken1 = ZERO_BD
+    lowerTick.collectedFeesUSD = ZERO_BD
+    lowerTick.liquidityProviderCount = ZERO_BI
   }
 
-  if (upperTick === null) {
-    upperTick = createTick(upperTickId, tickUpperIdx)
-  }
+  // let amountBD = event.params.amount.toBigDecimal()
+  // lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amountBD)
+  // lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amountBD)
+  // upperTick.liquidityGross = upperTick.liquidityGross.plus(amountBD)
+  // upperTick.liquidityNet = upperTick.liquidityNet.minus(amountBD)
 
-  let amountBD = event.params.amount.toBigDecimal()
-  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amountBD)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amountBD)
-  upperTick.liquidityGross = upperTick.liquidityGross.plus(amountBD)
-  upperTick.liquidityNet = upperTick.liquidityNet.minus(amountBD)
-
-  // TODO: Update volume, fees, and liquidity provider count. Computing these on the tick
+  // TODO: Update Tick's volume, fees, and liquidity provider count. Computing these on the tick
   // level requires reimplementing some of the swapping code from v3-core.
 
   updateUniswapDayData(event)
@@ -157,7 +155,7 @@ export function handleMint(event: MintEvent): void {
   factory.save()
   mint.save()
   lowerTick.save()
-  upperTick.save()
+  // upperTick.save()
 }
 
 export function handleBurn(event: BurnEvent): void {
@@ -221,16 +219,16 @@ export function handleBurn(event: BurnEvent): void {
   burn.tickUpper = BigInt.fromI32(event.params.tickUpper as i32)
   burn.logIndex = event.logIndex
 
-  // tick entities
-  let lowerTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickLower).toString()
-  let upperTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickUpper).toString()
-  let lowerTick = Tick.load(lowerTickId)
-  let upperTick = Tick.load(upperTickId)
-  let amountBD = event.params.amount.toBigDecimal()
-  lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amountBD)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amountBD)
-  upperTick.liquidityGross = upperTick.liquidityGross.minus(amountBD)
-  upperTick.liquidityNet = upperTick.liquidityNet.plus(amountBD)  
+  // // tick entities
+  // let lowerTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickLower).toString()
+  // let upperTickId = poolAddress + '-' + BigInt.fromI32(event.params.tickUpper).toString()
+  // let lowerTick = Tick.load(lowerTickId)
+  // let upperTick = Tick.load(upperTickId)
+  // let amountBD = event.params.amount.toBigDecimal()
+  // lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amountBD)
+  // lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amountBD)
+  // upperTick.liquidityGross = upperTick.liquidityGross.minus(amountBD)
+  // upperTick.liquidityNet = upperTick.liquidityNet.plus(amountBD)  
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
@@ -242,8 +240,8 @@ export function handleBurn(event: BurnEvent): void {
   pool.save()
   factory.save()
   burn.save()
-  lowerTick.save()
-  upperTick.save()
+  // lowerTick.save()
+  // upperTick.save()
 }
 
 export function handleSwap(event: SwapEvent): void {
