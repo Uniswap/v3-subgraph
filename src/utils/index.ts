@@ -2,7 +2,7 @@ import { EthereumEvent } from '@graphprotocol/graph-ts'
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { Transaction } from '../types/schema'
-import { ONE_BI, ZERO_BI, ZERO_BD } from '../utils/constants'
+import { ONE_BI, ZERO_BI, ZERO_BD, ONE_BD } from '../utils/constants'
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
@@ -12,12 +12,22 @@ export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   return bd
 }
 
-export function bigIntExponated(value: i32, power: BigInt): BigInt {
-  let bd = BigInt.fromI32(value as i32)
-  for (let i = ONE_BI; i.lt(power as BigInt); i = i.plus(ONE_BI)) {
-    bd = bd.times(bd)
+export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecimal {
+  if (power.equals(ZERO_BI)) {
+    return ONE_BD;
   }
-  return bd
+  let negativePower = power.lt(ZERO_BI);
+  let result = ZERO_BD.plus(value);
+  let powerAbs = power.abs();
+  for (let i = ONE_BI; i.lt(powerAbs); i = i.plus(ONE_BI)) {
+    result = result.times(value)
+  }
+  
+  if (negativePower) {
+    result = ONE_BD.div(result)
+  }
+  
+  return result;
 }
 
 export function tokenAmountToDecimal(tokenAmount: BigInt, exchangeDecimals: BigInt): BigDecimal {
