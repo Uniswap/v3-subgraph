@@ -125,6 +125,10 @@ type Pool @entity {
 type Tick @entity {
   # format: <pool address>#<tick index>
   id: ID!
+  # pool address
+  poolAddress: String
+  # tick index
+  tickIdx: BigInt!
   # pointer to pool
   pool: Pool!
   # total liquidity pool has as tick lower or upper

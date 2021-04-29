@@ -6,7 +6,9 @@ import { ONE_BD, ZERO_BD, ZERO_BI } from './constants';
 
 export function createTick(tickId: string, tickIdx: i32, poolId: string, event: MintEvent): Tick {
     let tick = new Tick(tickId);
+    tick.tickIdx = BigInt.fromI32(tickIdx)
     tick.pool = poolId;
+    tick.poolAddress = poolId;
 
     tick.createdAtTimestamp = event.block.timestamp
     tick.createdAtBlockNumber = event.block.number
