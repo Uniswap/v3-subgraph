@@ -1,5 +1,6 @@
+import { WHITELIST_TOKENS } from './../utils/pricing'
 /* eslint-disable prefer-const */
-import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD } from './../utils/constants'
+import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
@@ -18,7 +19,8 @@ export function handlePoolCreated(event: PoolCreated): void {
     factory.untrackedVolumeUSD = ZERO_BD
     factory.totalValueLockedETH = ZERO_BD
     factory.totalValueLockedUSD = ZERO_BD
-    factory.transactionCount = ZERO_BI
+    factory.txCount = ZERO_BI
+    factory.owner = ADDRESS_ZERO
 
     // create new bundle for tracking eth price
     let bundle = new Bundle('1')
@@ -55,21 +57,20 @@ export function handlePoolCreated(event: PoolCreated): void {
     token0.totalValueLockedUSD = ZERO_BD
     token0.txCount = ZERO_BI
     token0.poolCount = ZERO_BI
+    token0.whitelistPools = []
   }
 
   if (token1 === null) {
     token1 = new Token(event.params.token1.toHexString())
-    token1.symbol = fetchTokenSymbol(event.params.token0)
-    token1.name = fetchTokenName(event.params.token0)
-    token1.totalSupply = fetchTokenTotalSupply(event.params.token0)
-    let decimals = fetchTokenDecimals(event.params.token0)
-
+    token1.symbol = fetchTokenSymbol(event.params.token1)
+    token1.name = fetchTokenName(event.params.token1)
+    token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
+    let decimals = fetchTokenDecimals(event.params.token1)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
       log.debug('mybug the decimal on token 0 was null', [])
       return
     }
-
     token1.decimals = decimals
     token1.derivedETH = ZERO_BD
     token1.volume = ZERO_BD
@@ -79,6 +80,19 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.totalValueLockedUSD = ZERO_BD
     token1.txCount = ZERO_BI
     token1.poolCount = ZERO_BI
+    token1.whitelistPools = []
+  }
+
+  // update white listed pools
+  if (WHITELIST_TOKENS.includes(token0.id)) {
+    let newPools = token1.whitelistPools
+    newPools.push(pool.id)
+    token1.whitelistPools = newPools
+  }
+  if (WHITELIST_TOKENS.includes(token1.id)) {
+    let newPools = token0.whitelistPools
+    newPools.push(pool.id)
+    token0.whitelistPools = newPools
   }
 
   pool.token0 = token0.id
@@ -96,6 +110,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.totalValueLockedToken0 = ZERO_BD
   pool.totalValueLockedToken1 = ZERO_BD
   pool.totalValueLockedUSD = ZERO_BD
+  pool.totalValueLockedETH = ZERO_BD
   pool.volumeToken0 = ZERO_BD
   pool.volumeToken1 = ZERO_BD
   pool.volumeUSD = ZERO_BD

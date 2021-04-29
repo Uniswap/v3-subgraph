@@ -4,7 +4,7 @@ type Factory @entity {
   # amount of pools created
   poolCount: BigInt!
   # amoutn of transactions all time
-  transactionCount: BigInt!
+  txCount: BigInt!
   # total volume all time in derived USD
   totalVolumeUSD: BigDecimal!
   # total volume all time in derived ETH
@@ -45,14 +45,16 @@ type Token @entity {
   untrackedVolumeUSD: BigDecimal!
   # transactions across all pools that include this token
   txCount: BigInt!
-  # numebr of pools containing this token
+  # number of pools containing this token
   poolCount: BigInt!
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
   totalValueLockedUSD: BigDecimal!
   # derived price in ETH
-  derivedETH: BigDecimal
+  derivedETH: BigDecimal!
+  # pools token is in that are white listed for USD pricing
+  whitelistPools: [Pool!]!
   # derived fields
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
@@ -74,9 +76,9 @@ type Pool @entity {
   liquidity: BigInt!
   # current price tracker
   sqrtPrice: BigInt!
-  # price of token0 - derived from sqrtPrice
+  # token0 per token1
   token0Price: BigDecimal!
-  # price of token1 - derived from sqrtPrice
+  # token1 per token0
   token1Price: BigDecimal!
   # current tick
   tick: BigInt
@@ -102,6 +104,8 @@ type Pool @entity {
   totalValueLockedToken0: BigDecimal!
   # total token 1 across all ticks
   totalValueLockedToken1: BigDecimal!
+  # tvl derived ETH
+  totalValueLockedETH: BigDecimal!
   # tvl USD
   totalValueLockedUSD: BigDecimal!
   # Fields used to help derived relationship
@@ -152,7 +156,7 @@ type Tick @entity {
   # Fields used to help derived relationship
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # derived fields
-  swaps: [Swap!]! @derivedFrom(field: "tick")
+  # swaps: [Swap!]! @derivedFrom(field: "tick")
 }
 
 type Transaction @entity {
@@ -252,9 +256,9 @@ type Swap @entity {
   # derived info
   amountUSD: BigDecimal!
   # The sqrt(price) of the pool after the swap, as a Q64.96
-  sqrtPriceX96: BigDecimal!
+  sqrtPriceX96: BigInt!
   # the tick after the swap
-  tick: Tick!
+  tick: BigInt!
   # index within the txn
   logIndex: BigInt
 }
@@ -318,11 +322,11 @@ type UniswapDayData @entity {
   # timestamp rounded to current day by dividing by 86400
   date: Int!
   # total daily volume in Uniswap derived in terms of ETH
-  dailyVolumeETH: BigDecimal!
+  volumeETH: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD
-  dailyVolumeUSD: BigDecimal!
+  volumeUSD: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD untracked
-  dailyVolumeUntracked: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # number of daily transactions
   txCount: BigInt!
   # tvl in terms of USD
@@ -448,7 +452,7 @@ type TokenDayData @entity {
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
-  totalValueUSD: BigDecimal!
+  totalValueLockedUSD: BigDecimal!
   # price at end of period in USD
   priceUSD: BigDecimal!
 }
