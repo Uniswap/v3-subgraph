@@ -123,7 +123,7 @@ type Pool @entity {
 }
 
 type Tick @entity {
-  # format: <pool address>-<tick index>
+  # format: <pool address>#<tick index>
   id: ID!
   # pointer to pool
   pool: Pool!
@@ -175,7 +175,7 @@ type Transaction @entity {
 }
 
 type Mint @entity {
-  # transaction hash + "-" + index in mints Transaction array
+  # transaction hash + "#" + index in mints Transaction array
   id: ID!
   # which txn the mint was included in
   transaction: Transaction!
@@ -206,7 +206,7 @@ type Mint @entity {
 }
 
 type Burn @entity {
-  # transaction hash + "-" + index in mints Transaction array
+  # transaction hash + "#" + index in mints Transaction array
   id: ID!
   # txn burn was included in
   transaction: Transaction!
@@ -235,7 +235,7 @@ type Burn @entity {
 }
 
 type Swap @entity {
-  # transaction hash + "-" + index in swaps Transaction array
+  # transaction hash + "#" + index in swaps Transaction array
   id: ID!
   # pointer to transaction
   transaction: Transaction!
@@ -264,7 +264,7 @@ type Swap @entity {
 }
 
 type Collect @entity {
-  # transaction hash + "-" + index in collect Transaction array
+  # transaction hash + "#" + index in collect Transaction array
   id: ID!
   # pointer to txn
   transaction: Transaction!
