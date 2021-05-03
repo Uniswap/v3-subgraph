@@ -303,8 +303,6 @@ export function handleSwap(event: SwapEvent): void {
   let previousActiveTick: BigInt = previousTick.div(tickSpacing).times(tickSpacing)
   let newActiveTick: BigInt = newTick.div(tickSpacing).times(tickSpacing)
 
-  log.info('tick spacing {} prev act {} new act {}', [tickSpacing.toString(), previousActiveTick.toString(), newActiveTick.toString()])
-  
   // If our new tick is bigger, we check all initializable ticks up to and including the new tick, and apply their net liquidities.
   if (previousTick.le(newTick)) {
     for (let activeTick = previousActiveTick.plus(tickSpacing); activeTick.le(newActiveTick); activeTick = activeTick.plus(tickSpacing)) {
@@ -312,7 +310,6 @@ export function handleSwap(event: SwapEvent): void {
       let activeTickLoaded = Tick.load(activeTickId)
   
       if (activeTickLoaded) {
-        log.info('bumping pools liquidity {} with net {}', [pool.liquidity.toString(), activeTickLoaded.liquidityNet.toString()])
         pool.liquidity = pool.liquidity.plus(activeTickLoaded.liquidityNet)
       }
     }
