@@ -1,10 +1,5 @@
 [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -130,7 +125,7 @@
     "inputs": [
       {
         "internalType": "uint24",
-        "name": "",
+        "name": "fee",
         "type": "uint24"
       }
     ],
@@ -149,17 +144,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "tokenA",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "tokenB",
         "type": "address"
       },
       {
         "internalType": "uint24",
-        "name": "",
+        "name": "fee",
         "type": "uint24"
       }
     ],
@@ -167,7 +162,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "pool",
         "type": "address"
       }
     ],
@@ -182,39 +177,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "parameters",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "factory",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token0",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token1",
-        "type": "address"
-      },
-      {
-        "internalType": "uint24",
-        "name": "fee",
-        "type": "uint24"
-      },
-      {
-        "internalType": "int24",
-        "name": "tickSpacing",
-        "type": "int24"
       }
     ],
     "stateMutability": "view",

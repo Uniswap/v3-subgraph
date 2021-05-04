@@ -8,7 +8,7 @@ dataSources:
     name: Factory
     network: rinkeby
     source:
-      address: '0x815BCC87613315327E04e4A3b7c96a79Ae80760c'
+      address: '0x3820c1adA8d5Eb2b200F4dFcaB7C2B10062B1CfE'
       abi: Factory
       startBlock: 8459128
     mapping:
@@ -35,7 +35,7 @@ dataSources:
     name: NonfungiblePositionManager
     network: rinkeby
     source:
-      address: '0x3255160392215494bee8B5aBf8C4C40965d0986C'
+      address: '0xC62B9b27207ac749f72d65A98FF177cF5eF54099'
       abi: NonfungiblePositionManager
       startBlock: 8372189
     mapping:
@@ -82,7 +82,7 @@ templates:
       eventHandlers:
         - event: Initialize(uint160,int24)
           handler: handleInitialize
-        - event: Swap(indexed address,indexed address,int256,int256,uint160,int24)
+        - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
           handler: handleSwap
         - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
           handler: handleMint
