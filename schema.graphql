@@ -132,9 +132,9 @@ type Tick @entity {
   # pointer to pool
   pool: Pool!
   # total liquidity pool has as tick lower or upper
-  liquidityGross: BigDecimal!
+  liquidityGross: BigInt!
   # how much liquidity changes when tick crossed
-  liquidityNet: BigDecimal!
+  liquidityNet: BigInt!
   # calculated price of token0 of tick within this pool - constant
   price0: BigDecimal!
   # calculated price of token0 of tick within this pool - constant
