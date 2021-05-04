@@ -183,6 +183,10 @@ type Mint @entity {
   timestamp: BigInt!
   # pool position is within
   pool: Pool!
+  # allow indexing by tokens
+  token0: Token!
+  # allow indexing by tokens
+  token1: Token!
   # owner of position where liquidity minted to
   owner: Bytes!
   # the address that minted the liquidity
@@ -212,6 +216,10 @@ type Burn @entity {
   transaction: Transaction!
   # pool position is within
   pool: Pool!
+  # allow indexing by tokens
+  token0: Token!
+  # allow indexing by tokens
+  token1: Token!
   # need this to pull recent txns for specific token or pool
   timestamp: BigInt!
   # owner of position where liquidity was burned
@@ -243,6 +251,10 @@ type Swap @entity {
   timestamp: BigInt!
   # pool swap occured within
   pool: Pool!
+  # allow indexing by tokens
+  token0: Token!
+  # allow indexing by tokens
+  token1: Token!
   # sender of the swap
   sender: Bytes!
   # recipient of the swap

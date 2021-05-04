@@ -14,20 +14,20 @@ export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
 
 export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecimal {
   if (power.equals(ZERO_BI)) {
-    return ONE_BD;
+    return ONE_BD
   }
-  let negativePower = power.lt(ZERO_BI);
-  let result = ZERO_BD.plus(value);
-  let powerAbs = power.abs();
+  let negativePower = power.lt(ZERO_BI)
+  let result = ZERO_BD.plus(value)
+  let powerAbs = power.abs()
   for (let i = ONE_BI; i.lt(powerAbs); i = i.plus(ONE_BI)) {
     result = result.times(value)
   }
-  
+
   if (negativePower) {
     result = ONE_BD.div(result)
   }
-  
-  return result;
+
+  return result
 }
 
 export function tokenAmountToDecimal(tokenAmount: BigInt, exchangeDecimals: BigInt): BigDecimal {
