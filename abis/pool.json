@@ -623,7 +623,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "index",
         "type": "uint256"
       }
     ],
@@ -681,7 +681,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "key",
         "type": "bytes32"
       }
     ],
@@ -689,7 +689,7 @@
     "outputs": [
       {
         "internalType": "uint128",
-        "name": "liquidity",
+        "name": "_liquidity",
         "type": "uint128"
       },
       {
@@ -877,7 +877,7 @@
     "inputs": [
       {
         "internalType": "int16",
-        "name": "",
+        "name": "wordPosition",
         "type": "int16"
       }
     ],
@@ -909,7 +909,7 @@
     "inputs": [
       {
         "internalType": "int24",
-        "name": "",
+        "name": "tick",
         "type": "int24"
       }
     ],

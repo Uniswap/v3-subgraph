@@ -1,13 +1,12 @@
-import { log, Address } from '@graphprotocol/graph-ts'
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log, Address, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import { updateUniswapDayData, updatePoolDayData, updateTokenDayData } from '../utils/intervalUpdates'
-import { createTick, feeTierToTickSpacing } from '../utils/tick'
+import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
@@ -316,49 +315,8 @@ export function handleSwap(event: SwapEvent): void {
   pool.volumeUSD = pool.volumeUSD.plus(amountTotalUSD)
   pool.txCount = pool.txCount.plus(ONE_BI)
 
-  // Update the pools active liquidity.
-  // A swap can cause the currently active tick to change, which can cause a change in the active liquidity.
-  let previousTick = pool.tick
-  let newTick = BigInt.fromI32(event.params.tick)
-  let tickSpacing = feeTierToTickSpacing(pool.feeTier)
-  // Snap to the previous initializable tick (i.e. a multiple of fee spacing)
-  let previousActiveTick: BigInt = previousTick.div(tickSpacing).times(tickSpacing)
-  let newActiveTick: BigInt = newTick.div(tickSpacing).times(tickSpacing)
-
-  // If our new tick is bigger, we check all initializable ticks up to and including the new tick, and apply their net liquidities.
-  if (previousTick.le(newTick)) {
-    for (
-      let activeTick = previousActiveTick.plus(tickSpacing);
-      activeTick.le(newActiveTick);
-      activeTick = activeTick.plus(tickSpacing)
-    ) {
-      let activeTickId = pool.id + '#' + activeTick.toString()
-      let activeTickLoaded = Tick.load(activeTickId)
-
-      if (activeTickLoaded) {
-        pool.liquidity = pool.liquidity.plus(activeTickLoaded.liquidityNet)
-      }
-    }
-  } else {
-    // Our new tick is smaller. We don't want to apply net liquidity until we have passed the tick with the net.
-    // e.g. if our new tick = 200, and 200 has net liquidity, we *don't* want to apply 200's net liquidity yet (since 200s liquidity)
-    // is still active.
-    let previousActiveTickIter = ZERO_BI.plus(previousActiveTick)
-    for (
-      let activeTick = previousActiveTickIter.minus(tickSpacing);
-      activeTick.ge(newActiveTick);
-      activeTick = activeTick.minus(tickSpacing)
-    ) {
-      let previousActiveTickId = pool.id + '#' + previousActiveTickIter.toString()
-      let activeTickLoaded = Tick.load(previousActiveTickId)
-      if (activeTickLoaded) {
-        pool.liquidity = pool.liquidity.minus(activeTickLoaded.liquidityNet)
-      }
-      previousActiveTickIter = activeTick
-    }
-  }
-
-  // Update the pools tick
+  // Update the pool with the new active liquidity, price, and tick.
+  pool.liquidity = event.params.liquidity
   pool.tick = BigInt.fromI32(event.params.tick as i32)
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
