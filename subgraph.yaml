@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: rinkeby
+    network: mainnet
     source:
-      address: '0x815BCC87613315327E04e4A3b7c96a79Ae80760c'
+      address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
       abi: Factory
-      startBlock: 8494387
+      startBlock: 12369621
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -33,11 +33,11 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: rinkeby
+    network: mainnet
     source:
-      address: '0x2F9e608FD881861B8916257B76613Cb22EE0652c'
+      address: '0x3255160392215494bee8B5aBf8C4C40965d0986C'
       abi: NonfungiblePositionManager
-      startBlock: 8372189
+      startBlock: 12369621
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -61,7 +61,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: rinkeby
+    network: mainnet
     source:
       abi: Pool
     mapping:
@@ -82,7 +82,7 @@ templates:
       eventHandlers:
         - event: Initialize(uint160,int24)
           handler: handleInitialize
-        - event: Swap(indexed address,indexed address,int256,int256,uint160,int24)
+        - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
           handler: handleSwap
         - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
           handler: handleMint

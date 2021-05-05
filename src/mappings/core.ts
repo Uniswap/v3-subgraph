@@ -1,13 +1,13 @@
 import { log, Address } from '@graphprotocol/graph-ts'
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD } from '../utils/constants'
+import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import { updateUniswapDayData, updatePoolDayData, updateTokenDayData } from '../utils/intervalUpdates'
-import { createTick } from '../utils/tick'
+import { createTick, feeTierToTickSpacing } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
@@ -74,7 +74,17 @@ export function handleMint(event: MintEvent): void {
 
   // pool data
   pool.txCount = pool.txCount.plus(ONE_BI)
-  pool.liquidity = pool.liquidity.plus(event.params.amount)
+
+  // Pools liquidity tracks the currently active liquidity given pools current tick.
+  // We only want to update it on mint if the new position includes the current tick.
+  if (
+    pool.tick !== null &&
+    BigInt.fromI32(event.params.tickLower).le(pool.tick as BigInt) &&
+    BigInt.fromI32(event.params.tickUpper).gt(pool.tick as BigInt)
+  ) {
+    pool.liquidity = pool.liquidity.plus(event.params.amount)
+  }
+
   pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
   pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
   pool.totalValueLockedETH = pool.totalValueLockedToken0
@@ -122,11 +132,11 @@ export function handleMint(event: MintEvent): void {
     upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
   }
 
-  let amountBD = event.params.amount.toBigDecimal()
-  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amountBD)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amountBD)
-  upperTick.liquidityGross = upperTick.liquidityGross.plus(amountBD)
-  upperTick.liquidityNet = upperTick.liquidityNet.minus(amountBD)
+  let amount = event.params.amount
+  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
+  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
+  upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
+  upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
 
   // TODO: Update Tick's volume, fees, and liquidity provider count. Computing these on the tick
   // level requires reimplementing some of the swapping code from v3-core.
@@ -178,7 +188,16 @@ export function handleBurn(event: BurnEvent): void {
 
   // pool data
   pool.txCount = pool.txCount.plus(ONE_BI)
-  pool.liquidity = pool.liquidity.minus(event.params.amount)
+  // Pools liquidity tracks the currently active liquidity given pools current tick.
+  // We only want to update it on burn if the position being burnt includes the current tick.
+  if (
+    pool.tick !== null &&
+    BigInt.fromI32(event.params.tickLower).le(pool.tick as BigInt) &&
+    BigInt.fromI32(event.params.tickUpper).gt(pool.tick as BigInt)
+  ) {
+    pool.liquidity = pool.liquidity.minus(event.params.amount)
+  }
+
   pool.totalValueLockedToken0 = pool.totalValueLockedToken0.minus(amount0)
   pool.totalValueLockedToken1 = pool.totalValueLockedToken1.minus(amount1)
   pool.totalValueLockedETH = pool.totalValueLockedToken0
@@ -213,11 +232,11 @@ export function handleBurn(event: BurnEvent): void {
   let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
-  let amountBD = event.params.amount.toBigDecimal()
-  lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amountBD)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amountBD)
-  upperTick.liquidityGross = upperTick.liquidityGross.minus(amountBD)
-  upperTick.liquidityNet = upperTick.liquidityNet.plus(amountBD)
+  let amount = event.params.amount
+  lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amount)
+  lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
+  upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
+  upperTick.liquidityNet = upperTick.liquidityNet.plus(amount)
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
@@ -226,13 +245,13 @@ export function handleBurn(event: BurnEvent): void {
 
   // If liquidity gross is zero then there are no positions starting at or ending at the tick.
   // It is now safe to remove the tick from the data store.
-  if (lowerTick.liquidityGross.equals(ZERO_BD)) {
+  if (lowerTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', lowerTickId)
   } else {
     lowerTick.save()
   }
 
-  if (upperTick.liquidityGross.equals(ZERO_BD)) {
+  if (upperTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', upperTickId)
   } else {
     upperTick.save()
@@ -291,17 +310,59 @@ export function handleSwap(event: SwapEvent): void {
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(currentPoolTvlETH)
   factory.totalValueLockedUSD = factory.totalValueLockedUSD.minus(currentPoolTvlUSD)
 
-  // static updates
-  pool.tick = BigInt.fromI32(event.params.tick as i32)
-  pool.sqrtPrice = event.params.sqrtPriceX96
-  pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
-  pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
-
   // pool volume
   pool.volumeToken0 = pool.volumeToken0.plus(amount0)
   pool.volumeToken1 = pool.volumeToken1.plus(amount1)
   pool.volumeUSD = pool.volumeUSD.plus(amountTotalUSD)
   pool.txCount = pool.txCount.plus(ONE_BI)
+
+  // Update the pools active liquidity.
+  // A swap can cause the currently active tick to change, which can cause a change in the active liquidity.
+  let previousTick = pool.tick
+  let newTick = BigInt.fromI32(event.params.tick)
+  let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+  // Snap to the previous initializable tick (i.e. a multiple of fee spacing)
+  let previousActiveTick: BigInt = previousTick.div(tickSpacing).times(tickSpacing)
+  let newActiveTick: BigInt = newTick.div(tickSpacing).times(tickSpacing)
+
+  // If our new tick is bigger, we check all initializable ticks up to and including the new tick, and apply their net liquidities.
+  if (previousTick.le(newTick)) {
+    for (
+      let activeTick = previousActiveTick.plus(tickSpacing);
+      activeTick.le(newActiveTick);
+      activeTick = activeTick.plus(tickSpacing)
+    ) {
+      let activeTickId = pool.id + '#' + activeTick.toString()
+      let activeTickLoaded = Tick.load(activeTickId)
+
+      if (activeTickLoaded) {
+        pool.liquidity = pool.liquidity.plus(activeTickLoaded.liquidityNet)
+      }
+    }
+  } else {
+    // Our new tick is smaller. We don't want to apply net liquidity until we have passed the tick with the net.
+    // e.g. if our new tick = 200, and 200 has net liquidity, we *don't* want to apply 200's net liquidity yet (since 200s liquidity)
+    // is still active.
+    let previousActiveTickIter = ZERO_BI.plus(previousActiveTick)
+    for (
+      let activeTick = previousActiveTickIter.minus(tickSpacing);
+      activeTick.ge(newActiveTick);
+      activeTick = activeTick.minus(tickSpacing)
+    ) {
+      let previousActiveTickId = pool.id + '#' + previousActiveTickIter.toString()
+      let activeTickLoaded = Tick.load(previousActiveTickId)
+      if (activeTickLoaded) {
+        pool.liquidity = pool.liquidity.minus(activeTickLoaded.liquidityNet)
+      }
+      previousActiveTickIter = activeTick
+    }
+  }
+
+  // Update the pools tick
+  pool.tick = BigInt.fromI32(event.params.tick as i32)
+  pool.sqrtPrice = event.params.sqrtPriceX96
+  pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
+  pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
 
   // update token0 data
   token0.volume = token0.volume.plus(amount0Abs)
