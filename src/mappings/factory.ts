@@ -6,10 +6,15 @@ import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
-import { log, BigInt } from '@graphprotocol/graph-ts'
+import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 
 export function handlePoolCreated(event: PoolCreated): void {
-  // load factory (create if first exchange)
+  // temp fix
+  if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
+    return
+  }
+
+  // load factory
   let factory = Factory.load(FACTORY_ADDRESS)
   if (factory === null) {
     factory = new Factory(FACTORY_ADDRESS)
@@ -120,11 +125,9 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.collectedFeesToken1 = ZERO_BD
   pool.collectedFeesUSD = ZERO_BD
 
+  pool.save()
   // create the tracked contract based on the template
   PoolTemplate.create(event.params.pool)
-
-  // save updated values
-  pool.save()
   token0.save()
   token1.save()
   factory.save()

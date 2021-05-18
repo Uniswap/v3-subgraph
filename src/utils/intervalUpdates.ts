@@ -1,14 +1,14 @@
 import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
 import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle } from './../types/schema'
-import { EthereumEvent } from '@graphprotocol/graph-ts'
 import { FACTORY_ADDRESS } from './constants'
+import { ethereum } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
+export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
   let uniswap = Factory.load(FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded
@@ -27,7 +27,7 @@ export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
   return uniswapDayData as UniswapDayData
 }
 
-export function updatePoolDayData(event: EthereumEvent): PoolDayData {
+export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
@@ -59,7 +59,7 @@ export function updatePoolDayData(event: EthereumEvent): PoolDayData {
   return poolDayData as PoolDayData
 }
 
-export function updateTokenDayData(token: Token, event: EthereumEvent): TokenDayData {
+export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
   let bundle = Bundle.load('1')
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400

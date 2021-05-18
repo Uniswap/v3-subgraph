@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, log, Address, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
@@ -9,18 +9,14 @@ import { updateUniswapDayData, updatePoolDayData, updateTokenDayData } from '../
 import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
+  log.debug('mynewbug initializing', [])
+
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   // update token prices
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
-
-  // token prices
-  let prices = sqrtPriceX96ToTokenPrices(pool.sqrtPrice, token0 as Token, token1 as Token)
-  pool.token0Price = prices[0]
-  pool.token1Price = prices[1]
-  pool.save()
 
   // update ETH price now that prices could have changed
   let bundle = Bundle.load('1')
@@ -46,10 +42,6 @@ export function handleMint(event: MintEvent): void {
   let token1 = Token.load(pool.token1)
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-  if (event.transaction.from === Address.fromString('0x74Aa01d162E6dC6A657caC857418C403D48E2D77')) {
-    log.debug('mybug token0 orice', [token0.derivedETH.toString()])
-    log.debug('mybug token1 orice', [token1.derivedETH.toString()])
-  }
 
   let amountUSD = amount0
     .times(token0.derivedETH.times(bundle.ethPriceUSD))
@@ -288,15 +280,13 @@ export function handleSwap(event: SwapEvent): void {
   let amount1ETH = amount1Abs.times(token1.derivedETH)
   let amount0USD = amount0ETH.times(bundle.ethPriceUSD)
   let amount1USD = amount1ETH.times(bundle.ethPriceUSD)
+
   /**
    * @todo
    * need to account for if either amount is more reliable
    */
   let amountTotalETH = amount0ETH.plus(amount1ETH).div(BigDecimal.fromString('2'))
   let amountTotalUSD = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
-
-  log.debug('mybug token0 Eth: {}', [token0.derivedETH.toString()])
-  log.debug('mybug token1 Eth: {}', [token1.derivedETH.toString()])
 
   // global updates
   factory.txCount = factory.txCount.plus(ONE_BI)
@@ -305,9 +295,7 @@ export function handleSwap(event: SwapEvent): void {
 
   // reset aggregate tvl before individual pool tvl updates
   let currentPoolTvlETH = pool.totalValueLockedETH
-  let currentPoolTvlUSD = currentPoolTvlETH.times(bundle.ethPriceUSD)
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(currentPoolTvlETH)
-  factory.totalValueLockedUSD = factory.totalValueLockedUSD.minus(currentPoolTvlUSD)
 
   // pool volume
   pool.volumeToken0 = pool.volumeToken0.plus(amount0)
@@ -332,11 +320,28 @@ export function handleSwap(event: SwapEvent): void {
   token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
   token1.volumeUSD = token1.volumeUSD.plus(amountTotalUSD)
 
-  // updated pool rates
+  // updated pool ratess
   let prices = sqrtPriceX96ToTokenPrices(pool.sqrtPrice, token0 as Token, token1 as Token)
   pool.token0Price = prices[0]
   pool.token1Price = prices[1]
   pool.save()
+
+  // log.debug(
+  //   'mybug -  hash: {}, amount0: {}, amount1: {}, token0DE: {}, token1DE: {}, sqrtPrice: {}, price0: {}, price1: {}, locked0: {}, locked1: {}, new liquidity: {}',
+  //   [
+  //     event.transaction.hash.toString(),
+  //     amount0.toString(),
+  //     amount1.toString(),
+  //     token0.derivedETH.toString(),
+  //     token1.derivedETH.toString(),
+  //     event.params.sqrtPriceX96.toString(),
+  //     pool.token0Price.toString(),
+  //     pool.token1Price.toString(),
+  //     pool.totalValueLockedToken0.toString(),
+  //     pool.totalValueLockedToken1.toString(),
+  //     event.params.liquidity.toString()
+  //   ]
+  // )
 
   // update eth price
   bundle.ethPriceUSD = getEthPriceInUSD()
