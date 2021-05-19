@@ -170,6 +170,9 @@ type Transaction @entity {
   blockNumber: BigInt!
   # timestamp txn was confirmed
   timestamp: BigInt!
+  # gas used during txn execution
+  gasUsed: BigInt!
+  gasPrice: BigInt!
   # derived values
   mints: [Mint]! @derivedFrom(field: "transaction")
   burns: [Burn]! @derivedFrom(field: "transaction")
