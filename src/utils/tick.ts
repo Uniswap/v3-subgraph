@@ -27,6 +27,7 @@ export function createTick(tickId: string, tickIdx: i32, poolId: string, event: 
     tick.volumeToken0 = ZERO_BD
     tick.volumeToken1 = ZERO_BD
     tick.volumeUSD = ZERO_BD
+    tick.feesUSD = ZERO_BD
     tick.untrackedVolumeUSD = ZERO_BD
     tick.collectedFeesToken0 = ZERO_BD
     tick.collectedFeesToken1 = ZERO_BD
