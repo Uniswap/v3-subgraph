@@ -2,13 +2,13 @@ import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
 import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle, PoolHourData } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
-import { EthereumEvent, log } from '@graphprotocol/graph-ts'
+import { ethereum, log } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
+export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
   let uniswap = Factory.load(FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded
@@ -27,7 +27,7 @@ export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
   return uniswapDayData as UniswapDayData
 }
 
-export function updatePoolDayData(event: EthereumEvent): PoolDayData {
+export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
@@ -72,7 +72,7 @@ export function updatePoolDayData(event: EthereumEvent): PoolDayData {
   return poolDayData as PoolDayData
 }
 
-export function updatePoolHourData(event: EthereumEvent): PoolHourData {
+export function updatePoolHourData(event: ethereum.Event): PoolHourData {
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
@@ -117,7 +117,7 @@ export function updatePoolHourData(event: EthereumEvent): PoolHourData {
   return poolHourData as PoolHourData
 }
 
-export function updateTokenDayData(token: Token, event: EthereumEvent): TokenDayData {
+export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
   let bundle = Bundle.load('1')
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
