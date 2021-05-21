@@ -20,6 +20,7 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
     uniswapDayData.volumeETH = ZERO_BD
     uniswapDayData.volumeUSD = ZERO_BD
     uniswapDayData.volumeUSDUntracked = ZERO_BD
+    uniswapDayData.feesUSD = ZERO_BD
   }
   uniswapDayData.tvlUSD = uniswap.totalValueLockedUSD
   uniswapDayData.txCount = uniswap.txCount
@@ -45,6 +46,7 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
     poolDayData.volumeToken0 = ZERO_BD
     poolDayData.volumeToken1 = ZERO_BD
     poolDayData.volumeUSD = ZERO_BD
+    poolDayData.feesUSD = ZERO_BD
     poolDayData.txCount = ZERO_BI
   }
   poolDayData.liquidity = pool.liquidity
@@ -76,6 +78,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     tokenDayData.token = token.id
     tokenDayData.volume = ZERO_BD
     tokenDayData.volumeUSD = ZERO_BD
+    tokenDayData.feesUSD = ZERO_BD
     tokenDayData.untrackedVolumeUSD = ZERO_BD
   }
   tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPriceUSD)
