@@ -24,7 +24,7 @@ export function handleInitialize(event: Initialize): void {
   bundle.save()
 
   updatePoolDayData(event)
-  updatePoolHourData(event)
+  // updatePoolHourData(event)
 
   // update token prices
   token0.derivedETH = findEthPerToken(token0 as Token)
@@ -135,7 +135,7 @@ export function handleMint(event: MintEvent): void {
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
-  updatePoolHourData(event)
+  // updatePoolHourData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 
@@ -233,7 +233,7 @@ export function handleBurn(event: BurnEvent): void {
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
-  updatePoolHourData(event)
+  // updatePoolHourData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 
@@ -401,7 +401,7 @@ export function handleSwap(event: SwapEvent): void {
   // interval data
   let uniswapDayData = updateUniswapDayData(event)
   let poolDayData = updatePoolDayData(event)
-  let poolHourData = updatePoolHourData(event)
+  // let poolHourData = updatePoolHourData(event)
   let token0DayData = updateTokenDayData(token0 as Token, event)
   let token1DayData = updateTokenDayData(token1 as Token, event)
 
@@ -415,9 +415,9 @@ export function handleSwap(event: SwapEvent): void {
   poolDayData.volumeToken1 = poolDayData.volumeToken1.plus(amount1Abs)
   poolDayData.feesUSD = poolDayData.feesUSD.plus(feesUSD)
 
-  poolHourData.volumeUSD = poolHourData.volumeUSD.plus(amountTotalUSD)
-  poolHourData.volumeToken0 = poolHourData.volumeToken0.plus(amount0Abs)
-  poolHourData.volumeToken1 = poolHourData.volumeToken1.plus(amount1Abs)
+  // poolHourData.volumeUSD = poolHourData.volumeUSD.plus(amountTotalUSD)
+  // poolHourData.volumeToken0 = poolHourData.volumeToken0.plus(amount0Abs)
+  // poolHourData.volumeToken1 = poolHourData.volumeToken1.plus(amount1Abs)
 
   token0DayData.volume = token0DayData.volume.plus(amount0Abs)
   token0DayData.volumeUSD = token0DayData.volumeUSD.plus(amountTotalUSD)
@@ -434,7 +434,7 @@ export function handleSwap(event: SwapEvent): void {
   token1DayData.save()
   uniswapDayData.save()
   poolDayData.save()
-  poolHourData.save()
+  // poolHourData.save()
   factory.save()
   pool.save()
   token0.save()
