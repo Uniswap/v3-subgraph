@@ -101,7 +101,7 @@ export function handleMint(event: MintEvent): void {
   mint.amount = event.params.amount
   mint.amount0 = amount0
   mint.amount1 = amount1
-  mint.amountUSD = amountUSD 
+  mint.amountUSD = amountUSD
   mint.tickLower = BigInt.fromI32(event.params.tickLower)
   mint.tickUpper = BigInt.fromI32(event.params.tickUpper)
   mint.logIndex = event.logIndex
