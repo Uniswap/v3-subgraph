@@ -46,21 +46,21 @@ export function updatePoolDayData(event: EthereumEvent): PoolDayData {
     poolDayData.volumeToken1 = ZERO_BD
     poolDayData.volumeUSD = ZERO_BD
     poolDayData.txCount = ZERO_BI
-    poolDayData.open = pool.token0Price;
+    // poolDayData.open = pool.token0Price;
   }
 
-  if (pool.token0Price.gt(poolDayData.high)) {
-    poolDayData.high = pool.token0Price;
-  }
-  if (pool.token0Price.gt(poolDayData.low)) {
-    poolDayData.low = pool.token0Price;
-  }
+  // if (pool.token0Price.gt(poolDayData.high)) {
+  //   poolDayData.high = pool.token0Price;
+  // }
+  // if (pool.token0Price.gt(poolDayData.low)) {
+  //   poolDayData.low = pool.token0Price;
+  // }
   
   poolDayData.liquidity = pool.liquidity
   poolDayData.sqrtPrice = pool.sqrtPrice
   poolDayData.token0Price = pool.token0Price
   poolDayData.token1Price = pool.token1Price
-  poolDayData.close = pool.token0Price;
+  // poolDayData.close = pool.token0Price;
   poolDayData.tick = pool.tick
   poolDayData.tvlUSD = pool.totalValueLockedUSD
   poolDayData.txCount = poolDayData.txCount.plus(ONE_BI)
