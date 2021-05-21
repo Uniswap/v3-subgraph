@@ -2,7 +2,7 @@ import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
 import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle, PoolHourData } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
-import { EthereumEvent } from '@graphprotocol/graph-ts'
+import { EthereumEvent, log } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
@@ -46,21 +46,24 @@ export function updatePoolDayData(event: EthereumEvent): PoolDayData {
     poolDayData.volumeToken1 = ZERO_BD
     poolDayData.volumeUSD = ZERO_BD
     poolDayData.txCount = ZERO_BI
-    // poolDayData.open = pool.token0Price;
+    poolDayData.open = pool.token0Price;
+    poolDayData.high = pool.token0Price;
+    poolDayData.low = pool.token0Price;
+    poolDayData.close = pool.token0Price;
   }
 
-  // if (pool.token0Price.gt(poolDayData.high)) {
-  //   poolDayData.high = pool.token0Price;
-  // }
-  // if (pool.token0Price.gt(poolDayData.low)) {
-  //   poolDayData.low = pool.token0Price;
-  // }
+  if (pool.token0Price.gt(poolDayData.high)) {
+    poolDayData.high = pool.token0Price;
+  }
+  if (pool.token0Price.lt(poolDayData.low)) {
+    poolDayData.low = pool.token0Price;
+  }
   
   poolDayData.liquidity = pool.liquidity
   poolDayData.sqrtPrice = pool.sqrtPrice
   poolDayData.token0Price = pool.token0Price
   poolDayData.token1Price = pool.token1Price
-  // poolDayData.close = pool.token0Price;
+  poolDayData.close = pool.token0Price;
   poolDayData.tick = pool.tick
   poolDayData.tvlUSD = pool.totalValueLockedUSD
   poolDayData.txCount = poolDayData.txCount.plus(ONE_BI)
@@ -89,12 +92,15 @@ export function updatePoolHourData(event: EthereumEvent): PoolHourData {
     poolHourData.volumeUSD = ZERO_BD
     poolHourData.txCount = ZERO_BI
     poolHourData.open = pool.token0Price;
+    poolHourData.high = pool.token0Price;
+    poolHourData.low = pool.token0Price;
+    poolHourData.close = pool.token0Price;
   }
 
   if (pool.token0Price.gt(poolHourData.high)) {
     poolHourData.high = pool.token0Price;
   }
-  if (pool.token0Price.gt(poolHourData.low)) {
+  if (pool.token0Price.lt(poolHourData.low)) {
     poolHourData.low = pool.token0Price;
   }
 
