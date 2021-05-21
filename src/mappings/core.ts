@@ -24,7 +24,7 @@ export function handleInitialize(event: Initialize): void {
   bundle.save()
 
   updatePoolDayData(event)
-  // updatePoolHourData(event)
+  updatePoolHourData(event)
 
   // update token prices
   token0.derivedETH = findEthPerToken(token0 as Token)
