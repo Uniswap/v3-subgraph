@@ -9,6 +9,10 @@ type Factory @entity {
   totalVolumeUSD: BigDecimal!
   # total volume all time in derived ETH
   totalVolumeETH: BigDecimal!
+  # total swap fees all time in USD
+  totalFeesUSD: BigDecimal!
+  # total swap fees all time in USD
+  totalFeesETH: BigDecimal!
   # all volume even through less reliable USD values
   untrackedVolumeUSD: BigDecimal!
   # TVL derived in USD
@@ -41,6 +45,8 @@ type Token @entity {
   volume: BigDecimal!
   # volume in derived USD
   volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # volume in USD even on pools with less reliable USD values
   untrackedVolumeUSD: BigDecimal!
   # transactions across all pools that include this token
@@ -92,6 +98,8 @@ type Pool @entity {
   volumeUSD: BigDecimal!
   # all time USD swapped, unfiltered for unreliable USD pools
   untrackedVolumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # all time number of transactions
   txCount: BigInt!
   # all time fees collected token0
@@ -147,6 +155,8 @@ type Tick @entity {
   volumeUSD: BigDecimal!
   # lifetime volume in untracked USD with this tick in range
   untrackedVolumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # all time collected fees in token0
   collectedFeesToken0: BigDecimal!
   # all time collected fees in token1
@@ -343,6 +353,8 @@ type UniswapDayData @entity {
   volumeUSD: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD untracked
   volumeUSDUntracked: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # number of daily transactions
   txCount: BigInt!
   # tvl in terms of USD
@@ -375,6 +387,8 @@ type PoolHourData @entity {
   volumeToken1: BigDecimal!
   # volume in USD
   volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # numebr of transactions during period
   txCount: BigInt!
 }
@@ -405,6 +419,8 @@ type PoolDayData @entity {
   volumeToken1: BigDecimal!
   # volume in USD
   volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
   # numebr of transactions during period
   txCount: BigInt!
 }
@@ -428,6 +444,8 @@ type TickHourData @entity {
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
 }
 
 # Data accumulated and condensed into day stats for each exchange
@@ -450,6 +468,8 @@ type TickDayData @entity {
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
 }
 
 type TokenDayData @entity {
@@ -471,4 +491,6 @@ type TokenDayData @entity {
   totalValueLockedUSD: BigDecimal!
   # price at end of period in USD
   priceUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
 }

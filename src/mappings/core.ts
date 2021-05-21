@@ -294,10 +294,19 @@ export function handleSwap(event: SwapEvent): void {
   let amountTotalETH = amount0ETH.plus(amount1ETH).div(BigDecimal.fromString('2'))
   let amountTotalUSD = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
+  let feesETH = amountTotalETH
+    .times(pool.feeTier.toBigDecimal())
+    .div(BigDecimal.fromString('1000000'))
+  let feesUSD = amountTotalUSD
+    .times(pool.feeTier.toBigDecimal())
+    .div(BigDecimal.fromString('1000000'))
+
   // global updates
   factory.txCount = factory.txCount.plus(ONE_BI)
   factory.totalVolumeETH = factory.totalVolumeETH.plus(amount0ETH).plus(amount1ETH)
   factory.totalVolumeUSD = factory.totalVolumeUSD.plus(amountTotalUSD)
+  factory.totalFeesETH = factory.totalFeesETH.plus(feesETH)
+  factory.totalFeesUSD = factory.totalFeesUSD.plus(feesUSD)
 
   // reset aggregate tvl before individual pool tvl updates
   let currentPoolTvlETH = pool.totalValueLockedETH
@@ -307,6 +316,7 @@ export function handleSwap(event: SwapEvent): void {
   pool.volumeToken0 = pool.volumeToken0.plus(amount0)
   pool.volumeToken1 = pool.volumeToken1.plus(amount1)
   pool.volumeUSD = pool.volumeUSD.plus(amountTotalUSD)
+  pool.feesUSD = pool.feesUSD.plus(feesUSD)
   pool.txCount = pool.txCount.plus(ONE_BI)
 
   // Update the pool with the new active liquidity, price, and tick.
@@ -320,11 +330,13 @@ export function handleSwap(event: SwapEvent): void {
   token0.volume = token0.volume.plus(amount0Abs)
   token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
   token0.volumeUSD = token0.volumeUSD.plus(amountTotalUSD)
+  token0.feesUSD = token0.feesUSD.plus(feesUSD)
 
   // update token1 data
   token1.volume = token1.volume.plus(amount1Abs)
   token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
   token1.volumeUSD = token1.volumeUSD.plus(amountTotalUSD)
+  token1.feesUSD = token1.feesUSD.plus(feesUSD)
 
   // updated pool ratess
   let prices = sqrtPriceX96ToTokenPrices(pool.sqrtPrice, token0 as Token, token1 as Token)
@@ -398,18 +410,22 @@ export function handleSwap(event: SwapEvent): void {
   // update volume metrics
   uniswapDayData.volumeETH = uniswapDayData.volumeETH.plus(amountTotalETH)
   uniswapDayData.volumeUSD = uniswapDayData.volumeUSD.plus(amountTotalUSD)
+  uniswapDayData.feesUSD = uniswapDayData.feesUSD.plus(feesUSD)
 
   poolDayData.volumeUSD = poolDayData.volumeUSD.plus(amountTotalUSD)
   poolDayData.volumeToken0 = poolDayData.volumeToken0.plus(amount0Abs)
   poolDayData.volumeToken1 = poolDayData.volumeToken1.plus(amount1Abs)
+  poolDayData.feesUSD = poolDayData.feesUSD.plus(feesUSD)
 
   token0DayData.volume = token0DayData.volume.plus(amount0Abs)
   token0DayData.volumeUSD = token0DayData.volumeUSD.plus(amountTotalUSD)
   token0DayData.untrackedVolumeUSD = token0DayData.untrackedVolumeUSD.plus(amountTotalUSD)
+  token0DayData.feesUSD = token0DayData.feesUSD.plus(feesUSD)
 
   token1DayData.volume = token1DayData.volume.plus(amount1Abs)
   token1DayData.volumeUSD = token1DayData.volumeUSD.plus(amountTotalUSD)
   token1DayData.untrackedVolumeUSD = token1DayData.untrackedVolumeUSD.plus(amountTotalUSD)
+  token1DayData.feesUSD = token1DayData.feesUSD.plus(feesUSD)
 
   swap.save()
   token0DayData.save()
