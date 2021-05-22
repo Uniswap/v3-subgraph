@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
+import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token, Collect } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
 import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
 import {
@@ -7,7 +7,8 @@ import {
   Flash as FlashEvent,
   Initialize,
   Mint as MintEvent,
-  Swap as SwapEvent
+  Swap as SwapEvent,
+  Collect as CollectEvent
 } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
@@ -262,6 +263,44 @@ export function handleBurn(event: BurnEvent): void {
   pool.save()
   factory.save()
   burn.save()
+}
+
+export function handleCollect(event: CollectEvent): void {
+  let bundle = Bundle.load('1')
+  let poolAddress = event.address.toHexString()
+  let pool = Pool.load(poolAddress)
+  let factory = Factory.load(FACTORY_ADDRESS)
+
+  let token0 = Token.load(pool.token0)
+  let token1 = Token.load(pool.token1)
+  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+
+  let amountUSD = amount0
+    .times(token0.derivedETH.times(bundle.ethPriceUSD))
+    .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
+
+  // global updates
+  factory.txCount = factory.txCount.plus(ONE_BI)
+  pool.txCount = pool.txCount.plus(ONE_BI)
+
+  // Collect entity
+  let transaction = loadTransaction(event)
+  let collect = new Collect(transaction.id + '#' + pool.txCount.toString())
+  collect.transaction = transaction.id
+  collect.timestamp = transaction.timestamp
+  collect.pool = pool.id
+  collect.owner = event.params.owner
+  collect.amount0 = amount0
+  collect.amount1 = amount1
+  collect.amountUSD = amountUSD
+  collect.tickLower = BigInt.fromI32(event.params.tickLower)
+  collect.tickUpper = BigInt.fromI32(event.params.tickUpper)
+  collect.logIndex = event.logIndex
+
+  pool.save()
+  factory.save()
+  collect.save()
 }
 
 export function handleSwap(event: SwapEvent): void {
