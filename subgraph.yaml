@@ -54,6 +54,8 @@ dataSources:
           file: ./abis/NonfungiblePositionManager.json
         - name: Pool
           file: ./abis/pool.json
+        - name: Factory
+          file: ./abis/factory.json
       eventHandlers:
         - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
           handler: handleIncreaseLiquidity
