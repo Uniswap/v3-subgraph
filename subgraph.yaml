@@ -56,6 +56,8 @@ dataSources:
           file: ./abis/pool.json
         - name: Factory
           file: ./abis/factory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
           handler: handleIncreaseLiquidity
