@@ -2,57 +2,54 @@ import {
   Collect,
   DecreaseLiquidity,
   IncreaseLiquidity,
-  NonfungiblePositionManager
+  NonfungiblePositionManager, Transfer
 } from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
 import { Position, Token } from '../types/schema'
-import { factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
+import {
+  ADDRESS_ZERO,
+  factoryContract,
+  ZERO_BD,
+  ZERO_BI
+} from '../utils/constants'
 import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { fetchTokenDecimals } from '../utils/token'
 
-function initializePosition(event: ethereum.Event, tokenId: BigInt): Position | null {
-  let contract = NonfungiblePositionManager.bind(event.address)
-  let positionResult = contract.try_positions(tokenId)
-  if (positionResult.reverted) {
-    log.error('fetching position failed', [])
-    return null
+function getPosition(event: ethereum.Event, tokenId: BigInt): Position {
+  let position = Position.load(tokenId.toString())
+  if (position === null) {
+    let contract = NonfungiblePositionManager.bind(event.address)
+    let positionResult = contract.positions(tokenId)
+
+    let poolAddress = factoryContract.getPool(
+      positionResult.value2,
+      positionResult.value3,
+      positionResult.value4
+    )
+
+    position = new Position(tokenId.toString())
+    // The owner gets correctly updated in the Transfer handler
+    position.owner = Address.fromString(ADDRESS_ZERO)
+    position.pool = poolAddress.toHexString()
+    position.token0 = positionResult.value2.toHexString()
+    position.token1 = positionResult.value3.toHexString()
+    position.tickLower = BigInt.fromI32(positionResult.value5)
+    position.tickUpper = BigInt.fromI32(positionResult.value6)
+    position.liquidity = ZERO_BI
+    position.depositedToken0 = ZERO_BD
+    position.depositedToken1 = ZERO_BD
+    position.withdrawnToken0 = ZERO_BD
+    position.withdrawnToken1 = ZERO_BD
+    position.collectedFeesToken0 = ZERO_BD
+    position.collectedFeesToken1 = ZERO_BD
+    position.transaction = loadTransaction(event).id
   }
 
-  let poolResult = factoryContract.try_getPool(
-    positionResult.value.value2,
-    positionResult.value.value3,
-    positionResult.value.value4
-  )
-  if (poolResult.reverted) {
-    log.error('fetching pool failed', [])
-    return null
-  }
-
-  let position = new Position(tokenId.toString())
-  position.operator = positionResult.value.value1
-  position.pool = poolResult.value.toHexString()
-  position.token0 = positionResult.value.value2.toHexString()
-  position.token1 = positionResult.value.value3.toHexString()
-  position.tickLower = BigInt.fromI32(positionResult.value.value5)
-  position.tickUpper = BigInt.fromI32(positionResult.value.value6)
-  position.liquidity = ZERO_BI
-  position.depositedToken0 = ZERO_BD
-  position.depositedToken1 = ZERO_BD
-  position.withdrawnToken0 = ZERO_BD
-  position.withdrawnToken1 = ZERO_BD
-  position.collectedFeesToken0 = ZERO_BD
-  position.collectedFeesToken1 = ZERO_BD
-  position.transaction = loadTransaction(event).id
-
-  return position
+  return position!
 }
 
 export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
-  let position = Position.load(event.params.tokenId.toString())
-  if (position === null) {
-    position = initializePosition(event, event.params.tokenId)
-    if (position === null) return
-  }
+  let position = getPosition(event, event.params.tokenId)
 
   let decimals0 = fetchTokenDecimals(Address.fromString(position.token0))
   let decimals1 = fetchTokenDecimals(Address.fromString(position.token1))
@@ -68,7 +65,7 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
 }
 
 export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
-  let position = Position.load(event.params.tokenId.toString())
+  let position = getPosition(event, event.params.tokenId)
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -82,7 +79,7 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
 }
 
 export function handleCollect(event: Collect): void {
-  let position = Position.load(event.params.tokenId.toString())
+  let position = getPosition(event, event.params.tokenId)
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -91,5 +88,11 @@ export function handleCollect(event: Collect): void {
   position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
   position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount1)
 
+  position.save()
+}
+
+export function handleTransfer(event: Transfer): void {
+  let position = getPosition(event, event.params.tokenId)
+  position.owner = event.params.to
   position.save()
 }

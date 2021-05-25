@@ -65,6 +65,8 @@ dataSources:
           handler: handleDecreaseLiquidity
         - event: Collect(indexed uint256,address,uint256,uint256)
           handler: handleCollect
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
 templates:
   - kind: ethereum/contract
     name: Pool

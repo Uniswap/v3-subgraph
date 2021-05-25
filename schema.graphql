@@ -177,8 +177,8 @@ type Position @entity {
   # Positions created through NonfungiblePositionManager
   # NFT token id
   id: ID!
-  # the address that is approved for spending this token
-  operator: Bytes!
+  # owner of the NFT
+  owner: Bytes!
   # pool position is within
   pool: Pool!
   # allow indexing by tokens
