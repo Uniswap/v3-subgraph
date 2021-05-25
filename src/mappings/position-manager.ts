@@ -6,8 +6,9 @@ import {
 } from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
 import { Position, Token } from '../types/schema'
 import { factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
-import { BigInt, ethereum, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
+import { fetchTokenDecimals } from '../utils/token'
 
 function initializePosition(event: ethereum.Event, tokenId: BigInt): Position | null {
   let contract = NonfungiblePositionManager.bind(event.address)
@@ -53,10 +54,11 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
     if (position === null) return
   }
 
-  let token0 = Token.load(position.token0)
-  let token1 = Token.load(position.token1)
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+  let decimals0 = fetchTokenDecimals(Address.fromString(position.token0))
+  let decimals1 = fetchTokenDecimals(Address.fromString(position.token1))
+
+  let amount0 = convertTokenToDecimal(event.params.amount0, decimals0)
+  let amount1 = convertTokenToDecimal(event.params.amount1, decimals1)
 
   position.liquidity = position.liquidity.plus(event.params.liquidity)
   position.depositedToken0 = position.depositedToken0.plus(amount0)
