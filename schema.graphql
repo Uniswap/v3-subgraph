@@ -398,6 +398,46 @@ type UniswapDayData @entity {
   tvlUSD: BigDecimal!
 }
 
+# 5min stats tracker for pool
+type PoolFiveMinuteData @entity {
+  # format: <pool address>-<timestamp>
+  id: ID!
+  # unix timestamp for start of hour
+  periodStartUnix: Int!
+  # pointer to pool
+  pool: Pool!
+  # in range liquidity at end of period
+  liquidity: BigInt!
+  # current price tracker at end of period
+  sqrtPrice: BigInt!
+  # price of token0 - derived from sqrtPrice
+  token0Price: BigDecimal!
+  # price of token1 - derived from sqrtPrice
+  token1Price: BigDecimal!
+  # open price of token0
+  open: BigDecimal!
+  # high price of token0
+  high: BigDecimal!
+  # low price of token0
+  low: BigDecimal!
+  # close price of token0
+  close: BigDecimal!
+  # current tick at end of period
+  tick: BigInt
+  # tvl derived in USD at end of period
+  tvlUSD: BigDecimal!
+  # volume in token0
+  volumeToken0: BigDecimal!
+  # volume in token1
+  volumeToken1: BigDecimal!
+  # volume in USD
+  volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
+  # number of transactions during period
+  txCount: BigInt!
+}
+
 # hourly stats tracker for pool
 type PoolHourData @entity {
   # format: <pool address>-<timestamp>
@@ -434,7 +474,7 @@ type PoolHourData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
-  # numebr of transactions during period
+  # number of transactions during period
   txCount: BigInt!
 }
 
@@ -474,8 +514,31 @@ type PoolDayData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
-  # numebr of transactions during period
+  # number of transactions during period
   txCount: BigInt!
+}
+
+type TickFiveMinuteData @entity {
+  # format: <pool address>-<tick index>-<timestamp>
+  id: ID!
+  # unix timestamp for start of hour
+  periodStartUnix: Int!
+  # pointer to pool
+  pool: Pool!
+  # pointer to tick
+  tick: Tick!
+  # total liquidity pool has as tick lower or upper at end of period
+  liquidityGross: BigDecimal!
+  # how much liquidity changes when tick crossed at end of period
+  liquidityNet: BigDecimal!
+  # hourly volume of token0 with this tick in range
+  volumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range
+  volumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range
+  volumeUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
 }
 
 type TickHourData @entity {
