@@ -38,9 +38,9 @@ dataSources:
     name: NonfungiblePositionManager
     network: mainnet
     source:
-      address: '0xC62B9b27207ac749f72d65A98FF177cF5eF54099'
+      address: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
       abi: NonfungiblePositionManager
-      startBlock: 12369621
+      startBlock: 12369651
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -54,6 +54,10 @@ dataSources:
           file: ./abis/NonfungiblePositionManager.json
         - name: Pool
           file: ./abis/pool.json
+        - name: Factory
+          file: ./abis/factory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
           handler: handleIncreaseLiquidity
@@ -61,6 +65,8 @@ dataSources:
           handler: handleDecreaseLiquidity
         - event: Collect(indexed uint256,address,uint256,uint256)
           handler: handleCollect
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
 templates:
   - kind: ethereum/contract
     name: Pool
