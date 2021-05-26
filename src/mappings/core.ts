@@ -5,7 +5,7 @@ import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } f
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
-import { updateUniswapDayData, updatePoolDayData, updateTokenDayData, updatePoolHourData } from '../utils/intervalUpdates'
+import { updateUniswapDayData, updatePoolDayData, updateTokenDayData, updatePoolHourData, updatePoolFiveMinuteData } from '../utils/intervalUpdates'
 import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
@@ -24,7 +24,12 @@ export function handleInitialize(event: Initialize): void {
   bundle.save()
 
   updatePoolDayData(event)
+<<<<<<< HEAD
   // updatePoolHourData(event)
+=======
+  updatePoolHourData(event)
+  updatePoolFiveMinuteData(event)
+>>>>>>> 6a9dca2 (add five min intervals)
 
   // update token prices
   token0.derivedETH = findEthPerToken(token0 as Token)
@@ -136,6 +141,7 @@ export function handleMint(event: MintEvent): void {
   updateUniswapDayData(event)
   updatePoolDayData(event)
   updatePoolHourData(event)
+  updatePoolFiveMinuteData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 
@@ -234,6 +240,7 @@ export function handleBurn(event: BurnEvent): void {
   updateUniswapDayData(event)
   updatePoolDayData(event)
   updatePoolHourData(event)
+  updatePoolFiveMinuteData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 
@@ -402,6 +409,7 @@ export function handleSwap(event: SwapEvent): void {
   let uniswapDayData = updateUniswapDayData(event)
   let poolDayData = updatePoolDayData(event)
   let poolHourData = updatePoolHourData(event)
+  let poolFiveMinuteData = updatePoolFiveMinuteData(event)
   let token0DayData = updateTokenDayData(token0 as Token, event)
   let token1DayData = updateTokenDayData(token1 as Token, event)
 
@@ -419,6 +427,10 @@ export function handleSwap(event: SwapEvent): void {
   poolHourData.volumeToken0 = poolHourData.volumeToken0.plus(amount0Abs)
   poolHourData.volumeToken1 = poolHourData.volumeToken1.plus(amount1Abs)
 
+  poolFiveMinuteData.volumeUSD = poolFiveMinuteData.volumeUSD.plus(amountTotalUSD)
+  poolFiveMinuteData.volumeToken0 = poolFiveMinuteData.volumeToken0.plus(amount0Abs)
+  poolFiveMinuteData.volumeToken1 = poolFiveMinuteData.volumeToken1.plus(amount1Abs)
+
   token0DayData.volume = token0DayData.volume.plus(amount0Abs)
   token0DayData.volumeUSD = token0DayData.volumeUSD.plus(amountTotalUSD)
   token0DayData.untrackedVolumeUSD = token0DayData.untrackedVolumeUSD.plus(amountTotalUSD)
@@ -435,6 +447,7 @@ export function handleSwap(event: SwapEvent): void {
   uniswapDayData.save()
   poolDayData.save()
   poolHourData.save()
+  poolFiveMinuteData.save()
   factory.save()
   pool.save()
   token0.save()

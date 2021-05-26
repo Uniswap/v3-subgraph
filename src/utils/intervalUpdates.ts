@@ -1,6 +1,6 @@
 import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
-import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle, PoolHourData } from './../types/schema'
+import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle, PoolHourData, PoolFiveMinuteData } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum, log } from '@graphprotocol/graph-ts'
 
@@ -74,49 +74,94 @@ export function updatePoolDayData(event: EthereumEvent): PoolDayData {
   return poolDayData as PoolDayData
 }
 
-export function updatePoolHourData(event: EthereumEvent): PoolHourData {
+export function updatePoolHourData(event: ethereum.Event): PoolHourData {
+    let timestamp = event.block.timestamp.toI32()
+    let hourIndex = timestamp / 3600 // get unique hour within unix history
+    let hourStartUnix = hourIndex * 3600 // want the rounded effect
+    let hourPoolID = event.address
+        .toHexString()
+        .concat('-')
+        .concat(hourIndex.toString())
+    let pool = Pool.load(event.address.toHexString())
+    let poolHourData = PoolHourData.load(hourPoolID)
+    if (poolHourData === null) {
+        poolHourData = new PoolHourData(hourPoolID)
+        poolHourData.periodStartUnix = hourStartUnix
+        poolHourData.pool = pool.id
+        // things that dont get initialized always
+        poolHourData.volumeToken0 = ZERO_BD
+        poolHourData.volumeToken1 = ZERO_BD
+        poolHourData.volumeUSD = ZERO_BD
+        poolHourData.txCount = ZERO_BI
+        poolHourData.open = pool.token0Price;
+        poolHourData.high = pool.token0Price;
+        poolHourData.low = pool.token0Price;
+        poolHourData.close = pool.token0Price;
+    }
+
+    if (pool.token0Price.gt(poolHourData.high)) {
+        poolHourData.high = pool.token0Price;
+    }
+    if (pool.token0Price.lt(poolHourData.low)) {
+        poolHourData.low = pool.token0Price;
+    }
+
+    poolHourData.liquidity = pool.liquidity
+    poolHourData.sqrtPrice = pool.sqrtPrice
+    poolHourData.token0Price = pool.token0Price
+    poolHourData.token1Price = pool.token1Price
+    poolHourData.close = pool.token0Price;
+    poolHourData.tick = pool.tick
+    poolHourData.tvlUSD = pool.totalValueLockedUSD
+    poolHourData.txCount = poolHourData.txCount.plus(ONE_BI)
+    poolHourData.save()
+
+    return poolHourData as PoolHourData
+}
+
+export function updatePoolFiveMinuteData(event: ethereum.Event): PoolFiveMinuteData {
   let timestamp = event.block.timestamp.toI32()
-  let hourIndex = timestamp / 3600 // get unique hour within unix history
-  let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let hourPoolID = event.address
+  let fiveMinIndex = timestamp / 3600 / 12; // get unique 5 min interval within unix history
+  let periodStartUnix = fiveMinIndex * 3600 * 12; // want the rounded effect
+  let fiveMinPoolId = event.address
     .toHexString()
     .concat('-')
-    .concat(hourIndex.toString())
+    .concat(fiveMinIndex.toString())
   let pool = Pool.load(event.address.toHexString())
-  let poolHourData = PoolHourData.load(hourPoolID)
-  if (poolHourData === null) {
-    poolHourData = new PoolHourData(hourPoolID)
-    poolHourData.periodStartUnix = hourStartUnix
-    poolHourData.pool = pool.id
+  let poolFiveMinuteData = PoolFiveMinuteData.load(fiveMinPoolId)
+  if (poolFiveMinuteData === null) {
+    poolFiveMinuteData = new PoolFiveMinuteData(fiveMinPoolId)
+    poolFiveMinuteData.periodStartUnix = periodStartUnix
+    poolFiveMinuteData.pool = pool.id
     // things that dont get initialized always
-    poolHourData.volumeToken0 = ZERO_BD
-    poolHourData.volumeToken1 = ZERO_BD
-    poolHourData.volumeUSD = ZERO_BD
-    poolHourData.txCount = ZERO_BI
-    poolHourData.open = pool.token0Price;
-    poolHourData.high = pool.token0Price;
-    poolHourData.low = pool.token0Price;
-    poolHourData.close = pool.token0Price;
+    poolFiveMinuteData.volumeToken0 = ZERO_BD
+    poolFiveMinuteData.volumeToken1 = ZERO_BD
+    poolFiveMinuteData.volumeUSD = ZERO_BD
+    poolFiveMinuteData.txCount = ZERO_BI
+    poolFiveMinuteData.open = pool.token0Price;
+    poolFiveMinuteData.high = pool.token0Price;
+    poolFiveMinuteData.low = pool.token0Price;
+    poolFiveMinuteData.close = pool.token0Price;
   }
 
-  if (pool.token0Price.gt(poolHourData.high)) {
-    poolHourData.high = pool.token0Price;
+  if (pool.token0Price.gt(poolFiveMinuteData.high)) {
+    poolFiveMinuteData.high = pool.token0Price;
   }
-  if (pool.token0Price.lt(poolHourData.low)) {
-    poolHourData.low = pool.token0Price;
+  if (pool.token0Price.lt(poolFiveMinuteData.low)) {
+    poolFiveMinuteData.low = pool.token0Price;
   }
 
-  poolHourData.liquidity = pool.liquidity
-  poolHourData.sqrtPrice = pool.sqrtPrice
-  poolHourData.token0Price = pool.token0Price
-  poolHourData.token1Price = pool.token1Price
-  poolHourData.close = pool.token0Price;
-  poolHourData.tick = pool.tick
-  poolHourData.tvlUSD = pool.totalValueLockedUSD
-  poolHourData.txCount = poolHourData.txCount.plus(ONE_BI)
-  poolHourData.save()
+  poolFiveMinuteData.liquidity = pool.liquidity
+  poolFiveMinuteData.sqrtPrice = pool.sqrtPrice
+  poolFiveMinuteData.token0Price = pool.token0Price
+  poolFiveMinuteData.token1Price = pool.token1Price
+  poolFiveMinuteData.close = pool.token0Price;
+  poolFiveMinuteData.tick = pool.tick
+  poolFiveMinuteData.tvlUSD = pool.totalValueLockedUSD
+  poolFiveMinuteData.txCount = poolFiveMinuteData.txCount.plus(ONE_BI)
+  poolFiveMinuteData.save()
 
-  return poolHourData as PoolHourData
+  return poolFiveMinuteData as PoolFiveMinuteData
 }
 
 export function updateTokenDayData(token: Token, event: EthereumEvent): TokenDayData {
