@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
@@ -15,8 +15,6 @@ import {
 import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
-  log.debug('mynewbug initializing', [])
-
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)

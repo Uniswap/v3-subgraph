@@ -33,7 +33,7 @@ export let WHITELIST_TOKENS: string[] = [
   '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9' // AAVE
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('58')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('52')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
