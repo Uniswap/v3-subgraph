@@ -380,6 +380,14 @@ type PoolHourData @entity {
   token0Price: BigDecimal!
   # price of token1 - derived from sqrtPrice
   token1Price: BigDecimal!
+  # open price of token0
+  open: BigDecimal!
+  # high price of token0
+  high: BigDecimal!
+  # low price of token0
+  low: BigDecimal!
+  # close price of token0
+  close: BigDecimal!
   # current tick at end of period
   tick: BigInt
   # tvl derived in USD at end of period
@@ -412,6 +420,14 @@ type PoolDayData @entity {
   token0Price: BigDecimal!
   # price of token1 - derived from sqrtPrice
   token1Price: BigDecimal!
+  # open price of token0
+  open: BigDecimal!
+  # high price of token0
+  high: BigDecimal!
+  # low price of token0
+  low: BigDecimal!
+  # close price of token0
+  close: BigDecimal!
   # current tick at end of period
   tick: BigInt
   # tvl derived in USD at end of period
