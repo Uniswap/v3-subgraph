@@ -2,6 +2,7 @@
 import { ERC20 } from '../types/Factory/ERC20'
 import { ERC20SymbolBytes } from '../types/Factory/ERC20SymbolBytes'
 import { ERC20NameBytes } from '../types/Factory/ERC20NameBytes'
+import { StaticTokenDefinition } from './staticTokenDefinition'
 import { BigInt, Address } from '@graphprotocol/graph-ts'
 import { isNullEthValue } from '.'
 
@@ -18,6 +19,12 @@ export function fetchTokenSymbol(tokenAddress: Address): string {
       // for broken pairs that have no symbol function exposed
       if (!isNullEthValue(symbolResultBytes.value.toHexString())) {
         symbolValue = symbolResultBytes.value.toString()
+      } else {
+        // try with the static definition
+        let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+        if(staticTokenDefinition != null) {
+          symbolValue = staticTokenDefinition.symbol
+        }
       }
     }
   } else {
@@ -40,6 +47,12 @@ export function fetchTokenName(tokenAddress: Address): string {
       // for broken exchanges that have no name function exposed
       if (!isNullEthValue(nameResultBytes.value.toHexString())) {
         nameValue = nameResultBytes.value.toString()
+      } else {
+        // try with the static definition
+        let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+        if(staticTokenDefinition != null) {
+          nameValue = staticTokenDefinition.name
+        }
       }
     }
   } else {
@@ -66,6 +79,12 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt {
   let decimalResult = contract.try_decimals()
   if (!decimalResult.reverted) {
     decimalValue = decimalResult.value
+  } else {
+    // try with the static definition
+    let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+    if(staticTokenDefinition != null) {
+      return staticTokenDefinition.decimals
+    }
   }
 
   return BigInt.fromI32(decimalValue as i32)
