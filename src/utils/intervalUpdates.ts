@@ -1,6 +1,17 @@
 import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
-import { UniswapDayData, Factory, Pool, PoolDayData, Token, TokenDayData, Bundle, PoolHourData, PoolFiveMinuteData } from './../types/schema'
+import {
+  UniswapDayData,
+  Factory,
+  Pool,
+  PoolDayData,
+  Token,
+  TokenDayData,
+  TokenHourData,
+  Bundle,
+  PoolHourData,
+  PoolFiveMinuteData
+} from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum, log } from '@graphprotocol/graph-ts'
 
@@ -48,19 +59,19 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
     poolDayData.volumeUSD = ZERO_BD
     poolDayData.feesUSD = ZERO_BD
     poolDayData.txCount = ZERO_BI
-    poolDayData.open = pool.token0Price;
-    poolDayData.high = pool.token0Price;
-    poolDayData.low = pool.token0Price;
-    poolDayData.close = pool.token0Price;
+    poolDayData.open = pool.token0Price
+    poolDayData.high = pool.token0Price
+    poolDayData.low = pool.token0Price
+    poolDayData.close = pool.token0Price
   }
- 
+
   if (pool.token0Price.gt(poolDayData.high)) {
-    poolDayData.high = pool.token0Price;
+    poolDayData.high = pool.token0Price
   }
   if (pool.token0Price.lt(poolDayData.low)) {
-    poolDayData.low = pool.token0Price;
+    poolDayData.low = pool.token0Price
   }
-  
+
   poolDayData.liquidity = pool.liquidity
   poolDayData.sqrtPrice = pool.sqrtPrice
   poolDayData.token0Price = pool.token0Price
@@ -75,49 +86,49 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
 }
 
 export function updatePoolHourData(event: ethereum.Event): PoolHourData {
-    let timestamp = event.block.timestamp.toI32()
-    let hourIndex = timestamp / 3600 // get unique hour within unix history
-    let hourStartUnix = hourIndex * 3600 // want the rounded effect
-    let hourPoolID = event.address
-        .toHexString()
-        .concat('-')
-        .concat(hourIndex.toString())
-    let pool = Pool.load(event.address.toHexString())
-    let poolHourData = PoolHourData.load(hourPoolID)
-    if (poolHourData === null) {
-        poolHourData = new PoolHourData(hourPoolID)
-        poolHourData.periodStartUnix = hourStartUnix
-        poolHourData.pool = pool.id
-        // things that dont get initialized always
-        poolHourData.volumeToken0 = ZERO_BD
-        poolHourData.volumeToken1 = ZERO_BD
-        poolHourData.volumeUSD = ZERO_BD
-        poolHourData.feesUSD = ZERO_BD
-        poolHourData.txCount = ZERO_BI
-        poolHourData.open = pool.token0Price;
-        poolHourData.high = pool.token0Price;
-        poolHourData.low = pool.token0Price;
-        poolHourData.close = pool.token0Price;
-    }
+  let timestamp = event.block.timestamp.toI32()
+  let hourIndex = timestamp / 3600 // get unique hour within unix history
+  let hourStartUnix = hourIndex * 3600 // want the rounded effect
+  let hourPoolID = event.address
+    .toHexString()
+    .concat('-')
+    .concat(hourIndex.toString())
+  let pool = Pool.load(event.address.toHexString())
+  let poolHourData = PoolHourData.load(hourPoolID)
+  if (poolHourData === null) {
+    poolHourData = new PoolHourData(hourPoolID)
+    poolHourData.date = hourStartUnix
+    poolHourData.pool = pool.id
+    // things that dont get initialized always
+    poolHourData.volumeToken0 = ZERO_BD
+    poolHourData.volumeToken1 = ZERO_BD
+    poolHourData.volumeUSD = ZERO_BD
+    poolHourData.txCount = ZERO_BI
+    poolHourData.feesUSD = ZERO_BD
+    poolHourData.open = pool.token0Price
+    poolHourData.high = pool.token0Price
+    poolHourData.low = pool.token0Price
+    poolHourData.close = pool.token0Price
+  }
 
-    if (pool.token0Price.gt(poolHourData.high)) {
-        poolHourData.high = pool.token0Price;
-    }
-    if (pool.token0Price.lt(poolHourData.low)) {
-        poolHourData.low = pool.token0Price;
-    }
+  if (pool.token0Price.gt(poolHourData.high)) {
+    poolHourData.high = pool.token0Price
+  }
+  if (pool.token0Price.lt(poolHourData.low)) {
+    poolHourData.low = pool.token0Price
+  }
 
-    poolHourData.liquidity = pool.liquidity
-    poolHourData.sqrtPrice = pool.sqrtPrice
-    poolHourData.token0Price = pool.token0Price
-    poolHourData.token1Price = pool.token1Price
-    poolHourData.close = pool.token0Price;
-    poolHourData.tick = pool.tick
-    poolHourData.tvlUSD = pool.totalValueLockedUSD
-    poolHourData.txCount = poolHourData.txCount.plus(ONE_BI)
-    poolHourData.save()
+  poolHourData.liquidity = pool.liquidity
+  poolHourData.sqrtPrice = pool.sqrtPrice
+  poolHourData.token0Price = pool.token0Price
+  poolHourData.token1Price = pool.token1Price
+  poolHourData.close = pool.token0Price
+  poolHourData.tick = pool.tick
+  poolHourData.tvlUSD = pool.totalValueLockedUSD
+  poolHourData.txCount = poolHourData.txCount.plus(ONE_BI)
+  poolHourData.save()
 
-    return poolHourData as PoolHourData
+  return poolHourData as PoolHourData
 }
 
 export function updatePoolFiveMinuteData(event: ethereum.Event): PoolFiveMinuteData {
@@ -132,7 +143,7 @@ export function updatePoolFiveMinuteData(event: ethereum.Event): PoolFiveMinuteD
   let poolFiveMinuteData = PoolFiveMinuteData.load(fiveMinPoolId)
   if (poolFiveMinuteData === null) {
     poolFiveMinuteData = new PoolFiveMinuteData(fiveMinPoolId)
-    poolFiveMinuteData.periodStartUnix = periodStartUnix
+    poolFiveMinuteData.date = periodStartUnix
     poolFiveMinuteData.pool = pool.id
     // things that dont get initialized always
     poolFiveMinuteData.volumeToken0 = ZERO_BD
@@ -175,6 +186,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     .toString()
     .concat('-')
     .concat(dayID.toString())
+  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
   let tokenDayData = TokenDayData.load(tokenDayID)
   if (tokenDayData === null) {
@@ -185,11 +197,68 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     tokenDayData.volumeUSD = ZERO_BD
     tokenDayData.feesUSD = ZERO_BD
     tokenDayData.untrackedVolumeUSD = ZERO_BD
+    tokenDayData.open = tokenPrice
+    tokenDayData.high = tokenPrice
+    tokenDayData.low = tokenPrice
+    tokenDayData.close = tokenPrice
   }
+
+  if (tokenPrice.gt(tokenDayData.high)) {
+    tokenDayData.high = tokenPrice
+  }
+
+  if (tokenPrice.lt(tokenDayData.low)) {
+    tokenDayData.low = tokenPrice
+  }
+
+  tokenDayData.close = tokenPrice
   tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPriceUSD)
   tokenDayData.totalValueLocked = token.totalValueLocked
   tokenDayData.totalValueLockedUSD = token.totalValueLockedUSD
   tokenDayData.save()
 
   return tokenDayData as TokenDayData
+}
+
+export function updateTokenHourData(token: Token, event: ethereum.Event): TokenHourData {
+  let bundle = Bundle.load('1')
+  let timestamp = event.block.timestamp.toI32()
+  let hourIndex = timestamp / 3600 // get unique hour within unix history
+  let hourStartUnix = hourIndex * 3600 // want the rounded effect
+  let tokenHourID = event.address
+    .toHexString()
+    .concat('-')
+    .concat(hourIndex.toString())
+  let tokenHourData = TokenHourData.load(tokenHourID)
+  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+
+  if (tokenHourData === null) {
+    tokenHourData = new TokenHourData(tokenHourID)
+    tokenHourData.date = hourStartUnix
+    tokenHourData.token = token.id
+    tokenHourData.volume = ZERO_BD
+    tokenHourData.volumeUSD = ZERO_BD
+    tokenHourData.untrackedVolumeUSD = ZERO_BD
+    tokenHourData.feesUSD = ZERO_BD
+    tokenHourData.open = tokenPrice
+    tokenHourData.high = tokenPrice
+    tokenHourData.low = tokenPrice
+    tokenHourData.close = tokenPrice
+  }
+
+  if (tokenPrice.gt(tokenHourData.high)) {
+    tokenHourData.high = tokenPrice
+  }
+
+  if (tokenPrice.lt(tokenHourData.low)) {
+    tokenHourData.low = tokenPrice
+  }
+
+  tokenHourData.close = tokenPrice
+  tokenHourData.priceUSD = tokenPrice
+  tokenHourData.totalValueLocked = token.totalValueLocked
+  tokenHourData.totalValueLockedUSD = token.totalValueLockedUSD
+  tokenHourData.save()
+
+  return tokenHourData as TokenHourData
 }
