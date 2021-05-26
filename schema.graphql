@@ -182,6 +182,40 @@ type Tick @entity {
   # swaps: [Swap!]! @derivedFrom(field: "tick")
 }
 
+type Position @entity {
+  # Positions created through NonfungiblePositionManager
+  # NFT token id
+  id: ID!
+  # owner of the NFT
+  owner: Bytes!
+  # pool position is within
+  pool: Pool!
+  # allow indexing by tokens
+  token0: Token!
+  # allow indexing by tokens
+  token1: Token!
+  # lower tick of the position
+  tickLower: BigInt!
+  # upper tick of the position
+  tickUpper: BigInt!
+  # total position liquidity
+  liquidity: BigInt!
+  # amount of token 0 ever deposited to position
+  depositedToken0: BigDecimal!
+  # amount of token 1 ever deposited to position
+  depositedToken1: BigDecimal!
+  # amount of token 0 ever withdrawn from position (without fees)
+  withdrawnToken0: BigDecimal!
+  # amount of token 1 ever withdrawn from position (without fees)
+  withdrawnToken1: BigDecimal!
+  # all time collected fees in token0
+  collectedFeesToken0: BigDecimal!
+  # all time collected fees in token1
+  collectedFeesToken1: BigDecimal!
+  # tx in which the position was initialized
+  transaction: Transaction!
+}
+
 type Transaction @entity {
   # txn hash
   id: ID!
@@ -189,6 +223,9 @@ type Transaction @entity {
   blockNumber: BigInt!
   # timestamp txn was confirmed
   timestamp: BigInt!
+  # gas used during txn execution
+  gasUsed: BigInt!
+  gasPrice: BigInt!
   # derived values
   mints: [Mint]! @derivedFrom(field: "transaction")
   burns: [Burn]! @derivedFrom(field: "transaction")
