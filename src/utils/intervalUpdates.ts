@@ -122,8 +122,8 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
 
 export function updatePoolFiveMinuteData(event: ethereum.Event): PoolFiveMinuteData {
   let timestamp = event.block.timestamp.toI32()
-  let fiveMinIndex = timestamp / 3600 / 12; // get unique 5 min interval within unix history
-  let periodStartUnix = fiveMinIndex * 3600 * 12; // want the rounded effect
+  let fiveMinIndex = timestamp / 300; // get unique 5 min interval within unix history
+  let periodStartUnix = fiveMinIndex * 300; // want the rounded effect
   let fiveMinPoolId = event.address
     .toHexString()
     .concat('-')
