@@ -77,7 +77,7 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
-  position.liquidity = position.liquidity.plus(event.params.liquidity)
+  position.liquidity = position.liquidity.minus(event.params.liquidity)
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
 
