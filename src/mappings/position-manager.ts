@@ -4,7 +4,7 @@ import {
   IncreaseLiquidity,
   NonfungiblePositionManager, Transfer
 } from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
-import { Position, Token } from '../types/schema'
+import { Bundle, Pool, Position, PositionSnapshot, Token } from '../types/schema'
 import {
   ADDRESS_ZERO,
   factoryContract,
@@ -13,7 +13,6 @@ import {
 } from '../utils/constants'
 import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
-import { fetchTokenDecimals } from '../utils/token'
 
 function getPosition(event: ethereum.Event, tokenId: BigInt): Position {
   let position = Position.load(tokenId.toString())
@@ -48,6 +47,36 @@ function getPosition(event: ethereum.Event, tokenId: BigInt): Position {
   return position!
 }
 
+export function createPositionSnapshot(position: Position, event: ethereum.Event): void {
+  let timestamp = event.block.timestamp.toI32()
+  let bundle = Bundle.load('1')
+  let pool = Pool.load(position.pool)
+  let token0 = Token.load(pool.token0)
+  let token1 = Token.load(pool.token1)
+
+  // create new snapshot
+  let snapshot = new PositionSnapshot(position.id.concat(timestamp.toString()))
+  snapshot.position = position.id
+  snapshot.timestamp = timestamp
+  snapshot.block = event.block.number.toI32()
+  snapshot.owner = position.owner
+  snapshot.pool = position.pool
+  snapshot.token0PriceUSD = token0.derivedETH.times(bundle.ethPriceUSD)
+  snapshot.token1PriceUSD = token1.derivedETH.times(bundle.ethPriceUSD)
+  snapshot.sqrtPrice = pool.sqrtPrice
+  snapshot.liquidity = pool.liquidity
+  snapshot.totalValueLockedETH = pool.totalValueLockedETH
+  snapshot.totalValueLockedUSD = pool.totalValueLockedUSD
+  snapshot.depositedToken0 = position.depositedToken0
+  snapshot.depositedToken1 = position.depositedToken1
+  snapshot.withdrawnToken0 = position.withdrawnToken0
+  snapshot.withdrawnToken1 = position.withdrawnToken1
+  snapshot.collectedFeesToken0 = position.collectedFeesToken0
+  snapshot.collectedFeesToken1 = position.collectedFeesToken1
+  snapshot.tick = pool.tick
+  snapshot.save()
+}
+
 export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
 
@@ -66,6 +95,7 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   position.depositedToken0 = position.depositedToken0.plus(amount0)
   position.depositedToken1 = position.depositedToken1.plus(amount1)
 
+  createPositionSnapshot(position, event)
   position.save()
 }
 
@@ -86,6 +116,7 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
 
+  createPositionSnapshot(position, event)
   position.save()
 }
 
@@ -105,6 +136,7 @@ export function handleCollect(event: Collect): void {
   position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
   position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount1)
 
+  createPositionSnapshot(position, event)
   position.save()
 }
 
@@ -112,4 +144,6 @@ export function handleTransfer(event: Transfer): void {
   let position = getPosition(event, event.params.tokenId)
   position.owner = event.params.to
   position.save()
+  
+  // TODO: handle NFLPs that are transferred by creating the correct snapshots
 }

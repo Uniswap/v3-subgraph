@@ -216,6 +216,49 @@ type Position @entity {
   transaction: Transaction!
 }
 
+# saved over time for return calculations, gets created and never updated
+type PositionSnapshot @entity {
+  id: ID!
+  # state of liquidity position at time
+  position: Position!
+  # saved for fast historical lookups
+  timestamp: Int!
+  # saved for fast historical lookups
+  block: Int!
+  # owner of the position
+  owner: Bytes!
+  # reference to pool
+  pool: Pool! 
+  # snapshot of token0 price
+  token0PriceUSD: BigDecimal!
+  # snapshot of token1 price
+  token1PriceUSD: BigDecimal! 
+  # in range liquidity at snapshot
+  liquidity: BigInt!
+  # current price tracker at snapshot
+  sqrtPrice: BigInt!
+  # tvl derived ETH at snapshot
+  totalValueLockedETH: BigDecimal!
+  # tvl USD at snapshot
+  totalValueLockedUSD: BigDecimal!
+  # current tick at snapshot
+  tick: BigInt
+  # amount of token 0 ever deposited to position
+  depositedToken0: BigDecimal!
+  # amount of token 1 ever deposited to position
+  depositedToken1: BigDecimal!
+  # amount of token 0 ever withdrawn from position (without fees)
+  withdrawnToken0: BigDecimal!
+  # amount of token 1 ever withdrawn from position (without fees)
+  withdrawnToken1: BigDecimal!
+  # all time collected fees in token0
+  collectedFeesToken0: BigDecimal!
+  # all time collected fees in token1
+  collectedFeesToken1: BigDecimal!
+  # tx in which the position was initialized
+  transaction: Transaction!
+}
+
 type Transaction @entity {
   # txn hash
   id: ID!
