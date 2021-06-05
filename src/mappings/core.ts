@@ -302,7 +302,13 @@ export function handleSwap(event: SwapEvent): void {
   let amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
     BigDecimal.fromString('2')
   )
-  let amountTotalETHTracked = amountTotalUSDTracked.div(bundle.ethPriceUSD)
+  let amountTotalETHTracked: BigDecimal;
+  if (bundle.ethPriceUSD.equals(ZERO_BD)) {
+    amountTotalETHTracked = ZERO_BD
+  } else {
+    amountTotalETHTracked = amountTotalUSDTracked.div(bundle.ethPriceUSD)
+  }
+
   let amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
   let feesETH = amountTotalETHTracked.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
