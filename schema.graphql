@@ -89,6 +89,10 @@ type Pool @entity {
   liquidity: BigInt!
   # current price tracker
   sqrtPrice: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # token0 per token1
   token0Price: BigDecimal!
   # token1 per token0
@@ -425,6 +429,10 @@ type PoolDayData @entity {
   token1Price: BigDecimal!
   # current tick at end of period
   tick: BigInt
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
   tvlUSD: BigDecimal!
   # volume in token0
@@ -465,6 +473,10 @@ type PoolHourData @entity {
   token1Price: BigDecimal!
   # current tick at end of period
   tick: BigInt
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
   tvlUSD: BigDecimal!
   # volume in token0

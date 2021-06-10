@@ -58,6 +58,8 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
     poolDayData.volumeUSD = ZERO_BD
     poolDayData.feesUSD = ZERO_BD
     poolDayData.txCount = ZERO_BI
+    poolDayData.feeGrowthGlobal0X128 = ZERO_BI
+    poolDayData.feeGrowthGlobal1X128 = ZERO_BI
     poolDayData.open = pool.token0Price
     poolDayData.high = pool.token0Price
     poolDayData.low = pool.token0Price
@@ -73,6 +75,8 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
 
   poolDayData.liquidity = pool.liquidity
   poolDayData.sqrtPrice = pool.sqrtPrice
+  poolDayData.feeGrowthGlobal0X128 = pool.feeGrowthGlobal0X128
+  poolDayData.feeGrowthGlobal1X128 = pool.feeGrowthGlobal1X128
   poolDayData.token0Price = pool.token0Price
   poolDayData.token1Price = pool.token1Price
   poolDayData.tick = pool.tick
@@ -103,6 +107,8 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
     poolHourData.volumeUSD = ZERO_BD
     poolHourData.txCount = ZERO_BI
     poolHourData.feesUSD = ZERO_BD
+    poolHourData.feeGrowthGlobal0X128 = ZERO_BI
+    poolHourData.feeGrowthGlobal1X128 = ZERO_BI
     poolHourData.open = pool.token0Price
     poolHourData.high = pool.token0Price
     poolHourData.low = pool.token0Price
@@ -120,6 +126,8 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
   poolHourData.sqrtPrice = pool.sqrtPrice
   poolHourData.token0Price = pool.token0Price
   poolHourData.token1Price = pool.token1Price
+  poolHourData.feeGrowthGlobal0X128 = pool.feeGrowthGlobal0X128
+  poolHourData.feeGrowthGlobal1X128 = pool.feeGrowthGlobal1X128
   poolHourData.close = pool.token0Price
   poolHourData.tick = pool.tick
   poolHourData.tvlUSD = pool.totalValueLockedUSD
@@ -178,8 +186,8 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let tokenHourID = event.address
-    .toHexString()
+  let tokenHourID = token.id
+    .toString()
     .concat('-')
     .concat(hourIndex.toString())
   let tokenHourData = TokenHourData.load(tokenHourID)

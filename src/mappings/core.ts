@@ -1,5 +1,6 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
+import { Pool as PoolABI } from '../types/Factory/Pool'
 import { BigDecimal, BigInt, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
@@ -394,6 +395,13 @@ export function handleSwap(event: SwapEvent): void {
   swap.tick = BigInt.fromI32(event.params.tick as i32)
   swap.sqrtPriceX96 = event.params.sqrtPriceX96
   swap.logIndex = event.logIndex
+
+  // update fee growth
+  let poolContract = PoolABI.bind(event.address)
+  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
+  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
+  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
 
   // interval data
   let uniswapDayData = updateUniswapDayData(event)
