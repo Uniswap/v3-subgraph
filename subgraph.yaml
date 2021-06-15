@@ -3,9 +3,6 @@ description: Uniswap is a decentralized protocol for automated token exchange on
 repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
-# graft:
-#   base: QmNm4wgeeHs56fdqLUkc8oG18FVWPXWjLxexyP3GNGkKtv
-#   block: 12414183
 dataSources:
   - kind: ethereum/contract
     name: Factory
@@ -31,6 +28,8 @@ dataSources:
           file: ./abis/ERC20SymbolBytes.json
         - name: ERC20NameBytes
           file: ./abis/ERC20NameBytes.json
+        - name: Pool
+          file: ./abis/pool.json
       eventHandlers:
         - event: PoolCreated(indexed address,indexed address,indexed uint24,int24,address)
           handler: handlePoolCreated
