@@ -1,8 +1,10 @@
+/* eslint-disable prefer-const */
 import {
   Collect,
   DecreaseLiquidity,
   IncreaseLiquidity,
-  NonfungiblePositionManager, Transfer
+  NonfungiblePositionManager,
+  Transfer
 } from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
 import { Bundle, Pool, Position, PositionSnapshot, Token } from '../types/schema'
 import {
@@ -14,34 +16,33 @@ import {
 import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 
-function getPosition(event: ethereum.Event, tokenId: BigInt): Position {
+function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
   let position = Position.load(tokenId.toString())
   if (position === null) {
     let contract = NonfungiblePositionManager.bind(event.address)
-    let positionResult = contract.positions(tokenId)
+    let positionCall = contract.try_positions(tokenId)
 
-    let poolAddress = factoryContract.getPool(
-      positionResult.value2,
-      positionResult.value3,
-      positionResult.value4
-    )
+    if (!positionCall.reverted) {
+      let positionResult = positionCall.value
+      let poolAddress = factoryContract.getPool(positionResult.value2, positionResult.value3, positionResult.value4)
 
-    position = new Position(tokenId.toString())
-    // The owner gets correctly updated in the Transfer handler
-    position.owner = Address.fromString(ADDRESS_ZERO)
-    position.pool = poolAddress.toHexString()
-    position.token0 = positionResult.value2.toHexString()
-    position.token1 = positionResult.value3.toHexString()
-    position.tickLower = BigInt.fromI32(positionResult.value5)
-    position.tickUpper = BigInt.fromI32(positionResult.value6)
-    position.liquidity = ZERO_BI
-    position.depositedToken0 = ZERO_BD
-    position.depositedToken1 = ZERO_BD
-    position.withdrawnToken0 = ZERO_BD
-    position.withdrawnToken1 = ZERO_BD
-    position.collectedFeesToken0 = ZERO_BD
-    position.collectedFeesToken1 = ZERO_BD
-    position.transaction = loadTransaction(event).id
+      position = new Position(tokenId.toString())
+      // The owner gets correctly updated in the Transfer handler
+      position.owner = Address.fromString(ADDRESS_ZERO)
+      position.pool = poolAddress.toHexString()
+      position.token0 = positionResult.value2.toHexString()
+      position.token1 = positionResult.value3.toHexString()
+      position.tickLower = BigInt.fromI32(positionResult.value5)
+      position.tickUpper = BigInt.fromI32(positionResult.value6)
+      position.liquidity = ZERO_BI
+      position.depositedToken0 = ZERO_BD
+      position.depositedToken1 = ZERO_BD
+      position.withdrawnToken0 = ZERO_BD
+      position.withdrawnToken1 = ZERO_BD
+      position.collectedFeesToken0 = ZERO_BD
+      position.collectedFeesToken1 = ZERO_BD
+      position.transaction = loadTransaction(event).id
+    }
   }
 
   return position!
@@ -81,6 +82,11 @@ export function createPositionSnapshot(position: Position, event: ethereum.Event
 export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
 
+  // position was not able to be fetched
+  if (position == null) {
+    return
+  }
+
   // temp fix
   if (Address.fromString(position.pool).equals(Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'))) {
     return
@@ -96,12 +102,17 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   position.depositedToken0 = position.depositedToken0.plus(amount0)
   position.depositedToken1 = position.depositedToken1.plus(amount1)
 
-  createPositionSnapshot(position, event)
+  createPositionSnapshot(position as Position, event)
   position.save()
 }
 
 export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
+
+  // position was not able to be fetched
+  if (position == null) {
+    return
+  }
 
   // temp fix
   if (Address.fromString(position.pool).equals(Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'))) {
@@ -117,12 +128,17 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
 
-  createPositionSnapshot(position, event)
+  createPositionSnapshot(position as Position, event)
   position.save()
 }
 
 export function handleCollect(event: Collect): void {
   let position = getPosition(event, event.params.tokenId)
+
+  // position was not able to be fetched
+  if (position == null) {
+    return
+  }
 
   // temp fix
   if (Address.fromString(position.pool).equals(Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'))) {
@@ -133,16 +149,21 @@ export function handleCollect(event: Collect): void {
   let token1 = Token.load(position.token1)
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-
   position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
   position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount1)
 
-  createPositionSnapshot(position, event)
+  createPositionSnapshot(position as Position, event)
   position.save()
 }
 
 export function handleTransfer(event: Transfer): void {
   let position = getPosition(event, event.params.tokenId)
+
+  // position was not able to be fetched
+  if (position == null) {
+    return
+  }
+
   position.owner = event.params.to
   position.save()
   

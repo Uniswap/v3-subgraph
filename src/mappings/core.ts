@@ -1,8 +1,9 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
+import { Pool as PoolABI } from '../types/Factory/Pool'
+import { BigDecimal, BigInt, store } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
-import { convertTokenToDecimal, loadTransaction } from '../utils'
+import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
@@ -16,8 +17,6 @@ import {
 import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
-  log.debug('mynewbug initializing', [])
-
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
@@ -276,6 +275,12 @@ export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
   let factory = Factory.load(FACTORY_ADDRESS)
   let pool = Pool.load(event.address.toHexString())
+
+  // hot fix for bad pricing
+  if (pool.id == '0x9663f2ca0454accad3e094448ea6f77443880454') {
+    return
+  }
+
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
@@ -302,13 +307,7 @@ export function handleSwap(event: SwapEvent): void {
   let amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
     BigDecimal.fromString('2')
   )
-  let amountTotalETHTracked: BigDecimal;
-  if (bundle.ethPriceUSD.equals(ZERO_BD)) {
-    amountTotalETHTracked = ZERO_BD
-  } else {
-    amountTotalETHTracked = amountTotalUSDTracked.div(bundle.ethPriceUSD)
-  }
-
+  let amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
   let amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
   let feesETH = amountTotalETHTracked.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
@@ -400,6 +399,13 @@ export function handleSwap(event: SwapEvent): void {
   swap.tick = BigInt.fromI32(event.params.tick as i32)
   swap.sqrtPriceX96 = event.params.sqrtPriceX96
   swap.logIndex = event.logIndex
+
+  // update fee growth
+  let poolContract = PoolABI.bind(event.address)
+  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
+  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
+  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
 
   // interval data
   let uniswapDayData = updateUniswapDayData(event)
