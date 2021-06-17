@@ -31,8 +31,8 @@ function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
       position.pool = poolAddress.toHexString()
       position.token0 = positionResult.value2.toHexString()
       position.token1 = positionResult.value3.toHexString()
-      position.tickLower = BigInt.fromI32(positionResult.value5)
-      position.tickUpper = BigInt.fromI32(positionResult.value6)
+      position.tickLower = position.pool.concat('#').concat(positionResult.value5.toString())
+      position.tickUpper = position.pool.concat('#').concat(positionResult.value6.toString())
       position.liquidity = ZERO_BI
       position.depositedToken0 = ZERO_BD
       position.depositedToken1 = ZERO_BD

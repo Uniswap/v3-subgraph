@@ -202,9 +202,9 @@ type Position @entity {
   # allow indexing by tokens
   token1: Token!
   # lower tick of the position
-  tickLower: BigInt!
+  tickLower: Tick!
   # upper tick of the position
-  tickUpper: BigInt!
+  tickUpper: Tick!
   # total position liquidity
   liquidity: BigInt!
   # amount of token 0 ever deposited to position
