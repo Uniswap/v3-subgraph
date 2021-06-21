@@ -287,15 +287,23 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
     tickDayData = new TickDayData(dayTickID)
     tickDayData.date = dayStartTimestamp
     tickDayData.pool = tick.pool
+    tickDayData.tick = tick.id
+    tickDayData.tickIdx = tick.tickIdx
+    tickDayData.startingVolumeToken0 = tick.volumeToken0
+    tickDayData.startingVolumeToken1 = tick.volumeToken1
+    tickDayData.startingVolumeUSD = tick.volumeUSD
+    tickDayData.startingFeesToken0 = tick.feesToken0
+    tickDayData.startingFeesToken1 = tick.feesToken1
+    tickDayData.startingFeesUSD = tick.feesUSD
+    tickDayData.volumeToken0 = ZERO_BD
+    tickDayData.volumeToken1 = ZERO_BD
+    tickDayData.volumeUSD = ZERO_BD
+    tickDayData.feesToken0 = ZERO_BD
+    tickDayData.feesToken1 = ZERO_BD
+    tickDayData.feesUSD = ZERO_BD
   }
-  tickDayData.tick = tick.id
-  tickDayData.tickIdx = tick.tickIdx
   tickDayData.liquidityGross = tick.liquidityGross
   tickDayData.liquidityNet = tick.liquidityNet
-  tickDayData.volumeToken0 = tick.volumeToken0
-  tickDayData.volumeToken1 = tick.volumeToken1
-  tickDayData.volumeUSD = tick.volumeUSD
-  tickDayData.feesUSD = tick.feesUSD
   tickDayData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
   tickDayData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
 
@@ -314,15 +322,23 @@ export function updateTickHourData(tick: Tick, event: ethereum.Event): TickHourD
     tickHourData = new TickHourData(hourTickID)
     tickHourData.date = hourStartUnix
     tickHourData.pool = tick.pool
+    tickHourData.tick = tick.id
+    tickHourData.tickIdx = tick.tickIdx
+    tickHourData.startingVolumeToken0 = tick.volumeToken0
+    tickHourData.startingVolumeToken1 = tick.volumeToken1
+    tickHourData.startingVolumeUSD = tick.volumeUSD
+    tickHourData.startingFeesToken0 = tick.feesToken0
+    tickHourData.startingFeesToken1 = tick.feesToken1
+    tickHourData.startingFeesUSD = tick.feesUSD
+    tickHourData.volumeToken0 = ZERO_BD
+    tickHourData.volumeToken1 = ZERO_BD
+    tickHourData.volumeUSD = ZERO_BD
+    tickHourData.feesToken0 = ZERO_BD
+    tickHourData.feesToken1 = ZERO_BD
+    tickHourData.feesUSD = ZERO_BD
   }
-  tickHourData.tick = tick.id
-  tickHourData.tickIdx = tick.tickIdx
   tickHourData.liquidityGross = tick.liquidityGross
   tickHourData.liquidityNet = tick.liquidityNet
-  tickHourData.volumeToken0 = tick.volumeToken0
-  tickHourData.volumeToken1 = tick.volumeToken1
-  tickHourData.volumeUSD = tick.volumeUSD
-  tickHourData.feesUSD = tick.feesUSD
   tickHourData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
   tickHourData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
 
@@ -341,15 +357,23 @@ export function updateTickFiveMinuteData(tick: Tick, event: ethereum.Event): Tic
     tickFiveMinuteData = new TickFiveMinuteData(fiveMinTickID)
     tickFiveMinuteData.date = periodStartUnix
     tickFiveMinuteData.pool = tick.pool
+    tickFiveMinuteData.tick = tick.id
+    tickFiveMinuteData.tickIdx = tick.tickIdx
+    tickFiveMinuteData.startingVolumeToken0 = tick.volumeToken0
+    tickFiveMinuteData.startingVolumeToken1 = tick.volumeToken1
+    tickFiveMinuteData.startingVolumeUSD = tick.volumeUSD
+    tickFiveMinuteData.startingFeesToken0 = tick.feesToken0
+    tickFiveMinuteData.startingFeesToken1 = tick.feesToken1
+    tickFiveMinuteData.startingFeesUSD = tick.feesUSD
+    tickFiveMinuteData.volumeToken0 = ZERO_BD
+    tickFiveMinuteData.volumeToken1 = ZERO_BD
+    tickFiveMinuteData.volumeUSD = ZERO_BD
+    tickFiveMinuteData.feesToken0 = ZERO_BD
+    tickFiveMinuteData.feesToken1 = ZERO_BD
+    tickFiveMinuteData.feesUSD = ZERO_BD
   }
-  tickFiveMinuteData.tick = tick.id
-  tickFiveMinuteData.tickIdx = tick.tickIdx
   tickFiveMinuteData.liquidityGross = tick.liquidityGross
   tickFiveMinuteData.liquidityNet = tick.liquidityNet
-  tickFiveMinuteData.volumeToken0 = tick.volumeToken0
-  tickFiveMinuteData.volumeToken1 = tick.volumeToken1
-  tickFiveMinuteData.volumeUSD = tick.volumeUSD
-  tickFiveMinuteData.feesUSD = tick.feesUSD
   tickFiveMinuteData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
   tickFiveMinuteData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
 

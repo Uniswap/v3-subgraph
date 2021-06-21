@@ -168,6 +168,10 @@ type Tick @entity {
   volumeUSD: BigDecimal!
   # lifetime volume in untracked USD with this tick in range
   untrackedVolumeUSD: BigDecimal!
+  # fees accrued within tick
+  feesToken0: BigDecimal!
+  # fees accrued within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # all time collected fees in token0
@@ -610,6 +614,18 @@ type TickFiveMinuteData @entity {
   liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
   liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
@@ -618,6 +634,10 @@ type TickFiveMinuteData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
   # vars needed for fee computation
   feeGrowthOutside0X128: BigInt!
   feeGrowthOutside1X128: BigInt!
@@ -638,12 +658,28 @@ type TickHourData @entity {
   liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
   liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # vars needed for fee computation
@@ -668,12 +704,28 @@ type TickDayData @entity {
   liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
   liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # vars needed for fee computation

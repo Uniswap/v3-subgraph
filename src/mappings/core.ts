@@ -25,7 +25,9 @@ import {
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
 
-function updateTickVars(tickId: i32, event: ethereum.Event): void {
+let Q128 = BigInt.fromString('2').pow(128).toBigDecimal();
+
+function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event): void {
   let poolAddress = event.address
   let tick = Tick.load(
     poolAddress
@@ -33,17 +35,68 @@ function updateTickVars(tickId: i32, event: ethereum.Event): void {
       .concat('#')
       .concat(tickId.toString())
   )
+  let bundle = Bundle.load('1')
+  
   if (tick !== null) {
     // not all ticks are initialized so obtaining null is expected behavior
     let poolContract = PoolABI.bind(poolAddress)
     let tickResult = poolContract.ticks(tickId)
     tick.feeGrowthOutside0X128 = tickResult.value2
     tick.feeGrowthOutside1X128 = tickResult.value3
-    tick.save()
 
-    updateTickDayData(tick!, event)
-    updateTickHourData(tick!, event)
-    updateTickFiveMinuteData(tick!, event)
+    let feeDivisor = pool.feeTier.div(BigInt.fromString('10000')).toBigDecimal();
+
+    if (feeDivisor.gt(ZERO_BD)) {
+      // Compute fees token0 and token1
+      let feesAbove0X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(tick.feeGrowthOutside0X128) : tick.feeGrowthOutside0X128
+      let feesBelow0X128 = pool.tick.lt(tick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(tick.feeGrowthOutside0X128) : tick.feeGrowthOutside0X128
+      let feesToken0X128 = pool.feeGrowthGlobal0X128.minus(feesAbove0X128).minus(feesBelow0X128)
+      tick.feesToken0 = feesToken0X128.toBigDecimal().div(Q128)
+      tick.volumeToken0 = tick.feesToken0.div(feeDivisor)
+      let feesToken0USD = Token.load(pool.token0).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken0)
+      
+      let feesAbove1X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(tick.feeGrowthOutside1X128) : tick.feeGrowthOutside1X128
+      let feesBelow1X128 = pool.tick.lt(tick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(tick.feeGrowthOutside1X128) : tick.feeGrowthOutside1X128
+      let feesToken1X128 = pool.feeGrowthGlobal1X128.minus(feesAbove1X128).minus(feesBelow1X128)
+      tick.feesToken1 = feesToken1X128.toBigDecimal().div(Q128)
+      tick.volumeToken1 = tick.feesToken1.div(feeDivisor)
+      let feesToken1USD = Token.load(pool.token1).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken1)
+  
+      // Compute feesUSD based on prices
+      tick.feesUSD = feesToken0USD.plus(feesToken1USD)
+      tick.volumeUSD = tick.feesUSD.div(feeDivisor)
+  
+      tick.save()
+  
+      let tickDayData = updateTickDayData(tick!, event)
+      let tickHourData = updateTickHourData(tick!, event)
+      let tickFiveMinuteData = updateTickFiveMinuteData(tick!, event)
+  
+      tickDayData.volumeToken0 = tick.volumeToken0.minus(tickDayData.startingVolumeToken0)
+      tickDayData.volumeToken1 = tick.volumeToken0.minus(tickDayData.startingVolumeToken1)
+      tickDayData.volumeUSD = tick.volumeToken0.minus(tickDayData.startingVolumeUSD)
+      tickDayData.feesToken0 = tick.feesToken0.minus(tickDayData.startingFeesToken0)
+      tickDayData.feesToken1 = tick.feesToken0.minus(tickDayData.startingFeesToken1)
+      tickDayData.feesUSD = tick.feesToken0.minus(tickDayData.startingFeesUSD)
+  
+      tickHourData.volumeToken0 = tick.volumeToken0.minus(tickHourData.startingVolumeToken0)
+      tickHourData.volumeToken1 = tick.volumeToken0.minus(tickHourData.startingVolumeToken1)
+      tickHourData.volumeUSD = tick.volumeToken0.minus(tickHourData.startingVolumeUSD)
+      tickHourData.feesToken0 = tick.feesToken0.minus(tickHourData.startingFeesToken0)
+      tickHourData.feesToken1 = tick.feesToken0.minus(tickHourData.startingFeesToken1)
+      tickHourData.feesUSD = tick.feesToken0.minus(tickHourData.startingFeesUSD)
+  
+      tickFiveMinuteData.volumeToken0 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken0)
+      tickFiveMinuteData.volumeToken1 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken1)
+      tickFiveMinuteData.volumeUSD = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeUSD)
+      tickFiveMinuteData.feesToken0 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken0)
+      tickFiveMinuteData.feesToken1 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken1)
+      tickFiveMinuteData.feesUSD = tick.feesToken0.minus(tickFiveMinuteData.startingFeesUSD)
+  
+      tickDayData.save()
+      tickHourData.save()
+      tickFiveMinuteData.save()
+    }
   }
 }
 
@@ -180,8 +233,8 @@ export function handleMint(event: MintEvent): void {
   updateTokenHourData(token0 as Token, event)
   updateTokenHourData(token1 as Token, event)
   // Update inner tick vars
-  updateTickVars(event.params.tickLower, event)
-  updateTickVars(event.params.tickUpper, event)
+  updateTickVars(pool!, event.params.tickLower, event)
+  updateTickVars(pool!, event.params.tickUpper, event)
 
   token0.save()
   token1.save()
@@ -289,14 +342,14 @@ export function handleBurn(event: BurnEvent): void {
   if (lowerTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', lowerTickId)
   } else {
-    updateTickVars(event.params.tickLower, event)
+    updateTickVars(pool!, event.params.tickLower, event)
     lowerTick.save()
   }
 
   if (upperTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', upperTickId)
   } else {
-    updateTickVars(event.params.tickUpper, event)
+    updateTickVars(pool!, event.params.tickUpper, event)
     upperTick.save()
   }
 
@@ -513,7 +566,7 @@ export function handleSwap(event: SwapEvent): void {
   let modulo = newTick.mod(tickSpacing)
   if (modulo.equals(ZERO_BI)) {
     // Current tick is initialized and needs to be updated
-    updateTickVars(newTick.toI32(), event)
+    updateTickVars(pool!, newTick.toI32(), event)
   }
 
   let numIters = oldTick
@@ -530,12 +583,12 @@ export function handleSwap(event: SwapEvent): void {
   } else if (newTick.gt(oldTick)) {
     let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
     for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
-      updateTickVars(i.toI32(), event)
+      updateTickVars(pool!, i.toI32(), event)
     }
   } else if (newTick.lt(oldTick)) {
     let firstInitialized = oldTick.minus(modulo)
     for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
-      updateTickVars(i.toI32(), event)
+      updateTickVars(pool!, i.toI32(), event)
     }
   }
 }
