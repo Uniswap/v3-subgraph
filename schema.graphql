@@ -226,40 +226,6 @@ type Position @entity {
   feeGrowthInside1LastX128: BigInt!
 }
 
-type PositionSnapshot @entity {
-  # <NFT token id>#<block number>
-  id: ID!
-  # owner of the NFT
-  owner: Bytes!
-  # pool the position is within
-  pool: Pool!
-  # position of which the snap was taken of
-  position: Position!
-  # block in which the snap was created
-  blockNumber: BigInt!
-  # timestamp of block in which the snap was created
-  timestamp: BigInt!
-  # total position liquidity
-  liquidity: BigInt!
-  # amount of token 0 ever deposited to position
-  depositedToken0: BigDecimal!
-  # amount of token 1 ever deposited to position
-  depositedToken1: BigDecimal!
-  # amount of token 0 ever withdrawn from position (without fees)
-  withdrawnToken0: BigDecimal!
-  # amount of token 1 ever withdrawn from position (without fees)
-  withdrawnToken1: BigDecimal!
-  # all time collected fees in token0
-  collectedFeesToken0: BigDecimal!
-  # all time collected fees in token1
-  collectedFeesToken1: BigDecimal!
-  # tx in which the snapshot was initialized
-  transaction: Transaction!
-  # internal vars needed for fee computation
-  feeGrowthInside0LastX128: BigInt!
-  feeGrowthInside1LastX128: BigInt!
-}
-
 # saved over time for return calculations, gets created and never updated
 type PositionSnapshot @entity {
   id: ID!
@@ -268,7 +234,7 @@ type PositionSnapshot @entity {
   # saved for fast historical lookups
   timestamp: Int!
   # saved for fast historical lookups
-  block: Int!
+  blockNumber: BigInt!
   # owner of the position
   owner: Bytes!
   # reference to pool
@@ -301,6 +267,9 @@ type PositionSnapshot @entity {
   collectedFeesToken1: BigDecimal!
   # tx in which the position was initialized
   transaction: Transaction!
+  # internal vars needed for fee computation
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
 }
 
 type Transaction @entity {
