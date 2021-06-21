@@ -12,7 +12,9 @@ import {
   PoolHourData,
   PoolFiveMinuteData,
   TickDayData,
-  Tick
+  Tick,
+  TickHourData,
+  TickFiveMinuteData
 } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum, log } from '@graphprotocol/graph-ts'
@@ -275,9 +277,9 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
 
 export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayData {
   let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayTickID = tick.id.concat('-').concat(dayID.toString())
+  let dayIndex = timestamp / 86400
+  let dayStartTimestamp = dayIndex * 86400
+  let dayTickID = tick.id.concat('-').concat(dayIndex.toString())
   let tickDayData = TickDayData.load(dayTickID)
   if (tickDayData === null) {
     tickDayData = new TickDayData(dayTickID)
@@ -285,10 +287,11 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
     tickDayData.pool = tick.pool
   }
   tickDayData.tick = tick.id
+  tickDayData.tickIdx = tick.tickIdx
   tickDayData.liquidityGross = tick.liquidityGross
   tickDayData.liquidityNet = tick.liquidityNet
   tickDayData.volumeToken0 = tick.volumeToken0
-  tickDayData.volumeToken1 = tick.volumeToken0
+  tickDayData.volumeToken1 = tick.volumeToken1
   tickDayData.volumeUSD = tick.volumeUSD
   tickDayData.feesUSD = tick.feesUSD
   tickDayData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
@@ -297,4 +300,58 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
   tickDayData.save()
 
   return tickDayData as TickDayData
+}
+
+export function updateTickHourData(tick: Tick, event: ethereum.Event): TickHourData {
+  let timestamp = event.block.timestamp.toI32()
+  let hourIndex = timestamp / 3600 // get unique hour within unix history
+  let hourStartUnix = hourIndex * 3600 // want the rounded effect
+  let hourTickID = tick.id.concat('-').concat(hourIndex.toString())
+  let tickHourData = TickHourData.load(hourTickID)
+  if (tickHourData === null) {
+    tickHourData = new TickHourData(hourTickID)
+    tickHourData.date = hourStartUnix
+    tickHourData.pool = tick.pool
+  }
+  tickHourData.tick = tick.id
+  tickHourData.tickIdx = tick.tickIdx
+  tickHourData.liquidityGross = tick.liquidityGross
+  tickHourData.liquidityNet = tick.liquidityNet
+  tickHourData.volumeToken0 = tick.volumeToken0
+  tickHourData.volumeToken1 = tick.volumeToken1
+  tickHourData.volumeUSD = tick.volumeUSD
+  tickHourData.feesUSD = tick.feesUSD
+  tickHourData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
+  tickHourData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
+
+  tickHourData.save()
+
+  return tickHourData as TickHourData
+}
+
+export function updateTickFiveMinuteData(tick: Tick, event: ethereum.Event): TickFiveMinuteData {
+  let timestamp = event.block.timestamp.toI32()
+  let fiveMinIndex = timestamp / 300; // get unique 5 min interval within unix history
+  let periodStartUnix = fiveMinIndex * 300; // want the rounded effect
+  let fiveMinTickID = tick.id.concat('-').concat(fiveMinIndex.toString())
+  let tickFiveMinuteData = TickFiveMinuteData.load(fiveMinTickID)
+  if (tickFiveMinuteData === null) {
+    tickFiveMinuteData = new TickFiveMinuteData(fiveMinTickID)
+    tickFiveMinuteData.date = periodStartUnix
+    tickFiveMinuteData.pool = tick.pool
+  }
+  tickFiveMinuteData.tick = tick.id
+  tickFiveMinuteData.tickIdx = tick.tickIdx
+  tickFiveMinuteData.liquidityGross = tick.liquidityGross
+  tickFiveMinuteData.liquidityNet = tick.liquidityNet
+  tickFiveMinuteData.volumeToken0 = tick.volumeToken0
+  tickFiveMinuteData.volumeToken1 = tick.volumeToken1
+  tickFiveMinuteData.volumeUSD = tick.volumeUSD
+  tickFiveMinuteData.feesUSD = tick.feesUSD
+  tickFiveMinuteData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
+  tickFiveMinuteData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
+
+  tickFiveMinuteData.save()
+
+  return tickFiveMinuteData as TickFiveMinuteData
 }

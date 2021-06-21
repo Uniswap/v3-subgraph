@@ -604,10 +604,12 @@ type TickFiveMinuteData @entity {
   pool: Pool!
   # pointer to tick
   tick: Tick!
+  # index of the tick
+  tickIdx: BigInt!
   # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigDecimal!
+  liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigDecimal!
+  liquidityNet: BigInt!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
@@ -616,6 +618,9 @@ type TickFiveMinuteData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
+  # vars needed for fee computation
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
 }
 
 type TickHourData @entity {
@@ -627,7 +632,7 @@ type TickHourData @entity {
   pool: Pool!
   # pointer to tick
   tick: Tick!
-  # index of thes tick
+  # index of the tick
   tickIdx: BigInt!
   # total liquidity pool has as tick lower or upper at end of period
   liquidityGross: BigInt!

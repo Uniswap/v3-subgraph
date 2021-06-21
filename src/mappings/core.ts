@@ -19,7 +19,9 @@ import {
   updatePoolHourData,
   updateTokenHourData,
   updatePoolFiveMinuteData,
-  updateTickDayData
+  updateTickDayData,
+  updateTickHourData,
+  updateTickFiveMinuteData
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
 
@@ -40,6 +42,8 @@ function updateTickVars(tickId: i32, event: ethereum.Event): void {
     tick.save()
 
     updateTickDayData(tick!, event)
+    updateTickHourData(tick!, event)
+    updateTickFiveMinuteData(tick!, event)
   }
 }
 
