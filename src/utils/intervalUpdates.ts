@@ -180,6 +180,8 @@ export function updatePoolFiveMinuteData(event: ethereum.Event): PoolFiveMinuteD
   poolFiveMinuteData.sqrtPrice = pool.sqrtPrice
   poolFiveMinuteData.token0Price = pool.token0Price
   poolFiveMinuteData.token1Price = pool.token1Price
+  poolFiveMinuteData.feeGrowthGlobal0X128 = pool.feeGrowthGlobal0X128
+  poolFiveMinuteData.feeGrowthGlobal1X128 = pool.feeGrowthGlobal1X128
   poolFiveMinuteData.close = pool.token0Price;
   poolFiveMinuteData.tick = pool.tick
   poolFiveMinuteData.tvlUSD = pool.totalValueLockedUSD
