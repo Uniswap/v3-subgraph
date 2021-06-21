@@ -63,28 +63,7 @@ function updateFeeVars(position: Position, event: ethereum.Event, tokenId: BigIn
   }
   return position
 }
-
-function savePositionSnapshot(position: Position, event: ethereum.Event): void {
-  let positionSnapshot = new PositionSnapshot(position.id.concat('#').concat(event.block.number.toString()))
-  positionSnapshot.owner = position.owner
-  positionSnapshot.pool = position.pool
-  positionSnapshot.position = position.id
-  positionSnapshot.blockNumber = event.block.number
-  positionSnapshot.timestamp = event.block.timestamp
-  positionSnapshot.liquidity = position.liquidity
-  positionSnapshot.depositedToken0 = position.depositedToken0
-  positionSnapshot.depositedToken1 = position.depositedToken1
-  positionSnapshot.withdrawnToken0 = position.withdrawnToken0
-  positionSnapshot.withdrawnToken1 = position.withdrawnToken1
-  positionSnapshot.collectedFeesToken0 = position.collectedFeesToken0
-  positionSnapshot.collectedFeesToken1 = position.collectedFeesToken1
-  positionSnapshot.transaction = loadTransaction(event).id
-  positionSnapshot.feeGrowthInside0LastX128 = position.feeGrowthInside0LastX128
-  positionSnapshot.feeGrowthInside1LastX128 = position.feeGrowthInside1LastX128
-  positionSnapshot.save()
-}
-
-export function createPositionSnapshot(position: Position, event: ethereum.Event): void {
+export function savePositionSnapshot(position: Position, event: ethereum.Event): void {
   let timestamp = event.block.timestamp.toI32()
   let bundle = Bundle.load('1')
   let pool = Pool.load(position.pool)
@@ -95,7 +74,7 @@ export function createPositionSnapshot(position: Position, event: ethereum.Event
   let snapshot = new PositionSnapshot(position.id.concat(timestamp.toString()))
   snapshot.position = position.id
   snapshot.timestamp = timestamp
-  snapshot.block = event.block.number.toI32()
+  snapshot.blockNumber = event.block.number
   snapshot.owner = position.owner
   snapshot.pool = position.pool
   snapshot.token0PriceUSD = token0.derivedETH.times(bundle.ethPriceUSD)
@@ -112,6 +91,8 @@ export function createPositionSnapshot(position: Position, event: ethereum.Event
   snapshot.collectedFeesToken1 = position.collectedFeesToken1
   snapshot.tick = pool.tick
   snapshot.transaction = loadTransaction(event).id
+  snapshot.feeGrowthInside0LastX128 = position.feeGrowthInside0LastX128
+  snapshot.feeGrowthInside1LastX128 = position.feeGrowthInside1LastX128
   snapshot.save()
 }
 
