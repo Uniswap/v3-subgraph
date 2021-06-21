@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum, store, log } from '@graphprotocol/graph-ts'
 import {
   Mint as MintEvent,
   Burn as BurnEvent,
@@ -44,7 +44,8 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event): void {
     tick.feeGrowthOutside0X128 = tickResult.value2
     tick.feeGrowthOutside1X128 = tickResult.value3
 
-    let feeDivisor = pool.feeTier.div(BigInt.fromString('10000')).toBigDecimal();
+    let feeDivisor = pool.feeTier.toBigDecimal().div(BigDecimal.fromString('1000000'));
+    // log.warning("pool {}: fee tier {}, divisor: {}", [pool.id, pool.feeTier.toString(), feeDivisor.toString()])
 
     if (feeDivisor.gt(ZERO_BD)) {
       // Compute fees token0 and token1
@@ -67,36 +68,38 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event): void {
       tick.volumeUSD = tick.feesUSD.div(feeDivisor)
   
       tick.save()
-  
-      let tickDayData = updateTickDayData(tick!, event)
-      let tickHourData = updateTickHourData(tick!, event)
-      let tickFiveMinuteData = updateTickFiveMinuteData(tick!, event)
-  
-      tickDayData.volumeToken0 = tick.volumeToken0.minus(tickDayData.startingVolumeToken0)
-      tickDayData.volumeToken1 = tick.volumeToken0.minus(tickDayData.startingVolumeToken1)
-      tickDayData.volumeUSD = tick.volumeToken0.minus(tickDayData.startingVolumeUSD)
-      tickDayData.feesToken0 = tick.feesToken0.minus(tickDayData.startingFeesToken0)
-      tickDayData.feesToken1 = tick.feesToken0.minus(tickDayData.startingFeesToken1)
-      tickDayData.feesUSD = tick.feesToken0.minus(tickDayData.startingFeesUSD)
-  
-      tickHourData.volumeToken0 = tick.volumeToken0.minus(tickHourData.startingVolumeToken0)
-      tickHourData.volumeToken1 = tick.volumeToken0.minus(tickHourData.startingVolumeToken1)
-      tickHourData.volumeUSD = tick.volumeToken0.minus(tickHourData.startingVolumeUSD)
-      tickHourData.feesToken0 = tick.feesToken0.minus(tickHourData.startingFeesToken0)
-      tickHourData.feesToken1 = tick.feesToken0.minus(tickHourData.startingFeesToken1)
-      tickHourData.feesUSD = tick.feesToken0.minus(tickHourData.startingFeesUSD)
-  
-      tickFiveMinuteData.volumeToken0 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken0)
-      tickFiveMinuteData.volumeToken1 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken1)
-      tickFiveMinuteData.volumeUSD = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeUSD)
-      tickFiveMinuteData.feesToken0 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken0)
-      tickFiveMinuteData.feesToken1 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken1)
-      tickFiveMinuteData.feesUSD = tick.feesToken0.minus(tickFiveMinuteData.startingFeesUSD)
-  
-      tickDayData.save()
-      tickHourData.save()
-      tickFiveMinuteData.save()
+    } else {
+      log.warning("Not getting tick volume for {} at fee tier {}", [pool.id, pool.feeTier.toString()])
     }
+  
+    let tickDayData = updateTickDayData(tick!, event)
+    let tickHourData = updateTickHourData(tick!, event)
+    let tickFiveMinuteData = updateTickFiveMinuteData(tick!, event)
+
+    tickDayData.volumeToken0 = tick.volumeToken0.minus(tickDayData.startingVolumeToken0)
+    tickDayData.volumeToken1 = tick.volumeToken0.minus(tickDayData.startingVolumeToken1)
+    tickDayData.volumeUSD = tick.volumeToken0.minus(tickDayData.startingVolumeUSD)
+    tickDayData.feesToken0 = tick.feesToken0.minus(tickDayData.startingFeesToken0)
+    tickDayData.feesToken1 = tick.feesToken0.minus(tickDayData.startingFeesToken1)
+    tickDayData.feesUSD = tick.feesToken0.minus(tickDayData.startingFeesUSD)
+
+    tickHourData.volumeToken0 = tick.volumeToken0.minus(tickHourData.startingVolumeToken0)
+    tickHourData.volumeToken1 = tick.volumeToken0.minus(tickHourData.startingVolumeToken1)
+    tickHourData.volumeUSD = tick.volumeToken0.minus(tickHourData.startingVolumeUSD)
+    tickHourData.feesToken0 = tick.feesToken0.minus(tickHourData.startingFeesToken0)
+    tickHourData.feesToken1 = tick.feesToken0.minus(tickHourData.startingFeesToken1)
+    tickHourData.feesUSD = tick.feesToken0.minus(tickHourData.startingFeesUSD)
+
+    tickFiveMinuteData.volumeToken0 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken0)
+    tickFiveMinuteData.volumeToken1 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken1)
+    tickFiveMinuteData.volumeUSD = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeUSD)
+    tickFiveMinuteData.feesToken0 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken0)
+    tickFiveMinuteData.feesToken1 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken1)
+    tickFiveMinuteData.feesUSD = tick.feesToken0.minus(tickFiveMinuteData.startingFeesUSD)
+
+    tickDayData.save()
+    tickHourData.save()
+    tickFiveMinuteData.save()
   }
 }
 
