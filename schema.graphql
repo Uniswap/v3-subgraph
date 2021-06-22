@@ -89,6 +89,10 @@ type Pool @entity {
   liquidity: BigInt!
   # current price tracker
   sqrtPrice: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # token0 per token1
   token0Price: BigDecimal!
   # token1 per token0
@@ -164,6 +168,10 @@ type Tick @entity {
   volumeUSD: BigDecimal!
   # lifetime volume in untracked USD with this tick in range
   untrackedVolumeUSD: BigDecimal!
+  # fees accrued within tick
+  feesToken0: BigDecimal!
+  # fees accrued within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # all time collected fees in token0
@@ -180,6 +188,9 @@ type Tick @entity {
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # derived fields
   # swaps: [Swap!]! @derivedFrom(field: "tick")
+  # vars needed for fee computation
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
 }
 
 type Position @entity {
@@ -195,9 +206,9 @@ type Position @entity {
   # allow indexing by tokens
   token1: Token!
   # lower tick of the position
-  tickLower: BigInt!
+  tickLower: Tick!
   # upper tick of the position
-  tickUpper: BigInt!
+  tickUpper: Tick!
   # total position liquidity
   liquidity: BigInt!
   # amount of token 0 ever deposited to position
@@ -214,6 +225,9 @@ type Position @entity {
   collectedFeesToken1: BigDecimal!
   # tx in which the position was initialized
   transaction: Transaction!
+  # vars needed for fee computation
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
 }
 
 # saved over time for return calculations, gets created and never updated
@@ -224,7 +238,7 @@ type PositionSnapshot @entity {
   # saved for fast historical lookups
   timestamp: Int!
   # saved for fast historical lookups
-  block: Int!
+  blockNumber: BigInt!
   # owner of the position
   owner: Bytes!
   # reference to pool
@@ -257,6 +271,9 @@ type PositionSnapshot @entity {
   collectedFeesToken1: BigDecimal!
   # tx in which the position was initialized
   transaction: Transaction!
+  # internal vars needed for fee computation
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
 }
 
 type Transaction @entity {
@@ -476,6 +493,10 @@ type PoolFiveMinuteData @entity {
   close: BigDecimal!
   # current tick at end of period
   tick: BigInt
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
   tvlUSD: BigDecimal!
   # volume in token0
@@ -494,7 +515,7 @@ type PoolFiveMinuteData @entity {
 type PoolDayData @entity {
   # format: <pool address>-<timestamp>
   id: ID!
-  # timestamp rounded to current day by dividing by 86400
+  # unix timestamp for start of hour
   date: Int!
   # pointer to pool
   pool: Pool!
@@ -516,6 +537,10 @@ type PoolDayData @entity {
   close: BigDecimal!
   # current tick at end of period
   tick: BigInt
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
   tvlUSD: BigDecimal!
   # volume in token0
@@ -556,6 +581,10 @@ type PoolHourData @entity {
   close: BigDecimal!
   # current tick at end of period
   tick: BigInt
+  # tracker for global fee growth
+  feeGrowthGlobal0X128: BigInt!
+  # tracker for global fee growth
+  feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
   tvlUSD: BigDecimal!
   # volume in token0
@@ -579,10 +608,24 @@ type TickFiveMinuteData @entity {
   pool: Pool!
   # pointer to tick
   tick: Tick!
+  # index of the tick
+  tickIdx: BigInt!
   # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigDecimal!
+  liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigDecimal!
+  liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
@@ -591,6 +634,13 @@ type TickFiveMinuteData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
+  # vars needed for fee computation
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
 }
 
 type TickHourData @entity {
@@ -602,21 +652,43 @@ type TickHourData @entity {
   pool: Pool!
   # pointer to tick
   tick: Tick!
+  # index of the tick
+  tickIdx: BigInt!
   # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigDecimal!
+  liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigDecimal!
+  liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
+  # vars needed for fee computation
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
 }
 
 # Data accumulated and condensed into day stats for each exchange
+# Note: this entity gets saved only if there is a change during the day
 type TickDayData @entity {
   # format: <pool address>-<tick index>-<timestamp>
   id: ID!
@@ -626,18 +698,39 @@ type TickDayData @entity {
   pool: Pool!
   # pointer to tick
   tick: Tick!
+  # index of the tick
+  tickIdx: BigInt!
   # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigDecimal!
+  liquidityGross: BigInt!
   # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigDecimal!
+  liquidityNet: BigInt!
+  # hourly volume of token0 with this tick in range - at range start
+  startingVolumeToken0: BigDecimal!
+  # hourly volume of token1 with this tick in range - at range start
+  startingVolumeToken1: BigDecimal!
+  # hourly volume in derived USD with this tick in range - at range start
+  startingVolumeUSD: BigDecimal!
+  # fees in USD - at range start
+  startingFeesUSD: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken0: BigDecimal!
+  # fees collected within tick - at range start
+  startingFeesToken1: BigDecimal!
   # hourly volume of token0 with this tick in range
   volumeToken0: BigDecimal!
   # hourly volume of token1 with this tick in range
   volumeToken1: BigDecimal!
   # hourly volume in derived USD with this tick in range
   volumeUSD: BigDecimal!
+  # fees collected within tick
+  feesToken0: BigDecimal!
+  # fees collected within tick
+  feesToken1: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
+  # vars needed for fee computation
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
 }
 
 type TokenDayData @entity {

@@ -1,8 +1,15 @@
 /* eslint-disable prefer-const */
 import { Bundle, Pool, Token, Factory, Mint, Burn, Swap, Tick } from '../types/schema'
-import { BigDecimal, BigInt, log, store } from '@graphprotocol/graph-ts'
-import { Mint as MintEvent, Burn as BurnEvent, Swap as SwapEvent, Initialize } from '../types/templates/Pool/Pool'
-import { convertTokenToDecimal, loadTransaction } from '../utils'
+import { Pool as PoolABI } from '../types/Factory/Pool'
+import { BigDecimal, BigInt, ethereum, store, log } from '@graphprotocol/graph-ts'
+import {
+  Mint as MintEvent,
+  Burn as BurnEvent,
+  Swap as SwapEvent,
+  Flash as FlashEvent,
+  Initialize
+} from '../types/templates/Pool/Pool'
+import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
@@ -11,13 +18,123 @@ import {
   updateTokenDayData,
   updatePoolHourData,
   updateTokenHourData,
-  updatePoolFiveMinuteData
+  updatePoolFiveMinuteData,
+  updateTickDayData,
+  updateTickHourData,
+  updateTickFiveMinuteData
 } from '../utils/intervalUpdates'
-import { createTick } from '../utils/tick'
+import { createTick, feeTierToTickSpacing } from '../utils/tick'
+
+let Q128 = BigInt.fromString('2').pow(128).toBigDecimal();
+let MIN_TICK = -887282;
+
+function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: boolean): void {
+  let poolAddress = event.address
+  let tick = Tick.load(
+    poolAddress
+      .toHexString()
+      .concat('#')
+      .concat(tickId.toString())
+  )
+
+  let bundle = Bundle.load('1')
+  
+  if (tick !== null && isSwap) {
+    // not all ticks are initialized so obtaining null is expected behavior
+
+    // find previous tick - must iterate to get an initialized tick
+    let prevTickId = tickId;
+    let prevTick: Tick | null = null;
+    let tickSpacing = feeTierToTickSpacing(pool.feeTier).toI32();
+
+    while (!prevTick && prevTickId >= MIN_TICK) {
+      log.warning("could not find tick idx {}", [prevTickId.toString()])
+
+      // increment down to get a previous tick
+      prevTickId -= tickSpacing
+
+      prevTick = Tick.load(
+        poolAddress
+          .toHexString()
+          .concat('#')
+          .concat(prevTickId.toString())
+      )
+    }
+
+    if (!prevTick) {
+      log.error('Could not find previous tick in pool for event {}', [event.logType]);
+    }
+
+    let poolContract = PoolABI.bind(poolAddress)
+    let tickResult = poolContract.ticks(tickId)
+    tick.feeGrowthOutside0X128 = tickResult.value2
+    tick.feeGrowthOutside1X128 = tickResult.value3
+
+    let feeDivisor = pool.feeTier.toBigDecimal().div(BigDecimal.fromString('1000000'));
+    // log.warning("pool {}: fee tier {}, divisor: {}", [pool.id, pool.feeTier.toString(), feeDivisor.toString()])
+
+    if (feeDivisor.gt(ZERO_BD)) {
+      // Compute fees token0 and token1
+      let feesAbove0X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(tick.feeGrowthOutside0X128) : tick.feeGrowthOutside0X128
+      let feesBelow0X128 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(prevTick.feeGrowthOutside0X128) : prevTick.feeGrowthOutside0X128) : ZERO_BI
+      let feesToken0X128 = pool.feeGrowthGlobal0X128.minus(feesAbove0X128).minus(feesBelow0X128)
+      log.warning("pool {}: fee tier {}, fees global above below 128: {} {} {}, tick: {}", [pool.id, pool.feeTier.toString(), pool.feeGrowthGlobal0X128.toString(), feesAbove0X128.toString(), feesBelow0X128.toString(), tick.feeGrowthOutside0X128.toString()])
+      log.warning("pool {}: fee tier {}, fees token 0 x 128: {}", [pool.id, pool.feeTier.toString(), feesToken0X128.toString()])
+
+      tick.feesToken0 = feesToken0X128.toBigDecimal().div(Q128)
+      log.warning("pool {}: fee tier {}, fees token 0: {}", [pool.id, pool.feeTier.toString(), tick.feesToken0.toString()])
+
+      tick.volumeToken0 = tick.feesToken0.div(feeDivisor)
+      let feesToken0USD = Token.load(pool.token0).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken0)
+      
+      let feesAbove1X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(tick.feeGrowthOutside1X128) : tick.feeGrowthOutside1X128
+      let feesBelow1X128 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(prevTick.feeGrowthOutside1X128) : prevTick.feeGrowthOutside1X128) : ZERO_BI
+      let feesToken1X128 = pool.feeGrowthGlobal1X128.minus(feesAbove1X128).minus(feesBelow1X128)
+      tick.feesToken1 = feesToken1X128.toBigDecimal().div(Q128)
+      tick.volumeToken1 = tick.feesToken1.div(feeDivisor)
+      let feesToken1USD = Token.load(pool.token1).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken1)
+  
+      // Compute feesUSD based on prices
+      tick.feesUSD = feesToken0USD.plus(feesToken1USD)
+      tick.volumeUSD = tick.feesUSD.div(feeDivisor)
+  
+      tick.save()
+    } else {
+      log.warning("Not getting tick volume for {} at fee tier {}", [pool.id, pool.feeTier.toString()])
+    }
+  
+    let tickDayData = updateTickDayData(tick!, event)
+    let tickHourData = updateTickHourData(tick!, event)
+    let tickFiveMinuteData = updateTickFiveMinuteData(tick!, event)
+
+    tickDayData.volumeToken0 = tick.volumeToken0.minus(tickDayData.startingVolumeToken0)
+    tickDayData.volumeToken1 = tick.volumeToken0.minus(tickDayData.startingVolumeToken1)
+    tickDayData.volumeUSD = tick.volumeToken0.minus(tickDayData.startingVolumeUSD)
+    tickDayData.feesToken0 = tick.feesToken0.minus(tickDayData.startingFeesToken0)
+    tickDayData.feesToken1 = tick.feesToken0.minus(tickDayData.startingFeesToken1)
+    tickDayData.feesUSD = tick.feesToken0.minus(tickDayData.startingFeesUSD)
+
+    tickHourData.volumeToken0 = tick.volumeToken0.minus(tickHourData.startingVolumeToken0)
+    tickHourData.volumeToken1 = tick.volumeToken0.minus(tickHourData.startingVolumeToken1)
+    tickHourData.volumeUSD = tick.volumeToken0.minus(tickHourData.startingVolumeUSD)
+    tickHourData.feesToken0 = tick.feesToken0.minus(tickHourData.startingFeesToken0)
+    tickHourData.feesToken1 = tick.feesToken0.minus(tickHourData.startingFeesToken1)
+    tickHourData.feesUSD = tick.feesToken0.minus(tickHourData.startingFeesUSD)
+
+    tickFiveMinuteData.volumeToken0 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken0)
+    tickFiveMinuteData.volumeToken1 = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeToken1)
+    tickFiveMinuteData.volumeUSD = tick.volumeToken0.minus(tickFiveMinuteData.startingVolumeUSD)
+    tickFiveMinuteData.feesToken0 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken0)
+    tickFiveMinuteData.feesToken1 = tick.feesToken0.minus(tickFiveMinuteData.startingFeesToken1)
+    tickFiveMinuteData.feesUSD = tick.feesToken0.minus(tickFiveMinuteData.startingFeesUSD)
+
+    tickDayData.save()
+    tickHourData.save()
+    tickFiveMinuteData.save()
+  }
+}
 
 export function handleInitialize(event: Initialize): void {
-  log.debug('mynewbug initializing', [])
-
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
@@ -149,6 +266,9 @@ export function handleMint(event: MintEvent): void {
   updateTokenDayData(token1 as Token, event)
   updateTokenHourData(token0 as Token, event)
   updateTokenHourData(token1 as Token, event)
+  // Update inner tick vars
+  updateTickVars(pool!, event.params.tickLower, event, false)
+  updateTickVars(pool!, event.params.tickUpper, event, false)
 
   token0.save()
   token1.save()
@@ -256,12 +376,14 @@ export function handleBurn(event: BurnEvent): void {
   if (lowerTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', lowerTickId)
   } else {
+    updateTickVars(pool!, event.params.tickLower, event, false)
     lowerTick.save()
   }
 
   if (upperTick.liquidityGross.equals(ZERO_BI)) {
     store.remove('Tick', upperTickId)
   } else {
+    updateTickVars(pool!, event.params.tickUpper, event, false)
     upperTick.save()
   }
 
@@ -276,8 +398,16 @@ export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
   let factory = Factory.load(FACTORY_ADDRESS)
   let pool = Pool.load(event.address.toHexString())
+
+  // hot fix for bad pricing
+  if (pool.id == '0x9663f2ca0454accad3e094448ea6f77443880454') {
+    return
+  }
+
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
+
+  let oldTick = pool.tick!
 
   // amounts - 0/1 are token deltas: can be positive or negative
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -302,13 +432,7 @@ export function handleSwap(event: SwapEvent): void {
   let amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
     BigDecimal.fromString('2')
   )
-  let amountTotalETHTracked: BigDecimal;
-  if (bundle.ethPriceUSD.equals(ZERO_BD)) {
-    amountTotalETHTracked = ZERO_BD
-  } else {
-    amountTotalETHTracked = amountTotalUSDTracked.div(bundle.ethPriceUSD)
-  }
-
+  let amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
   let amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
   let feesETH = amountTotalETHTracked.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
@@ -401,6 +525,13 @@ export function handleSwap(event: SwapEvent): void {
   swap.sqrtPriceX96 = event.params.sqrtPriceX96
   swap.logIndex = event.logIndex
 
+  // update fee growth
+  let poolContract = PoolABI.bind(event.address)
+  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
+  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
+  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
+
   // interval data
   let uniswapDayData = updateUniswapDayData(event)
   let poolDayData = updatePoolDayData(event)
@@ -462,4 +593,47 @@ export function handleSwap(event: SwapEvent): void {
   pool.save()
   token0.save()
   token1.save()
+
+  // Update inner vars of current or crossed ticks
+  let newTick = pool.tick!
+  let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+  let modulo = newTick.mod(tickSpacing)
+  if (modulo.equals(ZERO_BI)) {
+    // Current tick is initialized and needs to be updated
+    updateTickVars(pool!, newTick.toI32(), event, true)
+  }
+
+  let numIters = oldTick
+    .minus(newTick)
+    .abs()
+    .div(tickSpacing)
+
+  if (numIters.gt(BigInt.fromI32(100))) {
+    // In case more than 100 ticks need to be updated ignore the update in
+    // order to avoid timeouts. From testing this behavior occurs only upon
+    // pool initialization. This should not be a big issue as the ticks get
+    // updated later. For early users this error also disappears when calling
+    // collect
+  } else if (newTick.gt(oldTick)) {
+    let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
+    for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
+      updateTickVars(pool!, i.toI32(), event, true)
+    }
+  } else if (newTick.lt(oldTick)) {
+    let firstInitialized = oldTick.minus(modulo)
+    for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
+      updateTickVars(pool!, i.toI32(), event, true)
+    }
+  }
+}
+
+export function handleFlash(event: FlashEvent): void {
+  // update fee growth
+  let pool = Pool.load(event.address.toHexString())
+  let poolContract = PoolABI.bind(event.address)
+  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
+  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
+  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
+  pool.save()
 }
