@@ -67,6 +67,7 @@ export function savePositionSnapshot(position: Position, event: ethereum.Event):
   let timestamp = event.block.timestamp.toI32()
   let bundle = Bundle.load('1')
   let pool = Pool.load(position.pool)
+  // log.warning("In handle transfer, pool token0 token1 {}", [position.pool, pool.token0, pool.token1])
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
@@ -187,8 +188,16 @@ export function handleTransfer(event: Transfer): void {
     return
   }
 
+  // Check if pool exists - if not, create
   position.owner = event.params.to
   position.save()
+
+  let pool = Pool.load(position.pool)
+  if (pool == null) {
+    log.warning("In handle transfer, tx hash, pool does not exist yet {}", [position.pool])
+    return
+  }
+
 
   savePositionSnapshot(position!, event)
 }
