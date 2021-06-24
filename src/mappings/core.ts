@@ -28,6 +28,10 @@ import { createTick, feeTierToTickSpacing } from '../utils/tick'
 let Q128 = BigInt.fromString('2').pow(128).toBigDecimal();
 let MIN_TICK = -887282;
 
+function q128ToBigDecimal(val: BigInt) {
+  return val.toBigDecimal().div(Q128);
+}
+
 function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: boolean): void {
   let poolAddress = event.address
   let tick = Tick.load(
@@ -75,25 +79,24 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: 
 
     if (feeDivisor.gt(ZERO_BD)) {
       // Compute fees token0 and token1
-      let feesAbove0X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(tick.feeGrowthOutside0X128) : tick.feeGrowthOutside0X128
-      let feesBelow0X128 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? pool.feeGrowthGlobal0X128.minus(prevTick.feeGrowthOutside0X128) : prevTick.feeGrowthOutside0X128) : ZERO_BI
-      let feesToken0X128 = pool.feeGrowthGlobal0X128.minus(feesAbove0X128).minus(feesBelow0X128)
-      log.warning("pool {}: fee tier {}, fees global above below 128: {} {} {}, tick: {}", [pool.id, pool.feeTier.toString(), pool.feeGrowthGlobal0X128.toString(), feesAbove0X128.toString(), feesBelow0X128.toString(), tick.feeGrowthOutside0X128.toString()])
-      log.warning("pool {}: fee tier {}, fees token 0 x 128: {}", [pool.id, pool.feeTier.toString(), feesToken0X128.toString()])
+      let poolFeeGrowth = q128ToBigDecimal(pool.feeGrowthGlobal0X128).times(pool.liquidity.toBigDecimal());
 
-      tick.feesToken0 = feesToken0X128.toBigDecimal().div(Q128)
-      log.warning("pool {}: fee tier {}, fees token 0: {}", [pool.id, pool.feeTier.toString(), tick.feesToken0.toString()])
-
+      let tickFeeGrowthOutside0 = q128ToBigDecimal(tick.feeGrowthOutside0X128).times(tick.liquidityGross.toBigDecimal());
+      let prevTickFeeGrowthOutside0 = q128ToBigDecimal(prevTick.feeGrowthOutside0X128).times(prevTick.liquidityGross.toBigDecimal());
+      let feesAbove0 = pool.tick.ge(tick.tickIdx) ? poolFeeGrowth.minus(tickFeeGrowthOutside0) : tickFeeGrowthOutside0
+      let feesBelow0 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? poolFeeGrowth.minus(prevTickFeeGrowthOutside0) : prevTickFeeGrowthOutside0) : ZERO_BD
+      tick.feesToken0 = poolFeeGrowth.minus(feesAbove0).minus(feesBelow0)
       tick.volumeToken0 = tick.feesToken0.div(feeDivisor)
       let feesToken0USD = Token.load(pool.token0).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken0)
       
-      let feesAbove1X128 = pool.tick.ge(tick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(tick.feeGrowthOutside1X128) : tick.feeGrowthOutside1X128
-      let feesBelow1X128 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? pool.feeGrowthGlobal1X128.minus(prevTick.feeGrowthOutside1X128) : prevTick.feeGrowthOutside1X128) : ZERO_BI
-      let feesToken1X128 = pool.feeGrowthGlobal1X128.minus(feesAbove1X128).minus(feesBelow1X128)
-      tick.feesToken1 = feesToken1X128.toBigDecimal().div(Q128)
+      let tickFeeGrowthOutside1 = q128ToBigDecimal(tick.feeGrowthOutside1X128).times(tick.liquidityGross.toBigDecimal());
+      let prevTickFeeGrowthOutside1 = q128ToBigDecimal(prevTick.feeGrowthOutside1X128).times(prevTick.liquidityGross.toBigDecimal());
+      let feesAbove1 = pool.tick.ge(tick.tickIdx) ? poolFeeGrowth.minus(tickFeeGrowthOutside1) : tickFeeGrowthOutside1
+      let feesBelow1 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? poolFeeGrowth.minus(prevTickFeeGrowthOutside1) : prevTickFeeGrowthOutside1) : ZERO_BD
+      tick.feesToken1 = poolFeeGrowth.minus(feesAbove1).minus(feesBelow1)
       tick.volumeToken1 = tick.feesToken1.div(feeDivisor)
       let feesToken1USD = Token.load(pool.token1).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken1)
-  
+
       // Compute feesUSD based on prices
       tick.feesUSD = feesToken0USD.plus(feesToken1USD)
       tick.volumeUSD = tick.feesUSD.div(feeDivisor)
