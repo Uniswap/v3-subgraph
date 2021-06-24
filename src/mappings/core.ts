@@ -254,20 +254,8 @@ export function handleBurn(event: BurnEvent): void {
   updateTokenDayData(token1 as Token, event)
   updateTokenHourData(token0 as Token, event)
   updateTokenHourData(token1 as Token, event)
-
-  // If liquidity gross is zero then there are no positions starting at or ending at the tick.
-  // It is now safe to remove the tick from the data store.
-  if (lowerTick.liquidityGross.equals(ZERO_BI)) {
-    store.remove('Tick', lowerTickId)
-  } else {
-    updateTickFeeVarsAndSave(lowerTick!, event)
-  }
-
-  if (upperTick.liquidityGross.equals(ZERO_BI)) {
-    store.remove('Tick', upperTickId)
-  } else {
-    updateTickFeeVarsAndSave(upperTick!, event)
-  }
+  updateTickFeeVarsAndSave(lowerTick!, event)
+  updateTickFeeVarsAndSave(upperTick!, event)
 
   token0.save()
   token1.save()
