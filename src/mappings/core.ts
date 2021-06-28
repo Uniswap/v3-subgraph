@@ -321,8 +321,8 @@ export function handleSwap(event: SwapEvent): void {
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(currentPoolTvlETH)
 
   // pool volume
-  pool.volumeToken0 = pool.volumeToken0.plus(amount0)
-  pool.volumeToken1 = pool.volumeToken1.plus(amount1)
+  pool.volumeToken0 = pool.volumeToken0.plus(amount0Abs)
+  pool.volumeToken1 = pool.volumeToken1.plus(amount1Abs)
   pool.volumeUSD = pool.volumeUSD.plus(amountTotalUSDTracked)
   pool.untrackedVolumeUSD = pool.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   pool.feesUSD = pool.feesUSD.plus(feesUSD)
