@@ -28,8 +28,12 @@ import { createTick, feeTierToTickSpacing } from '../utils/tick'
 let Q128 = BigInt.fromString('2').pow(128).toBigDecimal();
 let MIN_TICK = -887282;
 
-function q128ToBigDecimal(val: BigInt) {
-  return val.toBigDecimal().div(Q128);
+function q128ToBigDecimal(val: BigInt | null): BigDecimal {
+  if (val == null) {
+    return ZERO_BD;
+  } else {
+    return val.toBigDecimal().div(Q128);
+  }
 }
 
 function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: boolean): void {
@@ -71,6 +75,7 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: 
 
     let poolContract = PoolABI.bind(poolAddress)
     let tickResult = poolContract.ticks(tickId)
+    log.warning("tick results {} {}", [tickResult.value2.toString(), tickResult.value3.toString()])
     tick.feeGrowthOutside0X128 = tickResult.value2
     tick.feeGrowthOutside1X128 = tickResult.value3
 
@@ -82,7 +87,7 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: 
       let poolFeeGrowth = q128ToBigDecimal(pool.feeGrowthGlobal0X128).times(pool.liquidity.toBigDecimal());
 
       let tickFeeGrowthOutside0 = q128ToBigDecimal(tick.feeGrowthOutside0X128).times(tick.liquidityGross.toBigDecimal());
-      let prevTickFeeGrowthOutside0 = q128ToBigDecimal(prevTick.feeGrowthOutside0X128).times(prevTick.liquidityGross.toBigDecimal());
+      let prevTickFeeGrowthOutside0 = prevTick ? q128ToBigDecimal(prevTick.feeGrowthOutside0X128).times(prevTick.liquidityGross.toBigDecimal()) : ZERO_BD;
       let feesAbove0 = pool.tick.ge(tick.tickIdx) ? poolFeeGrowth.minus(tickFeeGrowthOutside0) : tickFeeGrowthOutside0
       let feesBelow0 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? poolFeeGrowth.minus(prevTickFeeGrowthOutside0) : prevTickFeeGrowthOutside0) : ZERO_BD
       tick.feesToken0 = poolFeeGrowth.minus(feesAbove0).minus(feesBelow0)
@@ -90,7 +95,7 @@ function updateTickVars(pool: Pool, tickId: i32, event: ethereum.Event, isSwap: 
       let feesToken0USD = Token.load(pool.token0).derivedETH.times(bundle.ethPriceUSD).times(tick.feesToken0)
       
       let tickFeeGrowthOutside1 = q128ToBigDecimal(tick.feeGrowthOutside1X128).times(tick.liquidityGross.toBigDecimal());
-      let prevTickFeeGrowthOutside1 = q128ToBigDecimal(prevTick.feeGrowthOutside1X128).times(prevTick.liquidityGross.toBigDecimal());
+      let prevTickFeeGrowthOutside1 = prevTick ? q128ToBigDecimal(prevTick.feeGrowthOutside1X128).times(prevTick.liquidityGross.toBigDecimal()) : ZERO_BD;
       let feesAbove1 = pool.tick.ge(tick.tickIdx) ? poolFeeGrowth.minus(tickFeeGrowthOutside1) : tickFeeGrowthOutside1
       let feesBelow1 = prevTick ? (pool.tick.lt(prevTick.tickIdx) ? poolFeeGrowth.minus(prevTickFeeGrowthOutside1) : prevTickFeeGrowthOutside1) : ZERO_BD
       tick.feesToken1 = poolFeeGrowth.minus(feesAbove1).minus(feesBelow1)
@@ -454,8 +459,8 @@ export function handleSwap(event: SwapEvent): void {
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(currentPoolTvlETH)
 
   // pool volume
-  pool.volumeToken0 = pool.volumeToken0.plus(amount0)
-  pool.volumeToken1 = pool.volumeToken1.plus(amount1)
+  pool.volumeToken0 = pool.volumeToken0.plus(amount0Abs)
+  pool.volumeToken1 = pool.volumeToken1.plus(amount1Abs)
   pool.volumeUSD = pool.volumeUSD.plus(amountTotalUSDTracked)
   pool.untrackedVolumeUSD = pool.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   pool.feesUSD = pool.feesUSD.plus(feesUSD)
