@@ -9,7 +9,9 @@ import {
   TokenDayData,
   TokenHourData,
   Bundle,
-  PoolHourData
+  PoolHourData,
+  TickDayData,
+  Tick
 } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum } from '@graphprotocol/graph-ts'
@@ -222,4 +224,30 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   tokenHourData.save()
 
   return tokenHourData as TokenHourData
+}
+
+export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayData {
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dayTickID = tick.id.concat('-').concat(dayID.toString())
+  let tickDayData = TickDayData.load(dayTickID)
+  if (tickDayData === null) {
+    tickDayData = new TickDayData(dayTickID)
+    tickDayData.date = dayStartTimestamp
+    tickDayData.pool = tick.pool
+  }
+  tickDayData.tick = tick.id
+  tickDayData.liquidityGross = tick.liquidityGross
+  tickDayData.liquidityNet = tick.liquidityNet
+  tickDayData.volumeToken0 = tick.volumeToken0
+  tickDayData.volumeToken1 = tick.volumeToken0
+  tickDayData.volumeUSD = tick.volumeUSD
+  tickDayData.feesUSD = tick.feesUSD
+  tickDayData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
+  tickDayData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
+
+  tickDayData.save()
+
+  return tickDayData as TickDayData
 }
