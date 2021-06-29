@@ -405,21 +405,11 @@ export function handleBurn(event: BurnEvent): void {
   updateTokenHourData(token0 as Token, event)
   updateTokenHourData(token1 as Token, event)
 
-  // If liquidity gross is zero then there are no positions starting at or ending at the tick.
-  // It is now safe to remove the tick from the data store.
-  if (lowerTick.liquidityGross.equals(ZERO_BI)) {
-    store.remove('Tick', lowerTickId)
-  } else {
-    updateTickVars(pool!, event.params.tickLower, event, false)
-    lowerTick.save()
-  }
+  updateTickVars(pool!, event.params.tickLower, event, false)
+  lowerTick.save()
 
-  if (upperTick.liquidityGross.equals(ZERO_BI)) {
-    store.remove('Tick', upperTickId)
-  } else {
-    updateTickVars(pool!, event.params.tickUpper, event, false)
-    upperTick.save()
-  }
+  updateTickVars(pool!, event.params.tickUpper, event, false)
+  upperTick.save()
 
   token0.save()
   token1.save()
@@ -632,11 +622,9 @@ export function handleSwap(event: SwapEvent): void {
   let newTick = pool.tick!
   let tickSpacing = feeTierToTickSpacing(pool.feeTier)
   let modulo = newTick.mod(tickSpacing)
-  if (modulo.equals(ZERO_BI)) {
-    log.warning("pool {}, Updating tick vars at tick {}", [pool.id, newTick.toString()])
-    // Current tick is initialized and needs to be updated
-    updateTickVars(pool!, newTick.toI32(), event, true)
-  }
+  log.warning("pool {}, Updating tick vars at tick {}", [pool.id, newTick.toString()])
+  // Current tick is initialized and needs to be updated
+  updateTickVars(pool!, newTick.toI32(), event, true)
 
   let numIters = oldTick
     .minus(newTick)
