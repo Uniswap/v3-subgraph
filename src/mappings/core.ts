@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum, log, store } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Flash as FlashEvent,
@@ -9,18 +9,118 @@ import {
   Mint as MintEvent,
   Swap as SwapEvent
 } from '../types/templates/Pool/Pool'
-import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { convertTokenToDecimal, loadTransaction, safeDiv, bigDecimalExponated, exponentToBigDecimal, getSqrtRatioAtTick } from '../utils'
+import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ONE_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
   updatePoolDayData,
   updatePoolHourData,
+  updatePoolFiveMinuteData,
   updateTickDayData,
+  updateTickHourData,
+  updateTickFiveMinuteData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData
+  updateUniswapDayData,
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
+
+function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
+  let poolAddress = event.address
+  // not all ticks are initialized so obtaining null is expected behavior
+  let poolContract = PoolABI.bind(poolAddress)
+  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
+  tick.feeGrowthOutside0X128 = tickResult.value2
+  tick.feeGrowthOutside1X128 = tickResult.value3
+  tick.save()
+}
+
+function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
+  let poolAddress = event.address
+  let tick = Tick.load(
+    poolAddress
+      .toHexString()
+      .concat('#')
+      .concat(tickId.toString())
+  )
+  if (tick !== null) {
+    updateTickFeeVarsAndSave(tick!, event)
+  }
+}
+
+function updateSingleTickVolume(
+  event: ethereum.Event,
+  tickId: i32, 
+  pool: Pool,
+  token0: Token,
+  token1: Token,
+  bundle: Bundle,
+  amount0Abs: BigDecimal, 
+  amount1Abs: BigDecimal
+): void {
+  let tick = Tick.load(
+    pool.id
+      .concat('#')
+      .concat(tickId.toString())
+  )
+
+  if (tick != null) {
+    // tick might not be initialized
+
+    let amount0ETH = amount0Abs.times(token0.derivedETH)
+    let amount1ETH = amount1Abs.times(token1.derivedETH)
+    let amount0USD = amount0ETH.times(bundle.ethPriceUSD)
+    let amount1USD = amount1ETH.times(bundle.ethPriceUSD)
+
+    // get amount that should be tracked only - div 2 because cant count both input and output as volume
+    let amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
+      BigDecimal.fromString('2')
+    )
+    let amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
+
+    let feesToken0 = amount0Abs.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
+    let feesToken1 = amount1Abs.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
+    let feesUSD = amountTotalUSDTracked.times(pool.feeTier.toBigDecimal()).div(BigDecimal.fromString('1000000'))
+
+    // tick volume
+    tick.volumeToken0 = tick.volumeToken0.plus(amount0Abs)
+    tick.volumeToken1 = tick.volumeToken1.plus(amount1Abs)
+    tick.volumeUSD = tick.volumeUSD.plus(amountTotalUSDTracked)
+    tick.untrackedVolumeUSD = tick.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
+    tick.feesToken0 = tick.feesToken0.plus(feesToken0)
+    tick.feesToken1 = tick.feesToken1.plus(feesToken1)
+    tick.feesUSD = tick.feesUSD.plus(feesUSD)
+
+    let tickDayData = updateTickDayData(tick!, event)
+    let tickHourData = updateTickHourData(tick!, event)
+    let tickFiveMinuteData = updateTickFiveMinuteData(tick!, event)
+
+    tickDayData.volumeUSD = tickDayData.volumeUSD.plus(amountTotalUSDTracked)
+    tickDayData.volumeToken0 = tickDayData.volumeToken0.plus(amount0Abs)
+    tickDayData.volumeToken1 = tickDayData.volumeToken1.plus(amount1Abs)
+    tickDayData.feesToken0 = tickDayData.feesToken0.plus(feesToken0)
+    tickDayData.feesToken1 = tickDayData.feesToken1.plus(feesToken1)
+    tickDayData.feesUSD = tickDayData.feesUSD.plus(feesUSD)
+
+    tickHourData.volumeUSD = tickHourData.volumeUSD.plus(amountTotalUSDTracked)
+    tickHourData.volumeToken0 = tickHourData.volumeToken0.plus(amount0Abs)
+    tickHourData.volumeToken1 = tickHourData.volumeToken1.plus(amount1Abs)
+    tickHourData.feesToken0 = tickHourData.feesToken0.plus(feesToken0)
+    tickHourData.feesToken1 = tickHourData.feesToken1.plus(feesToken1)
+    tickHourData.feesUSD = tickHourData.feesUSD.plus(feesUSD)
+
+    tickFiveMinuteData.volumeUSD = tickFiveMinuteData.volumeUSD.plus(amountTotalUSDTracked)
+    tickFiveMinuteData.volumeToken0 = tickFiveMinuteData.volumeToken0.plus(amount0Abs)
+    tickFiveMinuteData.volumeToken1 = tickFiveMinuteData.volumeToken1.plus(amount1Abs)
+    tickFiveMinuteData.feesToken0 = tickFiveMinuteData.feesToken0.plus(feesToken0)
+    tickFiveMinuteData.feesToken1 = tickFiveMinuteData.feesToken1.plus(feesToken1)
+    tickFiveMinuteData.feesUSD = tickFiveMinuteData.feesUSD.plus(feesUSD)
+
+    tickDayData.save()
+    tickHourData.save()
+    tickFiveMinuteData.save()
+  }
+}
 
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
@@ -37,6 +137,7 @@ export function handleInitialize(event: Initialize): void {
 
   updatePoolDayData(event)
   updatePoolHourData(event)
+  updatePoolFiveMinuteData(event)
 
   // update token prices
   token0.derivedETH = findEthPerToken(token0 as Token)
@@ -148,6 +249,7 @@ export function handleMint(event: MintEvent): void {
   updateUniswapDayData(event)
   updatePoolDayData(event)
   updatePoolHourData(event)
+  updatePoolFiveMinuteData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
   updateTokenHourData(token0 as Token, event)
@@ -278,6 +380,7 @@ export function handleSwap(event: SwapEvent): void {
   let token1 = Token.load(pool.token1)
 
   let oldTick = pool.tick!
+  let oldSqrtPrice = pool.sqrtPrice
 
   // amounts - 0/1 are token deltas: can be positive or negative
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -406,6 +509,7 @@ export function handleSwap(event: SwapEvent): void {
   let uniswapDayData = updateUniswapDayData(event)
   let poolDayData = updatePoolDayData(event)
   let poolHourData = updatePoolHourData(event)
+  let poolFiveMinuteData = updatePoolFiveMinuteData(event)
   let token0DayData = updateTokenDayData(token0 as Token, event)
   let token1DayData = updateTokenDayData(token1 as Token, event)
   let token0HourData = updateTokenHourData(token0 as Token, event)
@@ -425,6 +529,11 @@ export function handleSwap(event: SwapEvent): void {
   poolHourData.volumeToken0 = poolHourData.volumeToken0.plus(amount0Abs)
   poolHourData.volumeToken1 = poolHourData.volumeToken1.plus(amount1Abs)
   poolHourData.feesUSD = poolHourData.feesUSD.plus(feesUSD)
+
+  poolFiveMinuteData.volumeUSD = poolFiveMinuteData.volumeUSD.plus(amountTotalUSDTracked)
+  poolFiveMinuteData.volumeToken0 = poolFiveMinuteData.volumeToken0.plus(amount0Abs)
+  poolFiveMinuteData.volumeToken1 = poolFiveMinuteData.volumeToken1.plus(amount1Abs)
+  poolFiveMinuteData.feesUSD = poolFiveMinuteData.feesUSD.plus(feesUSD)
 
   token0DayData.volume = token0DayData.volume.plus(amount0Abs)
   token0DayData.volumeUSD = token0DayData.volumeUSD.plus(amountTotalUSDTracked)
@@ -451,6 +560,8 @@ export function handleSwap(event: SwapEvent): void {
   token1DayData.save()
   uniswapDayData.save()
   poolDayData.save()
+  poolHourData.save()
+  poolFiveMinuteData.save()
   factory.save()
   pool.save()
   token0.save()
@@ -458,33 +569,194 @@ export function handleSwap(event: SwapEvent): void {
 
   // Update inner vars of current or crossed ticks
   let newTick = pool.tick!
-  let tickSpacing = feeTierToTickSpacing(pool.feeTier)
-  let modulo = newTick.mod(tickSpacing)
-  if (modulo.equals(ZERO_BI)) {
-    // Current tick is initialized and needs to be updated
+
+  if (newTick === oldTick) {
+    // No ticks were crossed - so updating tick volume is easy
     loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
-  }
+    updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
+  } else {
+    // Ticks were crossed - need to figure out how much volume took place at each tick
+    let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+    let numTicksCrossed = oldTick
+      .minus(newTick)
+      .abs()
+      .div(tickSpacing)
 
-  let numIters = oldTick
-    .minus(newTick)
-    .abs()
-    .div(tickSpacing)
 
-  if (numIters.gt(BigInt.fromI32(100))) {
-    // In case more than 100 ticks need to be updated ignore the update in
-    // order to avoid timeouts. From testing this behavior occurs only upon
-    // pool initialization. This should not be a big issue as the ticks get
-    // updated later. For early users this error also disappears when calling
-    // collect
-  } else if (newTick.gt(oldTick)) {
-    let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
-    for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
-      loadTickUpdateFeeVarsAndSave(i.toI32(), event)
-    }
-  } else if (newTick.lt(oldTick)) {
-    let firstInitialized = oldTick.minus(modulo)
-    for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
-      loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+    if (numTicksCrossed.gt(BigInt.fromI32(100))) {
+      // In case more than 100 ticks need to be updated ignore the update in
+      // order to avoid timeouts. From testing this behavior occurs only upon
+      // pool initialization. This should not be a big issue as the ticks get
+      // updated later. For early users this error also disappears when calling
+      // collect
+      return
+    } 
+
+    // Figure out how much volume took place at each tick
+    let done = false
+    let amount0Remaining = amount0
+    let amount1Remaining = amount1
+    let currentTick = Tick.load(
+      pool.id
+        .concat('#')
+        .concat(oldTick.toString())
+    )
+    let currentSqrtPrice = oldSqrtPrice
+
+    if (newTick.gt(oldTick)) {
+      while (!done) {
+        if (!currentTick) {
+          // Skip this tick and try the next one
+          let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
+          let nextTick = Tick.load(
+            pool.id
+              .concat('#')
+              .concat(nextTickIdx.toString())
+          )
+          currentTick = nextTick
+        } else {
+          // Get liquidity of tick
+          let liquidity = currentTick.liquidityNet
+
+          if (liquidity.equals(ZERO_BI)) {
+            // Skip this tick and try the next one
+            let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
+            let nextTick = Tick.load(
+              pool.id
+                .concat('#')
+                .concat(nextTickIdx.toString())
+            )
+            currentTick = nextTick
+          } else {
+            // Figure out how to consume the tick amounts based on liquidity.
+            // Since we are moving ticks to the right, we are buying token0
+            // so amount0 should be negative.
+            // 
+            // We know the price delta and liquidity, we can compute the change in
+            // token1 and token0 amounts.
+            let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
+            let priceDelta = sqrtPrice.minus(currentSqrtPrice)
+    
+            let amount1 = priceDelta.times(liquidity)
+            let amount0 = ONE_BI.div(priceDelta).times(liquidity)
+    
+            // Track volume at tick with the new amounts
+            updateSingleTickVolume(
+              event,
+              currentTick.tickIdx.toI32(),
+              pool!,
+              token0!,
+              token1!,
+              bundle!,
+              amount0.abs().toBigDecimal(), 
+              amount1.abs().toBigDecimal()
+            )
+    
+            amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
+            amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
+    
+            if (amount0Remaining.le(ZERO_BD)) {
+              if (amount1Remaining.gt(ZERO_BD)) {
+                log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
+              }
+    
+              done = true
+            } else if (amount1Remaining.le(ZERO_BD)) {
+              if (amount0Remaining.gt(ZERO_BD)) {
+                log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
+              }
+    
+              done = true
+            } else {
+              // not done, so increment tick
+              let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
+              let nextTick = Tick.load(
+                pool.id
+                  .concat('#')
+                  .concat(nextTickIdx.toString())
+              )
+              currentTick = nextTick
+            }
+          }
+        }
+      }
+    } else if (newTick.lt(oldTick)) {
+      while (!done) {
+        if (!currentTick) {
+          // Skip this tick and try the next one
+          let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
+          let nextTick = Tick.load(
+            pool.id
+              .concat('#')
+              .concat(nextTickIdx.toString())
+          )
+          currentTick = nextTick
+        } else {
+          // Get liquidity of tick
+          let liquidity = currentTick.liquidityNet
+
+          if (liquidity.equals(ZERO_BI)) {
+            // Skip this tick and try the next one
+            let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
+            let nextTick = Tick.load(
+              pool.id
+                .concat('#')
+                .concat(nextTickIdx.toString())
+            )
+            currentTick = nextTick
+          } else {
+            // Figure out how to consume the tick amounts based on liquidity.
+            // Since we are moving ticks to the right, we are buying token0
+            // so amount0 should be negative.
+            // 
+            // We know the price delta and liquidity, we can compute the change in
+            // token1 and token0 amounts.
+            let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
+            let priceDelta = sqrtPrice.minus(currentSqrtPrice)
+
+            let amount1 = priceDelta.times(liquidity)
+            let amount0 = ONE_BI.div(priceDelta).times(liquidity)
+
+            // Track volume at tick with the new amounts
+            updateSingleTickVolume(
+              event,
+              currentTick.tickIdx.toI32(),
+              pool!,
+              token0!,
+              token1!,
+              bundle!,
+              amount0.abs().toBigDecimal(),
+              amount1.abs().toBigDecimal()
+            )
+
+            amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
+            amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
+
+            if (amount0Remaining.le(ZERO_BD)) {
+              if (amount1Remaining.gt(ZERO_BD)) {
+                log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
+              }
+
+              done = true
+            } else if (amount1Remaining.le(ZERO_BD)) {
+              if (amount0Remaining.gt(ZERO_BD)) {
+                log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
+              }
+
+              done = true
+            } else {
+              // not done, so increment tick
+              let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
+              let nextTick = Tick.load(
+                pool.id
+                  .concat('#')
+                  .concat(nextTickIdx.toString())
+              )
+              currentTick = nextTick
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -498,29 +770,4 @@ export function handleFlash(event: FlashEvent): void {
   pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
   pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
-}
-
-function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
-  let poolAddress = event.address
-  // not all ticks are initialized so obtaining null is expected behavior
-  let poolContract = PoolABI.bind(poolAddress)
-  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
-  tick.feeGrowthOutside0X128 = tickResult.value2
-  tick.feeGrowthOutside1X128 = tickResult.value3
-  tick.save()
-
-  updateTickDayData(tick!, event)
-}
-
-function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
-  let poolAddress = event.address
-  let tick = Tick.load(
-    poolAddress
-      .toHexString()
-      .concat('#')
-      .concat(tickId.toString())
-  )
-  if (tick !== null) {
-    updateTickFeeVarsAndSave(tick!, event)
-  }
 }
