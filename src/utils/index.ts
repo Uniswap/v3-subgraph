@@ -20,6 +20,14 @@ export function safeDiv(amount0: BigDecimal, amount1: BigDecimal): BigDecimal {
   }
 }
 
+export function safeDivBigInt(amount0: BigInt, amount1: BigInt): BigInt {
+  if (amount1.equals(ZERO_BI)) {
+    return ZERO_BI
+  } else {
+    return amount0.div(amount1)
+  }
+}
+
 export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecimal {
   if (power.equals(ZERO_BI)) {
     return ONE_BD
@@ -105,7 +113,7 @@ export function getSqrtRatioAtTick(tick: i32): BigInt {
   let ratio =
     (absTick & 0x1) != 0
       ? hexToBigInt('0xfffcb933bd6fad37aa2d162d1a594001')
-      : hexToBigInt('0x100000000000000000000000000000000')
+      : hexToBigInt('0x0100000000000000000000000000000000')
   if ((absTick & 0x2) != 0) ratio = ratio.times(hexToBigInt('0xfff97272373d413259a46990580e213a')).rightShift(128)
   if ((absTick & 0x4) != 0) ratio = ratio.times(hexToBigInt('0xfff2e50f5f656932ef12357cf3c7fdcc')).rightShift(128)
   if ((absTick & 0x8) != 0) ratio = ratio.times(hexToBigInt('0xffe5caca7e10e4e61c3624eaa0941cd0')).rightShift(128)
@@ -121,10 +129,10 @@ export function getSqrtRatioAtTick(tick: i32): BigInt {
   if ((absTick & 0x2000) != 0) ratio = ratio.times(hexToBigInt('0xa9f746462d870fdf8a65dc1f90e061e5')).rightShift(128)
   if ((absTick & 0x4000) != 0) ratio = ratio.times(hexToBigInt('0x70d869a156d2a1b890bb3df62baf32f7')).rightShift(128)
   if ((absTick & 0x8000) != 0) ratio = ratio.times(hexToBigInt('0x31be135f97d08fd981231505542fcfa6')).rightShift(128)
-  if ((absTick & 0x10000) != 0) ratio = ratio.times(hexToBigInt('0x9aa508b5b7a84e1c677de54f3e99bc9')).rightShift(128)
+  if ((absTick & 0x10000) != 0) ratio = ratio.times(hexToBigInt('0x09aa508b5b7a84e1c677de54f3e99bc9')).rightShift(128)
   if ((absTick & 0x20000) != 0) ratio = ratio.times(hexToBigInt('0x5d6af8dedb81196699c329225ee604')).rightShift(128)
   if ((absTick & 0x40000) != 0) ratio = ratio.times(hexToBigInt('0x2216e584f5fa1ea926041bedfe98')).rightShift(128)
-  if ((absTick & 0x80000) != 0) ratio = ratio.times(hexToBigInt('0x48a170391f7dc42444e8fa2')).rightShift(128)
+  if ((absTick & 0x80000) != 0) ratio = ratio.times(hexToBigInt('0x048a170391f7dc42444e8fa2')).rightShift(128)
 
   if (tick > 0) ratio = MaxUint256.div(ratio)
 

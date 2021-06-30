@@ -9,7 +9,7 @@ import {
   Mint as MintEvent,
   Swap as SwapEvent
 } from '../types/templates/Pool/Pool'
-import { convertTokenToDecimal, loadTransaction, safeDiv, bigDecimalExponated, exponentToBigDecimal, getSqrtRatioAtTick } from '../utils'
+import { convertTokenToDecimal, loadTransaction, safeDiv, bigDecimalExponated, exponentToBigDecimal, getSqrtRatioAtTick, safeDivBigInt } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ONE_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
@@ -24,6 +24,9 @@ import {
   updateUniswapDayData,
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
+
+let MAX_TICK = BigInt.fromI32(887282);
+let MIN_TICK = MAX_TICK.times(BigInt.fromI32(-1))
 
 function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
   let poolAddress = event.address
@@ -50,7 +53,7 @@ function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void 
 
 function updateSingleTickVolume(
   event: ethereum.Event,
-  tickId: i32, 
+  tickIdx: i32, 
   pool: Pool,
   token0: Token,
   token1: Token,
@@ -58,11 +61,16 @@ function updateSingleTickVolume(
   amount0Abs: BigDecimal, 
   amount1Abs: BigDecimal
 ): void {
-  let tick = Tick.load(
-    pool.id
-      .concat('#')
-      .concat(tickId.toString())
-  )
+  let tickId = pool.id
+  .concat('#')
+  .concat(tickIdx.toString())
+
+  let tick = Tick.load(tickId)
+
+  if (tick == null) {
+    // tick might not be initialized - create it
+    tick = createTick(tickId, tickIdx, pool.id, event)
+  }
 
   if (tick != null) {
     // tick might not be initialized
@@ -570,195 +578,190 @@ export function handleSwap(event: SwapEvent): void {
   // Update inner vars of current or crossed ticks
   let newTick = pool.tick!
 
-  if (newTick === oldTick) {
-    // No ticks were crossed - so updating tick volume is easy
-    loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
-    updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
-  } else {
-    // Ticks were crossed - need to figure out how much volume took place at each tick
-    let tickSpacing = feeTierToTickSpacing(pool.feeTier)
-    let numTicksCrossed = oldTick
-      .minus(newTick)
-      .abs()
-      .div(tickSpacing)
+  loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
+  updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
+
+  // if (newTick === oldTick) {
+  //   // No ticks were crossed - so updating tick volume is easy
+  //   loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
+  //   updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
+  // } else {
+  //   // Ticks were crossed - need to figure out how much volume took place at each tick
+  //   let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+  //   let numTicksCrossed = oldTick
+  //     .minus(newTick)
+  //     .abs()
+  //     .div(tickSpacing)
 
 
-    if (numTicksCrossed.gt(BigInt.fromI32(100))) {
-      // In case more than 100 ticks need to be updated ignore the update in
-      // order to avoid timeouts. From testing this behavior occurs only upon
-      // pool initialization. This should not be a big issue as the ticks get
-      // updated later. For early users this error also disappears when calling
-      // collect
-      return
-    } 
+  //   if (numTicksCrossed.gt(BigInt.fromI32(100).times(tickSpacing))) {
+  //     // In case more than 100 ticks need to be updated ignore the update in
+  //     // order to avoid timeouts. From testing this behavior occurs only upon
+  //     // pool initialization. This should not be a big issue as the ticks get
+  //     // updated later. For early users this error also disappears when calling
+  //     // collect
+  //     return
+  //   } 
 
-    // Figure out how much volume took place at each tick
-    let done = false
-    let amount0Remaining = amount0
-    let amount1Remaining = amount1
-    let currentTick = Tick.load(
-      pool.id
-        .concat('#')
-        .concat(oldTick.toString())
-    )
-    let currentSqrtPrice = oldSqrtPrice
+  //   // Figure out how much volume took place at each tick
+  //   let done = false
+  //   let amount0Remaining = amount0
+  //   let amount1Remaining = amount1
+  //   let currentTickIdx = oldTick
 
-    if (newTick.gt(oldTick)) {
-      while (!done) {
-        if (!currentTick) {
-          // Skip this tick and try the next one
-          let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
-          let nextTick = Tick.load(
-            pool.id
-              .concat('#')
-              .concat(nextTickIdx.toString())
-          )
-          currentTick = nextTick
-        } else {
-          // Get liquidity of tick
-          let liquidity = currentTick.liquidityNet
+  //   let currentSqrtPrice = oldSqrtPrice
 
-          if (liquidity.equals(ZERO_BI)) {
-            // Skip this tick and try the next one
-            let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
-            let nextTick = Tick.load(
-              pool.id
-                .concat('#')
-                .concat(nextTickIdx.toString())
-            )
-            currentTick = nextTick
-          } else {
-            // Figure out how to consume the tick amounts based on liquidity.
-            // Since we are moving ticks to the right, we are buying token0
-            // so amount0 should be negative.
-            // 
-            // We know the price delta and liquidity, we can compute the change in
-            // token1 and token0 amounts.
-            let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
-            let priceDelta = sqrtPrice.minus(currentSqrtPrice)
+  //   log.warning("WILL ATTEMPT TO LOOP TICKS", [])
+  //   if (newTick.gt(oldTick)) {
+  //     while (!done) {
+  //       log.warning("Trying index to the right {}", [currentTickIdx.toString()])
+  //       let currentTick = Tick.load(
+  //         pool.id
+  //           .concat('#')
+  //           .concat(currentTickIdx.toString())
+  //       )
+
+  //       if (!currentTick) {
+  //         // Skip this tick and try the next one
+  //         let nextTickIdx = currentTickIdx.plus(tickSpacing)
+  //         currentTickIdx = nextTickIdx
+  //       } else {
+  //         // Get liquidity of tick
+  //         let liquidity = currentTick.liquidityNet
+
+  //         if (liquidity.equals(ZERO_BI)) {
+  //           // Skip this tick and try the next one
+  //           let nextTickIdx = currentTickIdx.plus(tickSpacing)
+  //           currentTickIdx = nextTickIdx
+  //         } else {
+  //           // Figure out how to consume the tick amounts based on liquidity.
+  //           // Since we are moving ticks to the right, we are buying token0
+  //           // so amount0 should be negative.
+  //           // 
+  //           // We know the price delta and liquidity, we can compute the change in
+  //           // token1 and token0 amounts.
+  //           let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
+  //           let priceDelta = sqrtPrice.minus(currentSqrtPrice)
     
-            let amount1 = priceDelta.times(liquidity)
-            let amount0 = ONE_BI.div(priceDelta).times(liquidity)
+  //           let amount1 = priceDelta.times(liquidity)
+  //           let amount0 = safeDivBigInt(ONE_BI, priceDelta).times(liquidity)
     
-            // Track volume at tick with the new amounts
-            updateSingleTickVolume(
-              event,
-              currentTick.tickIdx.toI32(),
-              pool!,
-              token0!,
-              token1!,
-              bundle!,
-              amount0.abs().toBigDecimal(), 
-              amount1.abs().toBigDecimal()
-            )
+  //           // Track volume at tick with the new amounts
+  //           updateSingleTickVolume(
+  //             event,
+  //             currentTick.tickIdx.toI32(),
+  //             pool!,
+  //             token0!,
+  //             token1!,
+  //             bundle!,
+  //             amount0.abs().toBigDecimal(), 
+  //             amount1.abs().toBigDecimal()
+  //           )
     
-            amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
-            amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
+  //           amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
+  //           amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
     
-            if (amount0Remaining.le(ZERO_BD)) {
-              if (amount1Remaining.gt(ZERO_BD)) {
-                log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
-              }
+  //           if (amount0Remaining.le(ZERO_BD)) {
+  //             if (amount1Remaining.gt(ZERO_BD)) {
+  //               log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
+  //             }
     
-              done = true
-            } else if (amount1Remaining.le(ZERO_BD)) {
-              if (amount0Remaining.gt(ZERO_BD)) {
-                log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
-              }
+  //             done = true
+  //           } else if (amount1Remaining.le(ZERO_BD)) {
+  //             if (amount0Remaining.gt(ZERO_BD)) {
+  //               log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
+  //             }
     
-              done = true
-            } else {
-              // not done, so increment tick
-              let nextTickIdx = currentTick.tickIdx.plus(tickSpacing)
-              let nextTick = Tick.load(
-                pool.id
-                  .concat('#')
-                  .concat(nextTickIdx.toString())
-              )
-              currentTick = nextTick
-            }
-          }
-        }
-      }
-    } else if (newTick.lt(oldTick)) {
-      while (!done) {
-        if (!currentTick) {
-          // Skip this tick and try the next one
-          let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
-          let nextTick = Tick.load(
-            pool.id
-              .concat('#')
-              .concat(nextTickIdx.toString())
-          )
-          currentTick = nextTick
-        } else {
-          // Get liquidity of tick
-          let liquidity = currentTick.liquidityNet
+  //             done = true
+  //           } else {
+  //             // not done, so increment tick
+  //             let nextTickIdx = currentTickIdx.plus(tickSpacing)
+  //             currentTickIdx = nextTickIdx
+  //           }
+  //         }
+  //       }
 
-          if (liquidity.equals(ZERO_BI)) {
-            // Skip this tick and try the next one
-            let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
-            let nextTick = Tick.load(
-              pool.id
-                .concat('#')
-                .concat(nextTickIdx.toString())
-            )
-            currentTick = nextTick
-          } else {
-            // Figure out how to consume the tick amounts based on liquidity.
-            // Since we are moving ticks to the right, we are buying token0
-            // so amount0 should be negative.
-            // 
-            // We know the price delta and liquidity, we can compute the change in
-            // token1 and token0 amounts.
-            let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
-            let priceDelta = sqrtPrice.minus(currentSqrtPrice)
+  //       if (currentTickIdx.gt(oldTick.plus(BigInt.fromI32(100)))) {
+  //         log.warning("Could not find adjacent tick to the right for tx {}", [event.transaction.hash.toHexString()])
+  //         done = true
+  //       }
+  //     }
+  //   } else if (newTick.lt(oldTick)) {
+  //     while (!done) {
+  //       log.warning("Trying index to the left {}", [currentTickIdx.toString()])
+  //       let currentTick = Tick.load(
+  //         pool.id
+  //           .concat('#')
+  //           .concat(currentTickIdx.toString())
+  //       )
 
-            let amount1 = priceDelta.times(liquidity)
-            let amount0 = ONE_BI.div(priceDelta).times(liquidity)
+  //       if (!currentTick) {
+  //         // Skip this tick and try the next one
+  //         let nextTickIdx = currentTickIdx.minus(tickSpacing)
+  //         currentTickIdx = nextTickIdx
+  //       } else {
+  //         // Get liquidity of tick
+  //         let liquidity = currentTick.liquidityNet
 
-            // Track volume at tick with the new amounts
-            updateSingleTickVolume(
-              event,
-              currentTick.tickIdx.toI32(),
-              pool!,
-              token0!,
-              token1!,
-              bundle!,
-              amount0.abs().toBigDecimal(),
-              amount1.abs().toBigDecimal()
-            )
+  //         if (liquidity.equals(ZERO_BI)) {
+  //           // Skip this tick and try the next one
+  //           let nextTickIdx = currentTickIdx.minus(tickSpacing)
+  //           currentTickIdx = nextTickIdx
+  //         } else {
+  //           // Figure out how to consume the tick amounts based on liquidity.
+  //           // Since we are moving ticks to the right, we are buying token0
+  //           // so amount0 should be negative.
+  //           // 
+  //           // We know the price delta and liquidity, we can compute the change in
+  //           // token1 and token0 amounts.
+  //           let sqrtPrice = getSqrtRatioAtTick(currentTick.tickIdx.toI32())
+  //           let priceDelta = sqrtPrice.minus(currentSqrtPrice)
 
-            amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
-            amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
+  //           let amount1 = priceDelta.times(liquidity)
+  //           let amount0 = safeDivBigInt(ONE_BI, priceDelta).times(liquidity)
 
-            if (amount0Remaining.le(ZERO_BD)) {
-              if (amount1Remaining.gt(ZERO_BD)) {
-                log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
-              }
+  //           // Track volume at tick with the new amounts
+  //           updateSingleTickVolume(
+  //             event,
+  //             currentTick.tickIdx.toI32(),
+  //             pool!,
+  //             token0!,
+  //             token1!,
+  //             bundle!,
+  //             amount0.abs().toBigDecimal(),
+  //             amount1.abs().toBigDecimal()
+  //           )
 
-              done = true
-            } else if (amount1Remaining.le(ZERO_BD)) {
-              if (amount0Remaining.gt(ZERO_BD)) {
-                log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
-              }
+  //           amount0Remaining = amount0Remaining.minus(amount0.toBigDecimal())
+  //           amount1Remaining = amount1Remaining.minus(amount1.toBigDecimal())
 
-              done = true
-            } else {
-              // not done, so increment tick
-              let nextTickIdx = currentTick.tickIdx.minus(tickSpacing)
-              let nextTick = Tick.load(
-                pool.id
-                  .concat('#')
-                  .concat(nextTickIdx.toString())
-              )
-              currentTick = nextTick
-            }
-          }
-        }
-      }
-    }
-  }
+  //           if (amount0Remaining.le(ZERO_BD)) {
+  //             if (amount1Remaining.gt(ZERO_BD)) {
+  //               log.warning("Finished consuming amount0 with {} amount1 remaining", [amount1Remaining.toString()])
+  //             }
+
+  //             done = true
+  //           } else if (amount1Remaining.le(ZERO_BD)) {
+  //             if (amount0Remaining.gt(ZERO_BD)) {
+  //               log.warning("Finished consuming amount1 with {} amount0 remaining", [amount0Remaining.toString()])
+  //             }
+
+  //             done = true
+  //           } else {
+  //             // not done, so increment tick
+  //             let nextTickIdx = currentTickIdx.minus(tickSpacing)
+  //             currentTickIdx = nextTickIdx
+  //           }
+  //         }
+  //       }
+
+  //       if (currentTickIdx.lt(oldTick.minus(BigInt.fromI32(100).times(tickSpacing)))) {
+  //         log.warning("Could not find adjacent tick to the left for tx {}", [event.transaction.hash.toHexString()])
+  //         done = true
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 export function handleFlash(event: FlashEvent): void {
