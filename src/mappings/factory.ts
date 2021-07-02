@@ -16,7 +16,7 @@ export function handlePoolCreated(event: PoolCreated): void {
 
   // load factory
   let factory = Factory.load(FACTORY_ADDRESS)
-  if (factory === null) {
+  if (factory == null) {
     factory = new Factory(FACTORY_ADDRESS)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
@@ -44,7 +44,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   let token1 = Token.load(event.params.token1.toHexString())
 
   // fetch info if null
-  if (token0 === null) {
+  if (token0 == null) {
     token0 = new Token(event.params.token0.toHexString())
     token0.symbol = fetchTokenSymbol(event.params.token0)
     token0.name = fetchTokenName(event.params.token0)
@@ -52,7 +52,7 @@ export function handlePoolCreated(event: PoolCreated): void {
     let decimals = fetchTokenDecimals(event.params.token0)
 
     // bail if we couldn't figure out the decimals
-    if (decimals === null) {
+    if (!decimals) {
       log.debug('mybug the decimal on token 0 was null', [])
       return
     }
@@ -71,14 +71,14 @@ export function handlePoolCreated(event: PoolCreated): void {
     token0.whitelistPools = []
   }
 
-  if (token1 === null) {
+  if (token1 == null) {
     token1 = new Token(event.params.token1.toHexString())
     token1.symbol = fetchTokenSymbol(event.params.token1)
     token1.name = fetchTokenName(event.params.token1)
     token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
     let decimals = fetchTokenDecimals(event.params.token1)
     // bail if we couldn't figure out the decimals
-    if (decimals === null) {
+    if (!decimals) {
       log.debug('mybug the decimal on token 0 was null', [])
       return
     }
