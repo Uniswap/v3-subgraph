@@ -72,12 +72,14 @@ export function savePositionSnapshot(position: Position, event: ethereum.Event):
   let token1 = Token.load(pool.token1)
 
   // create new snapshot
-  let snapshot = new PositionSnapshot(position.id.concat(timestamp.toString()))
+  let snapshot = new PositionSnapshot(position.id.concat("#").concat(timestamp.toString()))
   snapshot.position = position.id
   snapshot.timestamp = timestamp
   snapshot.blockNumber = event.block.number
   snapshot.owner = position.owner
   snapshot.pool = position.pool
+  snapshot.token0Price = pool.token0Price
+  snapshot.token1Price = pool.token1Price
   snapshot.token0PriceUSD = token0.derivedETH.times(bundle.ethPriceUSD)
   snapshot.token1PriceUSD = token1.derivedETH.times(bundle.ethPriceUSD)
   snapshot.sqrtPrice = pool.sqrtPrice

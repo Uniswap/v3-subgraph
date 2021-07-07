@@ -244,6 +244,10 @@ type PositionSnapshot @entity {
   # reference to pool
   pool: Pool! 
   # snapshot of token0 price
+  token0Price: BigDecimal!
+  # snapshot of token1 price
+  token1Price: BigDecimal! 
+  # snapshot of token0 price
   token0PriceUSD: BigDecimal!
   # snapshot of token1 price
   token1PriceUSD: BigDecimal! 
