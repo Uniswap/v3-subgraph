@@ -579,7 +579,9 @@ export function handleSwap(event: SwapEvent): void {
   let newTick = pool.tick!
 
   loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
-  updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
+
+  // Removing to make subgraphs syncing faster
+  // updateSingleTickVolume(event, newTick.toI32(), pool!, token0!, token1!, bundle!, amount0Abs, amount1Abs)
 }
 
 export function handleFlash(event: FlashEvent): void {
