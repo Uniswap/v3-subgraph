@@ -158,7 +158,7 @@ type Tick @entity {
   liquidityNet: BigInt!
   # calculated price of token0 of tick within this pool - constant
   price0: BigDecimal!
-  # calculated price of token0 of tick within this pool - constant
+  # calculated price of token1 of tick within this pool - constant
   price1: BigDecimal!
   # lifetime volume of token0 with this tick in range
   volumeToken0: BigDecimal!
