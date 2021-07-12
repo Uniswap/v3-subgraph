@@ -19,10 +19,10 @@ export function createTick(tickId: string, tickIdx: i32, poolId: string, event: 
   tick.price0 = ONE_BD
   tick.price1 = ONE_BD
 
-  // 1.0001^tick is token1/token0.
-  let price0 = bigDecimalExponated(BigDecimal.fromString('1.0001'), BigInt.fromI32(tickIdx))
-  tick.price0 = price0
-  tick.price1 = safeDiv(ONE_BD, price0)
+  // 1.0001^tick is token0/token1.
+  let price1 = bigDecimalExponated(BigDecimal.fromString('1.0001'), BigInt.fromI32(tickIdx))
+  tick.price1 = price1
+  tick.price0 = safeDiv(ONE_BD, price1)
 
   tick.volumeToken0 = ZERO_BD
   tick.volumeToken1 = ZERO_BD
