@@ -9,7 +9,7 @@ import {
   Mint as MintEvent,
   Swap as SwapEvent
 } from '../types/templates/Pool/Pool'
-import { convertTokenToDecimal, loadTransaction, safeDiv, bigDecimalExponated, exponentToBigDecimal, getSqrtRatioAtTick, safeDivBigInt } from '../utils'
+import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ONE_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {

@@ -1,0 +1,1822 @@
+{
+    "5157": {
+        "position": {
+            "__typename": "Position",
+            "id": "5157",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                    "name": "Dai Stablecoin",
+                    "symbol": "DAI",
+                    "decimals": "18",
+                    "derivedETH": "0.0002903242484077945298117541295179109"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "3444.424657892793254260306574622553",
+                "token1Price": "0.0002903242484077945298117541295179109",
+                "sqrtPrice": "1349961052588333342878291182",
+                "liquidity": "1517363236128088171248346"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-81720",
+                "tickIdx": "-81720",
+                "price0": "0.0002825679720655361893707441693042492",
+                "price1": "3538.971500167291760820542628673383"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                "tickIdx": "-75180",
+                "price0": "0.0005434221363464856595505854755888673",
+                "price1": "1840.190034810066224630973366965126"
+            },
+            "liquidity": "0",
+            "depositedToken0": "499.999999999999999998",
+            "depositedToken1": "0",
+            "withdrawnToken0": "499.999999999999999997",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "499.999999999999999997",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "5006877603352851995865566646810381410",
+            "feeGrowthInside1LastX128": "1095548246608689990053788750283155",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x346890d8899d50247072a633ef27fd76bfda7b732eb5394324cb27a64a2d3812",
+                "gasUsed": "923748",
+                "gasPrice": "85000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "51571620321547",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.424657892793254260306574622553",
+                        "token1Price": "0.0002903242484077945298117541295179109",
+                        "sqrtPrice": "1349961052588333342878291182",
+                        "liquidity": "1517363236128088171248346"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-81720",
+                        "tickIdx": "-81720",
+                        "price0": "0.0002825679720655361893707441693042492",
+                        "price1": "3538.971500167291760820542628673383"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                        "tickIdx": "-75180",
+                        "price0": "0.0005434221363464856595505854755888673",
+                        "price1": "1840.190034810066224630973366965126"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "499.999999999999999998",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "499.999999999999999997",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "499.999999999999999997",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "5006877603352851995865566646810381410",
+                    "feeGrowthInside1LastX128": "1095548246608689990053788750283155"
+                },
+                "timestamp": 1620321547,
+                "token0PriceUSD": "1.000546575240701385943731700081397",
+                "token1PriceUSD": "3575.949342804399726016778311316505",
+                "liquidity": "603377832936104294722726",
+                "sqrtPrice": "1324185156877948612817187183",
+                "depositedToken0": "499.999999999999999998",
+                "depositedToken1": "0",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            },
+            {
+                "__typename": "PositionSnapshot",
+                "id": "51571620323396",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.424657892793254260306574622553",
+                        "token1Price": "0.0002903242484077945298117541295179109",
+                        "sqrtPrice": "1349961052588333342878291182",
+                        "liquidity": "1517363236128088171248346"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-81720",
+                        "tickIdx": "-81720",
+                        "price0": "0.0002825679720655361893707441693042492",
+                        "price1": "3538.971500167291760820542628673383"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                        "tickIdx": "-75180",
+                        "price0": "0.0005434221363464856595505854755888673",
+                        "price1": "1840.190034810066224630973366965126"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "499.999999999999999998",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "499.999999999999999997",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "499.999999999999999997",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "5006877603352851995865566646810381410",
+                    "feeGrowthInside1LastX128": "1095548246608689990053788750283155"
+                },
+                "timestamp": 1620323396,
+                "token0PriceUSD": "1.000518314730704166792963863613638",
+                "token1PriceUSD": "3578.887184118864962160775322141468",
+                "liquidity": "601228762068060781154769",
+                "sqrtPrice": "1324916246535129514052974759",
+                "depositedToken0": "499.999999999999999998",
+                "depositedToken1": "0",
+                "withdrawnToken0": "499.999999999999999997",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "499.999999999999999997",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "923748",
+            "gasPrice": "8.5e-8",
+            "token0Amount": "0",
+            "token1Amount": "0",
+            "usdAmount": "0",
+            "entryToken0Amount": "0",
+            "entryToken1Amount": "0",
+            "entryUsdAmount": "0",
+            "collectedFees0": "499.999999999999999997",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "499.6534649135689483423528191676346719526218533594518594124424187356548326644422085051053",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "499.6534649135689483423528191676346719526218533594518594124424187356548326644422085051053",
+            "txFees": "0.07851858",
+            "txFeesUSD": "270.26389130257689200493928230507069451338",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "229.3895736109920563374135368625639774392418533594518594124424187356548326644422085051053",
+            "pctReturn": "Infinity",
+            "apy": "Infinity"
+        }
+    },
+    "5241": {
+        "position": {
+            "__typename": "Position",
+            "id": "5241",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                    "name": "Dai Stablecoin",
+                    "symbol": "DAI",
+                    "decimals": "18",
+                    "derivedETH": "0.0002903242484077945298117541295179109"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "3444.424657892793254260306574622553",
+                "token1Price": "0.0002903242484077945298117541295179109",
+                "sqrtPrice": "1349961052588333342878291182",
+                "liquidity": "1517363236128088171248346"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-82860",
+                "tickIdx": "-82860",
+                "price0": "0.0002521249581653988047206085898530224",
+                "price1": "3966.287222322435981324968010872022"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                "tickIdx": "-75180",
+                "price0": "0.0005434221363464856595505854755888673",
+                "price1": "1840.190034810066224630973366965126"
+            },
+            "liquidity": "0",
+            "depositedToken0": "498.999999999999999988",
+            "depositedToken1": "0.024929088288946294",
+            "withdrawnToken0": "455.539864421533001839",
+            "withdrawnToken1": "0.037389520535348853",
+            "collectedFeesToken0": "465.440866148578407003",
+            "collectedFeesToken1": "0.040147410668984649",
+            "feeGrowthInside0LastX128": "119697776461153054507413854045319302651",
+            "feeGrowthInside1LastX128": "33072683004832966341005730940407899",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x218d8fafcf85399b6832d9760721a20b69293909fc7d533f57c29934e16d670f",
+                "gasUsed": "923748",
+                "gasPrice": "58000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "52411620323535",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.424657892793254260306574622553",
+                        "token1Price": "0.0002903242484077945298117541295179109",
+                        "sqrtPrice": "1349961052588333342878291182",
+                        "liquidity": "1517363236128088171248346"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-82860",
+                        "tickIdx": "-82860",
+                        "price0": "0.0002521249581653988047206085898530224",
+                        "price1": "3966.287222322435981324968010872022"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                        "tickIdx": "-75180",
+                        "price0": "0.0005434221363464856595505854755888673",
+                        "price1": "1840.190034810066224630973366965126"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "498.999999999999999988",
+                    "depositedToken1": "0.024929088288946294",
+                    "withdrawnToken0": "455.539864421533001839",
+                    "withdrawnToken1": "0.037389520535348853",
+                    "collectedFeesToken0": "465.440866148578407003",
+                    "collectedFeesToken1": "0.040147410668984649",
+                    "feeGrowthInside0LastX128": "119697776461153054507413854045319302651",
+                    "feeGrowthInside1LastX128": "33072683004832966341005730940407899"
+                },
+                "timestamp": 1620323535,
+                "token0PriceUSD": "1.000518314730704166792963863613638",
+                "token1PriceUSD": "3579.172986200840746616922435580434",
+                "liquidity": "601258286628058591980374",
+                "sqrtPrice": "1324916246535129514052974759",
+                "depositedToken0": "498.999999999999999988",
+                "depositedToken1": "0.024929088288946294",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            },
+            {
+                "__typename": "PositionSnapshot",
+                "id": "52411621283070",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.424657892793254260306574622553",
+                        "token1Price": "0.0002903242484077945298117541295179109",
+                        "sqrtPrice": "1349961052588333342878291182",
+                        "liquidity": "1517363236128088171248346"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-82860",
+                        "tickIdx": "-82860",
+                        "price0": "0.0002521249581653988047206085898530224",
+                        "price1": "3966.287222322435981324968010872022"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8#-75180",
+                        "tickIdx": "-75180",
+                        "price0": "0.0005434221363464856595505854755888673",
+                        "price1": "1840.190034810066224630973366965126"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "498.999999999999999988",
+                    "depositedToken1": "0.024929088288946294",
+                    "withdrawnToken0": "455.539864421533001839",
+                    "withdrawnToken1": "0.037389520535348853",
+                    "collectedFeesToken0": "465.440866148578407003",
+                    "collectedFeesToken1": "0.040147410668984649",
+                    "feeGrowthInside0LastX128": "119697776461153054507413854045319302651",
+                    "feeGrowthInside1LastX128": "33072683004832966341005730940407899"
+                },
+                "timestamp": 1621283070,
+                "token0PriceUSD": "1.002214120482802169871120919799242",
+                "token1PriceUSD": "3409.527035995227174738482921931508",
+                "liquidity": "1974228385063459005246408",
+                "sqrtPrice": "1358353396863166973697728774",
+                "depositedToken0": "498.999999999999999988",
+                "depositedToken1": "0.024929088288946294",
+                "withdrawnToken0": "455.539864421533001839",
+                "withdrawnToken1": "0.037389520535348853",
+                "collectedFeesToken0": "465.440866148578407003",
+                "collectedFeesToken1": "0.040147410668984649"
+            }
+        ],
+        "stats": {
+            "gasUsed": "923748",
+            "gasPrice": "5.8e-8",
+            "token0Amount": "0",
+            "token1Amount": "0",
+            "usdAmount": "0",
+            "entryToken0Amount": "0",
+            "entryToken1Amount": "0",
+            "entryUsdAmount": "0",
+            "collectedFees0": "465.440866148578407003",
+            "collectedFees1": "0.040147410668984649",
+            "collectedFeesUSD": "603.3071732032209269955887963553006487833561428871149118161589585624067885221588444091947",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "603.3071732032209269955887963553006487833561428871149118161589585624067885221588444091947",
+            "txFees": "0.053577384",
+            "txFeesUSD": "184.415361124111291015135039690518826844424",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "418.8918120791096359804537566647818219389321428871149118161589585624067885221588444091947",
+            "pctReturn": "Infinity",
+            "apy": "Infinity"
+        }
+    },
+    "6123": {
+        "position": {
+            "__typename": "Position",
+            "id": "6123",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                    "name": "Uniswap",
+                    "symbol": "UNI",
+                    "decimals": "18",
+                    "derivedETH": "0.01028019699122541117765330865905976"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "97.27440056387468721545409293422271",
+                "token1Price": "0.01028019699122541117765330865905976",
+                "sqrtPrice": "8033046892290494100853782456",
+                "liquidity": "2576046663984615872077556"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44580",
+                "tickIdx": "-44580",
+                "price0": "0.01158809368027538248374277038741101",
+                "price1": "86.29547081606227909877589227508541"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                "tickIdx": "-41280",
+                "price0": "0.01611840304080051178285074105539535",
+                "price1": "62.04088565527863485007221495620371"
+            },
+            "liquidity": "0",
+            "depositedToken0": "10",
+            "depositedToken1": "0",
+            "withdrawnToken0": "9.999999999999999999",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "9.999999999999999999",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "307197740937499763432495377387733750",
+            "feeGrowthInside1LastX128": "1031921744969495060272060515583251",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x4cfdde06ed04136eeaec93944a63c068480aacd79bee132f7306809eb6350d67",
+                "gasUsed": "923684",
+                "gasPrice": "49000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "61231620351051",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                            "name": "Uniswap",
+                            "symbol": "UNI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "97.27440056387468721545409293422271",
+                        "token1Price": "0.01028019699122541117765330865905976",
+                        "sqrtPrice": "8033046892290494100853782456",
+                        "liquidity": "2576046663984615872077556"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44580",
+                        "tickIdx": "-44580",
+                        "price0": "0.01158809368027538248374277038741101",
+                        "price1": "86.29547081606227909877589227508541"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                        "tickIdx": "-41280",
+                        "price0": "0.01611840304080051178285074105539535",
+                        "price1": "62.04088565527863485007221495620371"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "10",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "9.999999999999999999",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "9.999999999999999999",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "307197740937499763432495377387733750",
+                    "feeGrowthInside1LastX128": "1031921744969495060272060515583251"
+                },
+                "timestamp": 1620351051,
+                "token0PriceUSD": "39.86858140225377887096379779690526",
+                "token1PriceUSD": "3481.962339789609760714944564912106",
+                "liquidity": "575240812524680681914219",
+                "sqrtPrice": "8477795579079657441580291728",
+                "depositedToken0": "10",
+                "depositedToken1": "0",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            },
+            {
+                "__typename": "PositionSnapshot",
+                "id": "61231620354208",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                            "name": "Uniswap",
+                            "symbol": "UNI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "97.27440056387468721545409293422271",
+                        "token1Price": "0.01028019699122541117765330865905976",
+                        "sqrtPrice": "8033046892290494100853782456",
+                        "liquidity": "2576046663984615872077556"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44580",
+                        "tickIdx": "-44580",
+                        "price0": "0.01158809368027538248374277038741101",
+                        "price1": "86.29547081606227909877589227508541"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                        "tickIdx": "-41280",
+                        "price0": "0.01611840304080051178285074105539535",
+                        "price1": "62.04088565527863485007221495620371"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "10",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "9.999999999999999999",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "9.999999999999999999",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "307197740937499763432495377387733750",
+                    "feeGrowthInside1LastX128": "1031921744969495060272060515583251"
+                },
+                "timestamp": 1620354208,
+                "token0PriceUSD": "39.62349750532803594220084307828876",
+                "token1PriceUSD": "3462.691431231984352371569478115503",
+                "liquidity": "561147186222412277251070",
+                "sqrtPrice": "8475183133864443624143242131",
+                "depositedToken0": "10",
+                "depositedToken1": "0",
+                "withdrawnToken0": "9.999999999999999999",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "9.999999999999999999",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "923684",
+            "gasPrice": "4.9e-8",
+            "token0Amount": "0",
+            "token1Amount": "0",
+            "usdAmount": "0",
+            "entryToken0Amount": "0",
+            "entryToken1Amount": "0",
+            "entryUsdAmount": "0",
+            "collectedFees0": "9.999999999999999999",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "353.84822830540523497408534688843322690577547374602082519824521098180817997610825399464",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "353.84822830540523497408534688843322690577547374602082519824521098180817997610825399464",
+            "txFees": "0.045260516",
+            "txFeesUSD": "155.788390168575925109952656629770546667476",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "198.05983813682930986413269025866268023829947374602082519824521098180817997610825399464",
+            "pctReturn": "Infinity",
+            "apy": "Infinity"
+        }
+    },
+    "6788": {
+        "position": {
+            "__typename": "Position",
+            "id": "6788",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x4e15361fd6b4bb609fa63c81a2be19d873717870",
+                    "name": "Fantom Token",
+                    "symbol": "FTM",
+                    "decimals": "18",
+                    "derivedETH": "0.000196032205861386716849912943511832"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "5101.202609060546110753211267377384",
+                "token1Price": "0.000196032205861386716849912943511832",
+                "sqrtPrice": "1109285400428667707632081494",
+                "liquidity": "41027235742265071918717"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-89640",
+                "tickIdx": "-89640",
+                "price0": "0.0001279908437408671303949149547895392",
+                "price1": "7813.058893686335653153996217237017"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-79020",
+                "tickIdx": "-79020",
+                "price0": "0.0003701490016094996063500549726294666",
+                "price1": "2701.614743391856074179054569772457"
+            },
+            "liquidity": "0",
+            "depositedToken0": "394.892794393096905911",
+            "depositedToken1": "0.07165665091343941",
+            "withdrawnToken0": "599.077140954603008855",
+            "withdrawnToken1": "0.0339192961091654",
+            "collectedFeesToken0": "605.744084976524623103",
+            "collectedFeesToken1": "0.035180617489137259",
+            "feeGrowthInside0LastX128": "99126422096861833760264801882833760109",
+            "feeGrowthInside1LastX128": "18753761108503993071927058743734561",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x4019a72afa3857f370cb6f6d1207b1cbbfe4bb20420bcfee8d9a49ca9e70a316",
+                "gasUsed": "892482",
+                "gasPrice": "33000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "67881620365307",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x4e15361fd6b4bb609fa63c81a2be19d873717870",
+                            "name": "Fantom Token",
+                            "symbol": "FTM",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "5101.202609060546110753211267377384",
+                        "token1Price": "0.000196032205861386716849912943511832",
+                        "sqrtPrice": "1109285400428667707632081494",
+                        "liquidity": "41027235742265071918717"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-89640",
+                        "tickIdx": "-89640",
+                        "price0": "0.0001279908437408671303949149547895392",
+                        "price1": "7813.058893686335653153996217237017"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-79020",
+                        "tickIdx": "-79020",
+                        "price0": "0.0003701490016094996063500549726294666",
+                        "price1": "2701.614743391856074179054569772457"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "394.892794393096905911",
+                    "depositedToken1": "0.07165665091343941",
+                    "withdrawnToken0": "599.077140954603008855",
+                    "withdrawnToken1": "0.0339192961091654",
+                    "collectedFeesToken0": "605.744084976524623103",
+                    "collectedFeesToken1": "0.035180617489137259",
+                    "feeGrowthInside0LastX128": "99126422096861833760264801882833760109",
+                    "feeGrowthInside1LastX128": "18753761108503993071927058743734561"
+                },
+                "timestamp": 1620365307,
+                "token0PriceUSD": "0",
+                "token1PriceUSD": "3408.776757321274977426967770139124",
+                "liquidity": "36780869235825784769778",
+                "sqrtPrice": "1144393718967677382489742489",
+                "depositedToken0": "394.892794393096905911",
+                "depositedToken1": "0.07165665091343941",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            },
+            {
+                "__typename": "PositionSnapshot",
+                "id": "67881620937043",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x4e15361fd6b4bb609fa63c81a2be19d873717870",
+                            "name": "Fantom Token",
+                            "symbol": "FTM",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "5101.202609060546110753211267377384",
+                        "token1Price": "0.000196032205861386716849912943511832",
+                        "sqrtPrice": "1109285400428667707632081494",
+                        "liquidity": "41027235742265071918717"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-89640",
+                        "tickIdx": "-89640",
+                        "price0": "0.0001279908437408671303949149547895392",
+                        "price1": "7813.058893686335653153996217237017"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x64652315d86f5dfae30885fbd29d1da05b63add7#-79020",
+                        "tickIdx": "-79020",
+                        "price0": "0.0003701490016094996063500549726294666",
+                        "price1": "2701.614743391856074179054569772457"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "394.892794393096905911",
+                    "depositedToken1": "0.07165665091343941",
+                    "withdrawnToken0": "599.077140954603008855",
+                    "withdrawnToken1": "0.0339192961091654",
+                    "collectedFeesToken0": "605.744084976524623103",
+                    "collectedFeesToken1": "0.035180617489137259",
+                    "feeGrowthInside0LastX128": "99126422096861833760264801882833760109",
+                    "feeGrowthInside1LastX128": "18753761108503993071927058743734561"
+                },
+                "timestamp": 1620937043,
+                "token0PriceUSD": "0",
+                "token1PriceUSD": "3679.094794225898691935117341305773",
+                "liquidity": "16052554565209646518932",
+                "sqrtPrice": "1013754307249120366991951546",
+                "depositedToken0": "394.892794393096905911",
+                "depositedToken1": "0.07165665091343941",
+                "withdrawnToken0": "599.077140954603008855",
+                "withdrawnToken1": "0.0339192961091654",
+                "collectedFeesToken0": "605.744084976524623103",
+                "collectedFeesToken1": "0.035180617489137259"
+            }
+        ],
+        "stats": {
+            "gasUsed": "892482",
+            "gasPrice": "3.3e-8",
+            "token0Amount": "0",
+            "token1Amount": "0",
+            "usdAmount": "0",
+            "entryToken0Amount": "0",
+            "entryToken1Amount": "0",
+            "entryUsdAmount": "0",
+            "collectedFees0": "605.744084976524623103",
+            "collectedFees1": "0.035180617489137259",
+            "collectedFeesUSD": "529.818938658537907285182752273030819344755730147279841261761130339813241116931416592456",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "529.818938658537907285182752273030819344755730147279841261761130339813241116931416592456",
+            "txFees": "0.029451906",
+            "txFeesUSD": "101.374562833888643695563817865228910382266",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "428.444375824649263589618934407801908962489730147279841261761130339813241116931416592456",
+            "pctReturn": "Infinity",
+            "apy": "Infinity"
+        }
+    },
+    "6795": {
+        "position": {
+            "__typename": "Position",
+            "id": "6795",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x6c6bc977e13df9b0de53b251522280bb72383700",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                    "name": "Dai Stablecoin",
+                    "symbol": "DAI",
+                    "decimals": "18",
+                    "derivedETH": "0.0002903242484077945298117541295179109"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                    "name": "USD Coin",
+                    "symbol": "USDC",
+                    "decimals": "6",
+                    "derivedETH": "0.0002903086837110147317030138944603643"
+                },
+                "token0Price": "0.9997154753226291504536765101306105",
+                "token1Price": "1.00028460565470293181740771850555",
+                "sqrtPrice": "79239436103721217961860",
+                "liquidity": "33239644135769925788473"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276340",
+                "tickIdx": "-276340",
+                "price0": "0.0000000000009984039987888020481944736817729886",
+                "price1": "1001598552502.928789671242569028076"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276280",
+                "tickIdx": "-276280",
+                "price0": "0.000000000001004412128746438512204382366489789",
+                "price1": "995607252620.5502006981180549669848"
+            },
+            "liquidity": "0",
+            "depositedToken0": "280.062363174673474766",
+            "depositedToken1": "195.729761",
+            "withdrawnToken0": "269.217737323788363555",
+            "withdrawnToken1": "206.584559",
+            "collectedFeesToken0": "269.671499713310687679",
+            "collectedFeesToken1": "207.044125",
+            "feeGrowthInside0LastX128": "1124368489345014391639302329398707334123",
+            "feeGrowthInside1LastX128": "1154469172860195616823903390",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0xff99c40bdf76662e97a5dc224cd38fa6feec52d24c9ed9048b8594d35aa6ed33",
+                "gasUsed": "892418",
+                "gasPrice": "33000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "67951620365379",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": "6"
+                        },
+                        "token0Price": "0.9997154753226291504536765101306105",
+                        "token1Price": "1.00028460565470293181740771850555",
+                        "sqrtPrice": "79239436103721217961860",
+                        "liquidity": "33239644135769925788473"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276340",
+                        "tickIdx": "-276340",
+                        "price0": "0.0000000000009984039987888020481944736817729886",
+                        "price1": "1001598552502.928789671242569028076"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276280",
+                        "tickIdx": "-276280",
+                        "price0": "0.000000000001004412128746438512204382366489789",
+                        "price1": "995607252620.5502006981180549669848"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "280.062363174673474766",
+                    "depositedToken1": "195.729761",
+                    "withdrawnToken0": "269.217737323788363555",
+                    "withdrawnToken1": "206.584559",
+                    "collectedFeesToken0": "269.671499713310687679",
+                    "collectedFeesToken1": "207.044125",
+                    "feeGrowthInside0LastX128": "1124368489345014391639302329398707334123",
+                    "feeGrowthInside1LastX128": "1154469172860195616823903390"
+                },
+                "timestamp": 1620365379,
+                "token0PriceUSD": "1.000869588110846627907241920078393",
+                "token1PriceUSD": "1",
+                "liquidity": "22996227594572072553076",
+                "sqrtPrice": "79262602962723524183064",
+                "depositedToken0": "280.062363174673474766",
+                "depositedToken1": "195.729761",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            },
+            {
+                "__typename": "PositionSnapshot",
+                "id": "67951620937116",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x6b175474e89094c44da98b954eedeac495271d0f",
+                            "name": "Dai Stablecoin",
+                            "symbol": "DAI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": "6"
+                        },
+                        "token0Price": "0.9997154753226291504536765101306105",
+                        "token1Price": "1.00028460565470293181740771850555",
+                        "sqrtPrice": "79239436103721217961860",
+                        "liquidity": "33239644135769925788473"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276340",
+                        "tickIdx": "-276340",
+                        "price0": "0.0000000000009984039987888020481944736817729886",
+                        "price1": "1001598552502.928789671242569028076"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x6c6bc977e13df9b0de53b251522280bb72383700#-276280",
+                        "tickIdx": "-276280",
+                        "price0": "0.000000000001004412128746438512204382366489789",
+                        "price1": "995607252620.5502006981180549669848"
+                    },
+                    "liquidity": "0",
+                    "depositedToken0": "280.062363174673474766",
+                    "depositedToken1": "195.729761",
+                    "withdrawnToken0": "269.217737323788363555",
+                    "withdrawnToken1": "206.584559",
+                    "collectedFeesToken0": "269.671499713310687679",
+                    "collectedFeesToken1": "207.044125",
+                    "feeGrowthInside0LastX128": "1124368489345014391639302329398707334123",
+                    "feeGrowthInside1LastX128": "1154469172860195616823903390"
+                },
+                "timestamp": 1620937116,
+                "token0PriceUSD": "1.002869722079148362740234382520098",
+                "token1PriceUSD": "1",
+                "liquidity": "21406034544970975123863",
+                "sqrtPrice": "79268020653069157504284",
+                "depositedToken0": "280.062363174673474766",
+                "depositedToken1": "195.729761",
+                "withdrawnToken0": "269.217737323788363555",
+                "withdrawnToken1": "206.584559",
+                "collectedFeesToken0": "269.671499713310687679",
+                "collectedFeesToken1": "207.044125"
+            }
+        ],
+        "stats": {
+            "gasUsed": "892418",
+            "gasPrice": "3.3e-8",
+            "token0Amount": "0",
+            "token1Amount": "0",
+            "usdAmount": "0",
+            "entryToken0Amount": "0",
+            "entryToken1Amount": "0",
+            "entryUsdAmount": "0",
+            "collectedFees0": "269.671499713310687679",
+            "collectedFees1": "207.044125",
+            "collectedFeesUSD": "476.3741350952574238771159417055560524359652071079963765512686043632692077958786248974671",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "476.3741350952574238771159417055560524359652071079963765512686043632692077958786248974671",
+            "txFees": "0.029449794",
+            "txFeesUSD": "101.367293250836695451009287819420283821434",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "375.0068418444207284261066538861357686145312071079963765512686043632692077958786248974671",
+            "pctReturn": "Infinity",
+            "apy": "Infinity"
+        }
+    },
+    "6800": {
+        "position": {
+            "__typename": "Position",
+            "id": "6800",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                    "name": "Uniswap",
+                    "symbol": "UNI",
+                    "decimals": "18",
+                    "derivedETH": "0.01028019699122541117765330865905976"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "97.27440056387468721545409293422271",
+                "token1Price": "0.01028019699122541117765330865905976",
+                "sqrtPrice": "8033046892290494100853782456",
+                "liquidity": "2576046663984615872077556"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44580",
+                "tickIdx": "-44580",
+                "price0": "0.01158809368027538248374277038741101",
+                "price1": "86.29547081606227909877589227508541"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                "tickIdx": "-41280",
+                "price0": "0.01611840304080051178285074105539535",
+                "price1": "62.04088565527863485007221495620371"
+            },
+            "liquidity": "707748210427972492",
+            "depositedToken0": "0.999999999999999999",
+            "depositedToken1": "0",
+            "withdrawnToken0": "0",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "0",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "307197740937499763432495377387733750",
+            "feeGrowthInside1LastX128": "1031921744969495060272060515583251",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x37e5d5886dba67307f60a0bb66c6ff10755326a541853dcc0180b6592b9ed66c",
+                "gasUsed": "923620",
+                "gasPrice": "33000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "68001620365449",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                            "name": "Uniswap",
+                            "symbol": "UNI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "97.27440056387468721545409293422271",
+                        "token1Price": "0.01028019699122541117765330865905976",
+                        "sqrtPrice": "8033046892290494100853782456",
+                        "liquidity": "2576046663984615872077556"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44580",
+                        "tickIdx": "-44580",
+                        "price0": "0.01158809368027538248374277038741101",
+                        "price1": "86.29547081606227909877589227508541"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                        "tickIdx": "-41280",
+                        "price0": "0.01611840304080051178285074105539535",
+                        "price1": "62.04088565527863485007221495620371"
+                    },
+                    "liquidity": "707748210427972492",
+                    "depositedToken0": "0.999999999999999999",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "0",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "0",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "307197740937499763432495377387733750",
+                    "feeGrowthInside1LastX128": "1031921744969495060272060515583251"
+                },
+                "timestamp": 1620365449,
+                "token0PriceUSD": "38.96733864083837776419025800617784",
+                "token1PriceUSD": "3408.75563694653939702445644066668",
+                "liquidity": "643695808171997614444263",
+                "sqrtPrice": "8470948122109205455761125007",
+                "depositedToken0": "0.999999999999999999",
+                "depositedToken1": "0",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "923620",
+            "gasPrice": "3.3e-8",
+            "token0Amount": "6.98036386278067353589",
+            "token1Amount": "0.07175951557981647171",
+            "usdAmount": "493.9978771544032391320883382456130138421643645105440113274564110119278759329101740923704",
+            "entryToken0Amount": "6.61951760613606920527",
+            "entryToken1Amount": "0.07567130403878271614",
+            "entryUsdAmount": "515.8899683945920237294190417810386362459185162353004168",
+            "collectedFees0": "0",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "0",
+            "uncollectedFees0": "0.000084180953852693",
+            "uncollectedFees1": "9.79382455401e-7",
+            "uncollectedFeesUSD": "0.00634979920746080134845785827069682518848870756407274290498907233919747248462843448",
+            "totalFeesUSD": "0.00634979920746080134845785827069682518848870756407274290498907233919747248462843448",
+            "txFees": "0.03047946",
+            "txFeesUSD": "104.91144216313183805398501421505725180706",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "-126.7971836041131618499672598922121773856256630171923327296385999157329265946051974731496",
+            "pctReturn": "-0.24578338671460461097",
+            "apy": "-1.47157462411114805075"
+        }
+    },
+    "6818": {
+        "position": {
+            "__typename": "Position",
+            "id": "6818",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                    "name": "Uniswap",
+                    "symbol": "UNI",
+                    "decimals": "18",
+                    "derivedETH": "0.01028019699122541117765330865905976"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "97.27440056387468721545409293422271",
+                "token1Price": "0.01028019699122541117765330865905976",
+                "sqrtPrice": "8033046892290494100853782456",
+                "liquidity": "2576046663984615872077556"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44040",
+                "tickIdx": "-44040",
+                "price0": "0.01223102142626025104837581358141653",
+                "price1": "81.75932043197796382824222674001475"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                "tickIdx": "-41280",
+                "price0": "0.01611840304080051178285074105539535",
+                "price1": "62.04088565527863485007221495620371"
+            },
+            "liquidity": "2574041491501114846",
+            "depositedToken0": "3",
+            "depositedToken1": "0",
+            "withdrawnToken0": "0",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "0",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "49680764876337281322132956905942114",
+            "feeGrowthInside1LastX128": "567153273432169412451045080459529",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0xdd6577cb08e66b07e11d3c2ce49cba3e6ca44010df18a84bf19b0939bb0b4284",
+                "gasUsed": "923236",
+                "gasPrice": "31000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "68181620365714",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                            "name": "Uniswap",
+                            "symbol": "UNI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "97.27440056387468721545409293422271",
+                        "token1Price": "0.01028019699122541117765330865905976",
+                        "sqrtPrice": "8033046892290494100853782456",
+                        "liquidity": "2576046663984615872077556"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44040",
+                        "tickIdx": "-44040",
+                        "price0": "0.01223102142626025104837581358141653",
+                        "price1": "81.75932043197796382824222674001475"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                        "tickIdx": "-41280",
+                        "price0": "0.01611840304080051178285074105539535",
+                        "price1": "62.04088565527863485007221495620371"
+                    },
+                    "liquidity": "2574041491501114846",
+                    "depositedToken0": "3",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "0",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "0",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "49680764876337281322132956905942114",
+                    "feeGrowthInside1LastX128": "567153273432169412451045080459529"
+                },
+                "timestamp": 1620365714,
+                "token0PriceUSD": "38.96626456815947374877513744750722",
+                "token1PriceUSD": "3408.661680021935177721303294785504",
+                "liquidity": "643847792334939945386261",
+                "sqrtPrice": "8470948122109205455761125007",
+                "depositedToken0": "3",
+                "depositedToken1": "0",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "923236",
+            "gasPrice": "3.1e-8",
+            "token0Amount": "25.38720118798664926202",
+            "token1Amount": "0.2609854292683745458",
+            "usdAmount": "1796.6432324003910085166446444795002952225566139325011835588119317724233503268777269644272",
+            "entryToken0Amount": "24.07482310921424277612",
+            "entryToken1Amount": "0.27521238971984014778",
+            "entryUsdAmount": "1876.2118534105637250432317660046872691783896003483247064",
+            "collectedFees0": "0",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "0",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "0",
+            "txFees": "0.028620316",
+            "txFeesUSD": "98.512198927558321399587662186253644415276",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "-178.0808199377310379261747837114406183711089864158235228411880682275766496731222730355728",
+            "pctReturn": "-0.09491509160546932349",
+            "apy": "-0.56831208057532156695"
+        }
+    },
+    "6822": {
+        "position": {
+            "__typename": "Position",
+            "id": "6822",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                    "name": "Uniswap",
+                    "symbol": "UNI",
+                    "decimals": "18",
+                    "derivedETH": "0.01028019699122541117765330865905976"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "97.27440056387468721545409293422271",
+                "token1Price": "0.01028019699122541117765330865905976",
+                "sqrtPrice": "8033046892290494100853782456",
+                "liquidity": "2576046663984615872077556"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44040",
+                "tickIdx": "-44040",
+                "price0": "0.01223102142626025104837581358141653",
+                "price1": "81.75932043197796382824222674001475"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                "tickIdx": "-41280",
+                "price0": "0.01611840304080051178285074105539535",
+                "price1": "62.04088565527863485007221495620371"
+            },
+            "liquidity": "2574041491501114846",
+            "depositedToken0": "3",
+            "depositedToken1": "0",
+            "withdrawnToken0": "0",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "0",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "49680764876337281322132956905942114",
+            "feeGrowthInside1LastX128": "567153273432169412451045080459529",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x33accfe92c3e076c9b71472bc575c4445a5e11713d060fdb2755cb89c08e2038",
+                "gasUsed": "891970",
+                "gasPrice": "30500000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "68221620365750",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                            "name": "Uniswap",
+                            "symbol": "UNI",
+                            "decimals": "18"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "97.27440056387468721545409293422271",
+                        "token1Price": "0.01028019699122541117765330865905976",
+                        "sqrtPrice": "8033046892290494100853782456",
+                        "liquidity": "2576046663984615872077556"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-44040",
+                        "tickIdx": "-44040",
+                        "price0": "0.01223102142626025104837581358141653",
+                        "price1": "81.75932043197796382824222674001475"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801#-41280",
+                        "tickIdx": "-41280",
+                        "price0": "0.01611840304080051178285074105539535",
+                        "price1": "62.04088565527863485007221495620371"
+                    },
+                    "liquidity": "2574041491501114846",
+                    "depositedToken0": "3",
+                    "depositedToken1": "0",
+                    "withdrawnToken0": "0",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "0",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "49680764876337281322132956905942114",
+                    "feeGrowthInside1LastX128": "567153273432169412451045080459529"
+                },
+                "timestamp": 1620365750,
+                "token0PriceUSD": "38.96641379510110876608939007385938",
+                "token1PriceUSD": "3408.674733984464442033215567792327",
+                "liquidity": "643847792334939945386261",
+                "sqrtPrice": "8470948122109205455761125007",
+                "depositedToken0": "3",
+                "depositedToken1": "0",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "891970",
+            "gasPrice": "3.05e-8",
+            "token0Amount": "25.38720118798664926202",
+            "token1Amount": "0.2609854292683745458",
+            "usdAmount": "1796.6432324003910085166446444795002952225566139325011835588119317724233503268777269644272",
+            "entryToken0Amount": "24.07482310921424277612",
+            "entryToken1Amount": "0.27521238971984014778",
+            "entryUsdAmount": "1876.2190386350097092031167960494649846133419014437860656",
+            "collectedFees0": "0",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "0",
+            "uncollectedFees0": "0",
+            "uncollectedFees1": "0",
+            "uncollectedFeesUSD": "0",
+            "totalFeesUSD": "0",
+            "txFees": "0.027205085",
+            "txFeesUSD": "93.640920853603886698284579203399299570185",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "-173.2167270882225873847567307733639889609702875112848820411880682275766496731222730355728",
+            "pctReturn": "-0.09232223078508015569",
+            "apy": "-0.55279088710647833252"
+        }
+    },
+    "12803": {
+        "position": {
+            "__typename": "Position",
+            "id": "12803",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                    "name": "USD Coin",
+                    "symbol": "USDC",
+                    "decimals": "6",
+                    "derivedETH": "0.0002903086837110147317030138944603643"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "3444.609328308764442332732246605188",
+                "token1Price": "0.0002903086837110147317030138944603643",
+                "sqrtPrice": "1349924865435196605523749213870699",
+                "liquidity": "9744874549822156318"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#192420",
+                "tickIdx": "192420",
+                "price0": "227131105.0781718196429582896244063",
+                "price1": "0.000000004402743515274270901776203305459604"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#200460",
+                "tickIdx": "200460",
+                "price0": "507495177.7248078156421312744448396",
+                "price1": "0.000000001970462073123886434438785468272581"
+            },
+            "liquidity": "7641574397126",
+            "depositedToken0": "150",
+            "depositedToken1": "0.00419834159123809",
+            "withdrawnToken0": "0",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "0",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "76909244794809824733131757577805",
+            "feeGrowthInside1LastX128": "18582560565637208872343060810049271350034",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x72923fca21b6553e1a9cd73f8d537c6023cc6f5828f52a264570fcbd3aefc0ba",
+                "gasUsed": "647405",
+                "gasPrice": "225000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "128031620852513",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": "6"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.609328308764442332732246605188",
+                        "token1Price": "0.0002903086837110147317030138944603643",
+                        "sqrtPrice": "1349924865435196605523749213870699",
+                        "liquidity": "9744874549822156318"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#192420",
+                        "tickIdx": "192420",
+                        "price0": "227131105.0781718196429582896244063",
+                        "price1": "0.000000004402743515274270901776203305459604"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#200460",
+                        "tickIdx": "200460",
+                        "price0": "507495177.7248078156421312744448396",
+                        "price1": "0.000000001970462073123886434438785468272581"
+                    },
+                    "liquidity": "7641574397126",
+                    "depositedToken0": "150",
+                    "depositedToken1": "0.00419834159123809",
+                    "withdrawnToken0": "0",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "0",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "76909244794809824733131757577805",
+                    "feeGrowthInside1LastX128": "18582560565637208872343060810049271350034"
+                },
+                "timestamp": 1620852513,
+                "token0PriceUSD": "1.002052956421759236397914675185714",
+                "token1PriceUSD": "4098.477150325410798306597900799407",
+                "liquidity": "5331503387782920688",
+                "sqrtPrice": "1237565872617829241030170484240573",
+                "depositedToken0": "150",
+                "depositedToken1": "0.00419834159123809",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "647405",
+            "gasPrice": "2.25e-7",
+            "token0Amount": "448.49007059749129192213",
+            "token1Amount": "0.13020056205261777218",
+            "usdAmount": "896.310415958187389177037130964995570760714763073148292808957281414971551993407803507273499",
+            "entryToken0Amount": "489.20862444249178905692",
+            "entryToken1Amount": "0.11936351149442168584",
+            "entryUsdAmount": "979.42157287211281255815178343145908417181069102621372088",
+            "collectedFees0": "0",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "0",
+            "uncollectedFees0": "14.863921",
+            "uncollectedFees1": "0.005842792403568522",
+            "uncollectedFeesUSD": "34.9639330842192449992087561766229609972755949366259510768354136127661624383",
+            "totalFeesUSD": "34.9639330842192449992087561766229609972755949366259510768354136127661624383",
+            "txFees": "0.145666125",
+            "txFeesUSD": "501.388254518453828035389663359433091133625",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "-549.535478348160006417295559649273643547445333016439476994207304972262285568292196492726501",
+            "pctReturn": "-0.56108165632565167254",
+            "apy": "-3.70165524128187171614"
+        }
+    },
+    "14148": {
+        "position": {
+            "__typename": "Position",
+            "id": "14148",
+            "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+            "pool": {
+                "__typename": "Pool",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "token0": {
+                    "__typename": "Token",
+                    "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                    "name": "USD Coin",
+                    "symbol": "USDC",
+                    "decimals": "6",
+                    "derivedETH": "0.0002903086837110147317030138944603643"
+                },
+                "token1": {
+                    "__typename": "Token",
+                    "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                    "name": "Wrapped Ether",
+                    "symbol": "WETH",
+                    "decimals": "18",
+                    "derivedETH": "1"
+                },
+                "token0Price": "3444.609328308764442332732246605188",
+                "token1Price": "0.0002903086837110147317030138944603643",
+                "sqrtPrice": "1349924865435196605523749213870699",
+                "liquidity": "9744874549822156318"
+            },
+            "tickLower": {
+                "__typename": "Tick",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#192300",
+                "tickIdx": "192300",
+                "price0": "224421954.6829685739861869970959618",
+                "price1": "0.000000004455892033436112814915277675071489"
+            },
+            "tickUpper": {
+                "__typename": "Tick",
+                "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#199320",
+                "tickIdx": "199320",
+                "price0": "452819190.7868905879958799215358627",
+                "price1": "0.000000002208386968454762440324565881410413"
+            },
+            "liquidity": "6177781422793",
+            "depositedToken0": "102.607242",
+            "depositedToken1": "0.004583417206357968",
+            "withdrawnToken0": "0",
+            "withdrawnToken1": "0",
+            "collectedFeesToken0": "0",
+            "collectedFeesToken1": "0",
+            "feeGrowthInside0LastX128": "129418016838322876660803317608041",
+            "feeGrowthInside1LastX128": "32237574712864613477465766887151259728677",
+            "transaction": {
+                "__typename": "Transaction",
+                "id": "0x7e1df648c892fc6359c5d37eee641ff823abf323eea355b87ed357200d4bfbd9",
+                "gasUsed": "1106640",
+                "gasPrice": "89000000000"
+            }
+        },
+        "snapshots": [
+            {
+                "__typename": "PositionSnapshot",
+                "id": "141481621054225",
+                "owner": "0x1ab83223ee734ea5151e345841c4cfdd34c67d3c",
+                "position": {
+                    "__typename": "Position",
+                    "pool": {
+                        "__typename": "Pool",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                        "token0": {
+                            "__typename": "Token",
+                            "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": "6"
+                        },
+                        "token1": {
+                            "__typename": "Token",
+                            "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            "name": "Wrapped Ether",
+                            "symbol": "WETH",
+                            "decimals": "18"
+                        },
+                        "token0Price": "3444.609328308764442332732246605188",
+                        "token1Price": "0.0002903086837110147317030138944603643",
+                        "sqrtPrice": "1349924865435196605523749213870699",
+                        "liquidity": "9744874549822156318"
+                    },
+                    "tickLower": {
+                        "__typename": "Tick",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#192300",
+                        "tickIdx": "192300",
+                        "price0": "224421954.6829685739861869970959618",
+                        "price1": "0.000000004455892033436112814915277675071489"
+                    },
+                    "tickUpper": {
+                        "__typename": "Tick",
+                        "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8#199320",
+                        "tickIdx": "199320",
+                        "price0": "452819190.7868905879958799215358627",
+                        "price1": "0.000000002208386968454762440324565881410413"
+                    },
+                    "liquidity": "6177781422793",
+                    "depositedToken0": "102.607242",
+                    "depositedToken1": "0.004583417206357968",
+                    "withdrawnToken0": "0",
+                    "withdrawnToken1": "0",
+                    "collectedFeesToken0": "0",
+                    "collectedFeesToken1": "0",
+                    "feeGrowthInside0LastX128": "129418016838322876660803317608041",
+                    "feeGrowthInside1LastX128": "32237574712864613477465766887151259728677"
+                },
+                "timestamp": 1621054225,
+                "token0PriceUSD": "0.9999999999999999999999999999999999",
+                "token1PriceUSD": "4045.284884334983164468650391310861",
+                "liquidity": "8934253854185994598",
+                "sqrtPrice": "1245675801415337346085769190133277",
+                "depositedToken0": "102.607242",
+                "depositedToken1": "0.004583417206357968",
+                "withdrawnToken0": "0",
+                "withdrawnToken1": "0",
+                "collectedFeesToken0": "0",
+                "collectedFeesToken1": "0"
+            }
+        ],
+        "stats": {
+            "gasUsed": "1106640",
+            "gasPrice": "8.9e-8",
+            "token0Amount": "362.57889833361493187031",
+            "token1Amount": "0.10525980271662158758",
+            "usdAmount": "724.616361628947035413231275256010199473234347386362967846929106233738498813864781420377913",
+            "entryToken0Amount": "392.92267698106427756006",
+            "entryToken1Amount": "0.09713102740986758979",
+            "entryUsdAmount": "785.845353962128569908908398412968667792702258613281433994",
+            "collectedFees0": "0",
+            "collectedFees1": "0",
+            "collectedFeesUSD": "0",
+            "uncollectedFees0": "9.132743",
+            "uncollectedFees1": "0.003561760101968825",
+            "uncollectedFeesUSD": "21.3856356755011977594756053559733567560971817944020900026521323561996111689",
+            "totalFeesUSD": "21.3856356755011977594756053559733567560971817944020900026521323561996111689",
+            "txFees": "0.09849096",
+            "txFeesUSD": "339.00957082675780136857791692026811450856",
+            "impermanentLoss": "0",
+            "impermanentLossPct": "0",
+            "totalReturn": "-378.852927484438138104779434721253226071930729432516376144418761410061890017235218579622087",
+            "pctReturn": "-0.48209603272999156053",
+            "apy": "-3.32068560583861077956"
+        }
+    }
+}

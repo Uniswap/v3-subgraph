@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import { bigDecimalExponated, safeDiv } from '.'
-import { Tick } from '../types/schema'
+import { ticktoPrice, safeDiv } from '.'
+import { Tick, Pool, Token } from '../types/schema'
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 
 export function createTick(tickId: string, tickIdx: i32, poolId: string, event: ethereum.Event): Tick {
@@ -19,8 +19,17 @@ export function createTick(tickId: string, tickIdx: i32, poolId: string, event: 
   tick.price0 = ONE_BD
   tick.price1 = ONE_BD
 
+  let pool = Pool.load(poolId)
+  let token0 = Token.load(pool.token0)
+  let token1 = Token.load(pool.token1)
+
   // 1.0001^tick is token0/token1.
-  let price1 = bigDecimalExponated(BigDecimal.fromString('1.0001'), BigInt.fromI32(tickIdx))
+  let price1 = ticktoPrice(
+    BigDecimal.fromString('1.0001'), 
+    BigInt.fromI32(tickIdx),
+    token0.decimals,
+    token1.decimals
+  )
   tick.price1 = price1
   tick.price0 = safeDiv(ONE_BD, price1)
 

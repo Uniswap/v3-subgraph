@@ -28,19 +28,35 @@ export function safeDivBigInt(amount0: BigInt, amount1: BigInt): BigInt {
   }
 }
 
-export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecimal {
-  if (power.equals(ZERO_BI)) {
+export function ticktoPrice(tickBase: BigDecimal, tickIdx: BigInt, numerator: BigInt, denominator: BigInt): BigDecimal {
+  if (tickIdx.equals(ZERO_BI)) {
     return ONE_BD
   }
-  let negativePower = power.lt(ZERO_BI)
-  let result = ZERO_BD.plus(value)
-  let powerAbs = power.abs()
+  let negativePower = tickIdx.lt(ZERO_BI)
+  let result = ZERO_BD.plus(tickBase)
+  let powerAbs = tickIdx.abs()
   for (let i = ONE_BI; i.lt(powerAbs); i = i.plus(ONE_BI)) {
-    result = result.times(value)
+    result = result.times(tickBase)
   }
 
   if (negativePower) {
     result = safeDiv(ONE_BD, result)
+  }
+
+  let scalar = numerator.minus(denominator);
+  let TEN_BI = BigDecimal.fromString('10');
+
+  if (scalar.gt(ZERO_BI)) {
+    for (let i = ZERO_BI; i.lt(scalar); i = i.plus(ONE_BI)) {
+      result = result.times(TEN_BI)
+    }
+  } else {
+    // Scalar is negative, so invert it
+    scalar = scalar.abs()
+
+    for (let i = ZERO_BI; i.lt(scalar); i = i.plus(ONE_BI)) {
+      result = safeDiv(result, TEN_BI)
+    }
   }
 
   return result
