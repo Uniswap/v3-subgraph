@@ -71,6 +71,10 @@ export function savePositionSnapshot(position: Position, event: ethereum.Event):
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
+  if (pool == null || token0 == null || token1 == null) {
+    return
+  }
+
   // create new snapshot
   let snapshot = new PositionSnapshot(position.id.concat("#").concat(timestamp.toString()))
   snapshot.position = position.id
