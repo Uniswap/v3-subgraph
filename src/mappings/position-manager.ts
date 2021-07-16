@@ -67,11 +67,16 @@ export function savePositionSnapshot(position: Position, event: ethereum.Event):
   let timestamp = event.block.timestamp.toI32()
   let bundle = Bundle.load('1')
   let pool = Pool.load(position.pool)
+
+  if (pool == null) {
+    return
+  }
+  
   // log.warning("In handle transfer, pool token0 token1 {}", [position.pool, pool.token0, pool.token1])
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
-  if (pool == null || token0 == null || token1 == null) {
+  if (token0 == null || token1 == null) {
     return
   }
 
