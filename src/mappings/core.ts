@@ -36,8 +36,15 @@ function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
 
   if (!tickCall.reverted) {
     let tickResult = tickCall.value
-    tick.feeGrowthOutside0X128 = tickResult.value2
-    tick.feeGrowthOutside1X128 = tickResult.value3
+
+    if (tickResult.value2) {
+      tick.feeGrowthOutside0X128 = tickResult.value2
+    }
+
+    if (tickResult.value3) {
+      tick.feeGrowthOutside1X128 = tickResult.value3
+    }
+    
     tick.save()
   }
 }
