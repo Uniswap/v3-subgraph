@@ -250,10 +250,22 @@ export function handleMint(event: MintEvent): void {
   }
 
   let amount = event.params.amount
-  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
-  upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
-  upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
+
+  if (lowerTick.liquidityGross) {
+    lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
+  }
+
+  if (lowerTick.liquidityNet) {
+    lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
+  }
+
+  if (upperTick.liquidityGross) {
+    upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
+  }
+
+  if (upperTick.liquidityNet) {
+    upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
+  }
 
   // TODO: Update Tick's volume, fees, and liquidity provider count. Computing these on the tick
   // level requires reimplementing some of the swapping code from v3-core.
@@ -356,11 +368,27 @@ export function handleBurn(event: BurnEvent): void {
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
   let amount = event.params.amount
-  lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amount)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
-  upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
-  upperTick.liquidityNet = upperTick.liquidityNet.plus(amount)
 
+  if (lowerTick) {
+    if (lowerTick.liquidityGross) {
+      lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
+    }
+  
+    if (lowerTick.liquidityNet) {
+      lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
+    }
+  }
+
+  if (upperTick) {
+    if (upperTick.liquidityGross) {
+      upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
+    }
+  
+    if (upperTick.liquidityNet) {
+      upperTick.liquidityNet = upperTick.liquidityNet.plus(amount)
+    }
+  }
+  
   updateUniswapDayData(event)
   updatePoolDayData(event)
   updatePoolHourData(event)
