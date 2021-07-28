@@ -58,7 +58,7 @@ function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void 
       .concat(tickId.toString())
   )
   if (tick !== null) {
-    updateTickFeeVarsAndSave(tick!, event)
+    // updateTickFeeVarsAndSave(tick!, event)
   }
 }
 
@@ -293,8 +293,8 @@ export function handleMint(event: MintEvent): void {
   mint.save()
 
   // Update inner tick vars and save the ticks
-  updateTickFeeVarsAndSave(lowerTick!, event)
-  updateTickFeeVarsAndSave(upperTick!, event)
+  // updateTickFeeVarsAndSave(lowerTick!, event)
+  // updateTickFeeVarsAndSave(upperTick!, event)
 }
 
 export function handleBurn(event: BurnEvent): void {
@@ -403,8 +403,8 @@ export function handleBurn(event: BurnEvent): void {
   updateTokenDayData(token1 as Token, event)
   updateTokenHourData(token0 as Token, event)
   updateTokenHourData(token1 as Token, event)
-  updateTickFeeVarsAndSave(lowerTick!, event)
-  updateTickFeeVarsAndSave(upperTick!, event)
+  // updateTickFeeVarsAndSave(lowerTick!, event)
+  // updateTickFeeVarsAndSave(upperTick!, event)
 
   token0.save()
   token1.save()
