@@ -230,14 +230,14 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let dayTickID = tick.id.concat('-').concat(dayID.toString())
-  let tickDayData = TickDayData.load(dayTickID)
+  let tickDayDataID = tick.id.concat('-').concat(dayID.toString())
+  let tickDayData = TickDayData.load(tickDayDataID)
   if (tickDayData === null) {
-    tickDayData = new TickDayData(dayTickID)
+    tickDayData = new TickDayData(tickDayDataID)
     tickDayData.date = dayStartTimestamp
     tickDayData.pool = tick.pool
+    tickDayData.tick = tick.id
   }
-  tickDayData.tick = tick.id
   tickDayData.liquidityGross = tick.liquidityGross
   tickDayData.liquidityNet = tick.liquidityNet
   tickDayData.volumeToken0 = tick.volumeToken0
