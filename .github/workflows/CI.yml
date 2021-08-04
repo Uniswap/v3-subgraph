@@ -3,36 +3,44 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
   test:
     strategy:
       matrix:
-        node: ['10.x', '12.x']
+        node: ['12.x', '14.x']
         os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
-      - run: npm install -g yarn
-
-      - id: yarn-cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v1
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ matrix.os }}-yarn-
 
-      - run: yarn
+      - name: Install dependencies
+        run: yarn install
 
-      - run: yarn codegen
-      - run: yarn build
+      - name: Run GraphQL codegen
+        run: yarn codegen
+
+      - name: Build project
+        run: yarn build
