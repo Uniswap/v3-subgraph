@@ -49,16 +49,18 @@ function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
   }
 }
 
-function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
+function loadTickUpdateFeeVarsAndSave(tickIdx: i32, event: ethereum.Event): void {
   let poolAddress = event.address
-  let tick = Tick.load(
-    poolAddress
-      .toHexString()
-      .concat('#')
-      .concat(tickId.toString())
-  )
+  let tickId = poolAddress
+    .toHexString()
+    .concat('#')
+    .concat(tickIdx.toString())
+
+  let tick = Tick.load(tickId)
   if (tick !== null) {
     // updateTickFeeVarsAndSave(tick!, event)
+  } else {
+    createTick(tickId, tickIdx, poolAddress.toHexString(), event);
   }
 }
 
@@ -374,6 +376,15 @@ export function handleBurn(event: BurnEvent): void {
   let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
+
+  if (lowerTick === null) {
+    lowerTick = createTick(lowerTickId, event.params.tickLower, pool.id, event)
+  }
+
+  if (upperTick === null) {
+    upperTick = createTick(upperTickId, event.params.tickUpper, pool.id, event)
+  }
+
   let amount = event.params.amount
 
   if (lowerTick) {
