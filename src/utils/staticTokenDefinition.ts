@@ -29,6 +29,15 @@ export class StaticTokenDefinition {
     )
     staticDefinitions.push(tokenWETH)
 
+    // USDC
+    let tokenUSDC = new StaticTokenDefinition(
+      Address.fromString('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'),
+      'USDC',
+      'USD Coin',
+      BigInt.fromI32(6)
+    )
+    staticDefinitions.push(tokenUSDC)
+
     return staticDefinitions
   }
 

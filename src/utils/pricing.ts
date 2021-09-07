@@ -10,7 +10,11 @@ const USDC_WETH_03_POOL = '0x17c14d2c404d167802b16c450d3c99f88f2c4f4d'
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
-  WETH_ADDRESS // WETH
+  WETH_ADDRESS, // WETH
+  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC
+  '0xf97f4df75117a78c1a5a0dbb814af92458539fb4', // LINK
+  '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
+  '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' // UNI
 ]
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
@@ -30,9 +34,9 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(USDC_WETH_03_POOL) // dai is token0
+  let usdcPool = Pool.load(USDC_WETH_03_POOL) // usdc is token1
   if (usdcPool !== null) {
-    return usdcPool.token0Price
+    return usdcPool.token1Price
   } else {
     return ZERO_BD
   }
