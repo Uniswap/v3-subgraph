@@ -1,10 +1,11 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
+import { Bundle, Burn, Collect, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Flash as FlashEvent,
+  Collect as CollectEvent,
   Initialize,
   Mint as MintEvent,
   Swap as SwapEvent
@@ -27,22 +28,9 @@ export function handleInitialize(event: Initialize): void {
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   // update token prices
-  let token0 = Token.load(pool.token0)
-  let token1 = Token.load(pool.token1)
-
-  // update ETH price now that prices could have changed
-  let bundle = Bundle.load('1')
-  bundle.ethPriceUSD = getEthPriceInUSD()
-  bundle.save()
 
   updatePoolDayData(event)
   updatePoolHourData(event)
-
-  // update token prices
-  token0.derivedETH = findEthPerToken(token0 as Token)
-  token1.derivedETH = findEthPerToken(token1 as Token)
-  token0.save()
-  token1.save()
 }
 
 export function handleMint(event: MintEvent): void {
@@ -498,6 +486,44 @@ export function handleFlash(event: FlashEvent): void {
   pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
   pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
+}
+
+export function handleCollect(event: CollectEvent): void {
+  // update fee growth
+  let pool = Pool.load(event.address.toHexString())
+  let token0 = Token.load(pool.token0)
+  let token1 = Token.load(pool.token1)
+  let transaction = loadTransaction(event)
+
+  // amounts - 0/1 are token deltas: can be positive or negative
+  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+  pool.totalValueLockedToken0 = pool.totalValueLockedToken0.minus(amount0)
+
+  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+  pool.totalValueLockedToken1 = pool.totalValueLockedToken1.minus(amount1)
+
+  let amountUSD = getTrackedAmountUSD(amount0, token0 as Token, amount1, token1 as Token).div(
+    BigDecimal.fromString('2')
+  )
+
+  let collectID = event.transaction.hash
+    .toString()
+    .concat('-')
+    .concat(event.logIndex.toString())
+  let collect = new Collect(collectID)
+  collect.transaction = transaction.id
+  collect.timestamp = event.block.timestamp
+  collect.pool = pool.id
+  collect.owner = event.params.owner
+  collect.amount0 = amount0
+  collect.amount1 = amount1
+  collect.amountUSD = amountUSD
+  collect.tickLower = BigInt.fromI32(event.params.tickLower)
+  collect.tickUpper = BigInt.fromI32(event.params.tickUpper)
+  collect.logIndex = event.logIndex
+
+  pool.save()
+  collect.save()
 }
 
 function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
