@@ -27,7 +27,6 @@ export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
-  // update token prices
 
   updatePoolDayData(event)
   updatePoolHourData(event)
