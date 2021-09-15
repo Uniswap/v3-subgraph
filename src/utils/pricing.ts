@@ -10,14 +10,10 @@ const USDC_WETH_03_POOL = '0x17c14d2c404d167802b16c450d3c99f88f2c4f4d'
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
-  WETH_ADDRESS, // WETH
-  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC
-  '0xf97f4df75117a78c1a5a0dbb814af92458539fb4', // LINK
-  '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
-  '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' // UNI
+  WETH_ADDRESS // WETH
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
@@ -32,10 +28,14 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
   return [price0, price1]
 }
 
+// weird blocks https://explorer.offchainlabs.com/tx/0x1c295207effcdaa54baa7436068c57448ff8ace855b8d6f3f9c424b4b7603960
+
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdcPool = Pool.load(USDC_WETH_03_POOL) // usdc is token1
-  if (usdcPool !== null) {
+
+  // need to only count ETH as having valid USD price if lots of ETH in pool
+  if (usdcPool !== null && usdcPool.totalValueLockedToken0.gt(MINIMUM_ETH_LOCKED)) {
     return usdcPool.token1Price
   } else {
     return ZERO_BD

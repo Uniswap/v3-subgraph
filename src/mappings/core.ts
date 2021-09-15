@@ -27,22 +27,9 @@ export function handleInitialize(event: Initialize): void {
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   // update token prices
-  let token0 = Token.load(pool.token0)
-  let token1 = Token.load(pool.token1)
-
-  // update ETH price now that prices could have changed
-  let bundle = Bundle.load('1')
-  bundle.ethPriceUSD = getEthPriceInUSD()
-  bundle.save()
 
   updatePoolDayData(event)
   updatePoolHourData(event)
-
-  // update token prices
-  token0.derivedETH = findEthPerToken(token0 as Token)
-  token1.derivedETH = findEthPerToken(token1 as Token)
-  token0.save()
-  token1.save()
 }
 
 export function handleMint(event: MintEvent): void {
