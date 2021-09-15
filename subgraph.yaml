@@ -37,7 +37,7 @@ dataSources:
     name: NonfungiblePositionManager
     network: ropsten
     source:
-      address: '0x34Dba2E613a58d89EaB24aB5CE8d81DF89706AF6'
+      address: '0xd6b8b0f37b4555eb3e788b8ce052659ab8a9bef0'
       abi: NonfungiblePositionManager
       startBlock: 8845990
     mapping:
