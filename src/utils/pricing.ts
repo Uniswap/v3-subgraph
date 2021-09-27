@@ -13,7 +13,7 @@ export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS // WETH
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('4')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {

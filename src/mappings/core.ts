@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Flash as FlashEvent,
@@ -446,6 +446,7 @@ export function handleSwap(event: SwapEvent): void {
   // Update inner vars of current or crossed ticks
   let newTick = pool.tick!
   let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+
   let modulo = newTick.mod(tickSpacing)
   if (modulo.equals(ZERO_BI)) {
     // Current tick is initialized and needs to be updated
