@@ -382,13 +382,6 @@ export function handleSwap(event: SwapEvent): void {
   swap.sqrtPriceX96 = event.params.sqrtPriceX96
   swap.logIndex = event.logIndex
 
-  // update fee growth
-  let poolContract = PoolABI.bind(event.address)
-  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
-  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
-  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
-  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
-
   // interval data
   let uniswapDayData = updateUniswapDayData(event)
   let poolDayData = updatePoolDayData(event)
@@ -480,11 +473,6 @@ export function handleSwap(event: SwapEvent): void {
 export function handleFlash(event: FlashEvent): void {
   // update fee growth
   let pool = Pool.load(event.address.toHexString())
-  let poolContract = PoolABI.bind(event.address)
-  let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
-  let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
-  pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
-  pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
 }
 
