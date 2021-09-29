@@ -459,8 +459,9 @@ export function handleSwap(event: SwapEvent): void {
   // Update inner vars of current or crossed ticks
   let newTick = pool.tick!
   let tickSpacing = feeTierToTickSpacing(pool.feeTier)
-  let modulo = newTick.mod(tickSpacing)
-  if (modulo.equals(ZERO_BI)) {
+  let newModulo = newTick.mod(tickSpacing)
+  let oldModulo = oldTick.mod(tickSpacing)
+  if (newModulo.equals(ZERO_BI)) {
     // Current tick is initialized and needs to be updated
     loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
   }
@@ -477,12 +478,12 @@ export function handleSwap(event: SwapEvent): void {
     // updated later. For early users this error also disappears when calling
     // collect
   } else if (newTick.gt(oldTick)) {
-    let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
+    let firstInitialized = oldTick.plus(tickSpacing.minus(oldModulo))
     for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
       loadTickUpdateFeeVarsAndSave(i.toI32(), event)
     }
   } else if (newTick.lt(oldTick)) {
-    let firstInitialized = oldTick.minus(modulo)
+    let firstInitialized = oldTick.minus(oldModulo)
     for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
       loadTickUpdateFeeVarsAndSave(i.toI32(), event)
     }
