@@ -34,8 +34,6 @@ export function createTick(tickId: string, tickIdx: i32, poolId: string, event: 
   tick.collectedFeesToken1 = ZERO_BD
   tick.collectedFeesUSD = ZERO_BD
   tick.liquidityProviderCount = ZERO_BI
-  tick.feeGrowthOutside0X128 = ZERO_BI
-  tick.feeGrowthOutside1X128 = ZERO_BI
 
   return tick
 }

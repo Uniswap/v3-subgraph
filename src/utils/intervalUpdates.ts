@@ -236,8 +236,6 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
   tickDayData.volumeToken1 = tick.volumeToken0
   tickDayData.volumeUSD = tick.volumeUSD
   tickDayData.feesUSD = tick.feesUSD
-  tickDayData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
-  tickDayData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
 
   tickDayData.save()
 
