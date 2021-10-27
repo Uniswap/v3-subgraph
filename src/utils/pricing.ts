@@ -30,10 +30,12 @@ export let WHITELIST_TOKENS: string[] = [
   '0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8', // yCurv
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9' // AAVE
+  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
+  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95' // PRINTS
+
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('52')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('30')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
@@ -80,7 +82,7 @@ export function findEthPerToken(token: Token): BigDecimal {
         let token1 = Token.load(pool.token1)
         // get the derived ETH in pool
         let ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
-        if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
+        if (ethLocked.gt(largestLiquidityETH) && (ethLocked.gt(MINIMUM_ETH_LOCKED)|| WHITELIST_TOKENS.includes(token.id))) {
           largestLiquidityETH = ethLocked
           // token1 per our token * Eth per token1
           priceSoFar = pool.token1Price.times(token1.derivedETH as BigDecimal)
@@ -90,7 +92,7 @@ export function findEthPerToken(token: Token): BigDecimal {
         let token0 = Token.load(pool.token0)
         // get the derived ETH in pool
         let ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
-        if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
+        if (ethLocked.gt(largestLiquidityETH) && (ethLocked.gt(MINIMUM_ETH_LOCKED) || WHITELIST_TOKENS.includes(token.id))) {
           largestLiquidityETH = ethLocked
           // token0 per our token * ETH per token0
           priceSoFar = pool.token0Price.times(token0.derivedETH as BigDecimal)
