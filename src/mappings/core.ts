@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, Mint,Collect,  Pool, Swap, Tick, Token } from '../types/schema'
-import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { Bundle, Burn, Factory, Mint,Collect,  Pool, Swap,  Token } from '../types/schema'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Initialize,
@@ -14,12 +14,10 @@ import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToT
 import {
   updatePoolDayData,
   updatePoolHourData,
-  updateTickDayData,
   updateTokenDayData,
   updateTokenHourData,
   updateUniswapDayData
 } from '../utils/intervalUpdates'
-import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
@@ -117,32 +115,6 @@ export function handleMint(event: MintEvent): void {
   mint.tickUpper = BigInt.fromI32(event.params.tickUpper)
   mint.logIndex = event.logIndex
 
-  // tick entities
-  let lowerTickIdx = event.params.tickLower
-  let upperTickIdx = event.params.tickUpper
-
-  let lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
-  let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
-
-  let lowerTick = Tick.load(lowerTickId)
-  let upperTick = Tick.load(upperTickId)
-
-  if (lowerTick === null) {
-    lowerTick = createTick(lowerTickId, lowerTickIdx, pool.id, event)
-  }
-
-  if (upperTick === null) {
-    upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
-  }
-
-  let amount = event.params.amount
-  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
-  upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
-  upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
-
-  // TODO: Update Tick's volume, fees, and liquidity provider count. Computing these on the tick
-  // level requires reimplementing some of the swapping code from v3-core.
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
@@ -231,17 +203,6 @@ export function handleBurn(event: BurnEvent): void {
   burn.tickLower = BigInt.fromI32(event.params.tickLower)
   burn.tickUpper = BigInt.fromI32(event.params.tickUpper)
   burn.logIndex = event.logIndex
-
-  // tick entities
-  let lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
-  let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
-  let lowerTick = Tick.load(lowerTickId)
-  let upperTick = Tick.load(upperTickId)
-  let amount = event.params.amount
-  lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amount)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
-  upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
-  upperTick.liquidityNet = upperTick.liquidityNet.plus(amount)
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
