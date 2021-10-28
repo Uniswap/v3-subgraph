@@ -30,7 +30,8 @@ export let WHITELIST_TOKENS: string[] = [
   '0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8', // yCurv
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9' // AAVE
+  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
+  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95' // PRINTS
 ]
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
