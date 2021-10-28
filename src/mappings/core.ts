@@ -30,11 +30,11 @@ export function handleInitialize(event: Initialize): void {
   pool.save()
 
   // update token prices
-  const token0 = Token.load(pool.token0)
-  const token1 = Token.load(pool.token1)
+  let token0 = Token.load(pool.token0)
+  let token1 = Token.load(pool.token1)
 
   // update ETH price now that prices could have changed
-  const bundle = Bundle.load('1')
+  let bundle = Bundle.load('1')
   bundle.ethPriceUSD = getEthPriceInUSD()
   bundle.save()
 
@@ -506,7 +506,7 @@ export function handleFlash(event: FlashEvent): void {
 export function handleCollect(event: CollectEvent): void {
   // update fee growth
   let pool = Pool.load(event.address.toHexString())
-  const factory = Factory.load(FACTORY_ADDRESS)
+  let factory = Factory.load(FACTORY_ADDRESS)
   let bundle = Bundle.load('1')
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
