@@ -27,9 +27,25 @@ export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
+  pool.save()
+
+  // update token prices
+  const token0 = Token.load(pool.token0)
+  const token1 = Token.load(pool.token1)
+
+  // update ETH price now that prices could have changed
+  const bundle = Bundle.load('1')
+  bundle.ethPriceUSD = getEthPriceInUSD()
+  bundle.save()
 
   updatePoolDayData(event)
   updatePoolHourData(event)
+
+  // update token prices
+  token0.derivedETH = findEthPerToken(token0 as Token)
+  token1.derivedETH = findEthPerToken(token1 as Token)
+  token0.save()
+  token1.save()
 }
 
 export function handleMint(event: MintEvent): void {
@@ -490,6 +506,8 @@ export function handleFlash(event: FlashEvent): void {
 export function handleCollect(event: CollectEvent): void {
   // update fee growth
   let pool = Pool.load(event.address.toHexString())
+  const factory = Factory.load(FACTORY_ADDRESS)
+  let bundle = Bundle.load('1')
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
   let transaction = loadTransaction(event)
@@ -504,6 +522,31 @@ export function handleCollect(event: CollectEvent): void {
   let amountUSD = getTrackedAmountUSD(amount0, token0 as Token, amount1, token1 as Token).div(
     BigDecimal.fromString('2')
   )
+
+  // reset tvl aggregates until new amounts calculated
+  factory.totalValueLockedETH = factory.totalValueLockedETH.minus(pool.totalValueLockedETH)
+  // update globals
+  factory.txCount = factory.txCount.plus(ONE_BI)
+  // update token0 data
+  token0.txCount = token0.txCount.plus(ONE_BI)
+  token0.totalValueLocked = token0.totalValueLocked.minus(amount0)
+  token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH.times(bundle.ethPriceUSD))
+
+  // update token1 data
+  token1.txCount = token1.txCount.plus(ONE_BI)
+  token1.totalValueLocked = token1.totalValueLocked.minus(amount1)
+  token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
+
+  // pool data
+  pool.txCount = pool.txCount.plus(ONE_BI)
+  pool.totalValueLockedETH = pool.totalValueLockedToken0
+    .times(token0.derivedETH)
+    .plus(pool.totalValueLockedToken1.times(token1.derivedETH))
+  pool.totalValueLockedUSD = pool.totalValueLockedETH.times(bundle.ethPriceUSD)
+
+  // reset aggregates with new amounts
+  factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
+  factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
   let collectID = event.transaction.hash
     .toString()
