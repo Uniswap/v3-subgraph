@@ -6,6 +6,7 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
+    "prepare": "mustache config.json subgraph.template.yaml > subgraph.test.yaml",
     "create-local": "graph create ianlapham/uniswap-v3 --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy ianlapham/uniswap-v3 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy": "graph deploy ianlapham/uniswap-optimism-dev --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
@@ -21,6 +22,7 @@
     "eslint": "^6.2.2",
     "eslint-config-prettier": "^6.1.0",
     "prettier": "^1.18.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "mustache": "^3.1.0"
   }
 }
