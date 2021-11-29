@@ -4,8 +4,8 @@ import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
-const WETH_ADDRESS = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
-const USDC_WETH_03_POOL = '0x17c14d2c404d167802b16c450d3c99f88f2c4f4d'
+const WETH_ADDRESS = ' 0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681'
+const USDC_WETH_03_POOL = '0xfa16216537daa64542bf37700a39db070e911ae4'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
@@ -13,7 +13,7 @@ export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS // WETH
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('4')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {

@@ -11,7 +11,7 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: arbitrum-one
+    network: arbitrum-rinkeby
     source:
       address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
       abi: Factory
@@ -40,7 +40,7 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: arbitrum-one
+    network: arbitrum-rinkeby
     source:
       address: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
       abi: NonfungiblePositionManager
@@ -74,7 +74,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: arbitrum-one
+    network: arbitrum-rinkeby
     source:
       abi: Pool
     mapping:
