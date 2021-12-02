@@ -651,3 +651,36 @@ type TokenHourData @entity {
   # close price USD
   close: BigDecimal!
 }
+
+type TokenBlockData @entity {
+  # <token address>-<block number>
+  id: ID!
+  # unix timestamp for the block
+  timestampUnix: Int!
+  # block number
+  blockNumber: BigInt!
+  # pointer to token
+  token: Token!
+  # volume in token units
+  volume: BigDecimal!
+  # volume in derived USD
+  volumeUSD: BigDecimal!
+  # volume in USD even on pools with less reliable USD values
+  untrackedVolumeUSD: BigDecimal!
+  # liquidity across all pools in token units
+  totalValueLocked: BigDecimal!
+  # liquidity across all pools in derived USD
+  totalValueLockedUSD: BigDecimal!
+  # price at time of the block in USD
+  priceUSD: BigDecimal!
+  # fees in USD
+  feesUSD: BigDecimal!
+  # opening price USD
+  open: BigDecimal!
+  # high price USD
+  high: BigDecimal!
+  # low price USD
+  low: BigDecimal!
+  # close price USD
+  close: BigDecimal!
+}

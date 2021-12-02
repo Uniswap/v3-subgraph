@@ -8,6 +8,7 @@ import {
   Token,
   TokenDayData,
   TokenHourData,
+  TokenBlockData,
   Bundle,
   PoolHourData,
   TickDayData,
@@ -224,6 +225,46 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   tokenHourData.save()
 
   return tokenHourData as TokenHourData
+}
+
+export function updateTokenBlockData(token: Token, event: ethereum.Event): TokenBlockData {
+  let bundle = Bundle.load('1')
+  let tokenBlockID = token.id
+    .toString()
+    .concat('-')
+    .concat(event.block.number.toString())
+  let tokenBlockData = TokenBlockData.load(tokenBlockID)
+  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+
+  if (tokenBlockData === null) {
+    tokenBlockData = new TokenBlockData(tokenBlockID)
+    tokenBlockData.timestampUnix = event.block.timestamp.toI32()
+    tokenBlockData.token = token.id
+    tokenBlockData.volume = ZERO_BD
+    tokenBlockData.volumeUSD = ZERO_BD
+    tokenBlockData.untrackedVolumeUSD = ZERO_BD
+    tokenBlockData.feesUSD = ZERO_BD
+    tokenBlockData.open = tokenPrice
+    tokenBlockData.high = tokenPrice
+    tokenBlockData.low = tokenPrice
+    tokenBlockData.close = tokenPrice
+  }
+
+  if (tokenPrice.gt(tokenBlockData.high)) {
+    tokenBlockData.high = tokenPrice
+  }
+
+  if (tokenPrice.lt(tokenBlockData.low)) {
+    tokenBlockData.low = tokenPrice
+  }
+
+  tokenBlockData.close = tokenPrice
+  tokenBlockData.priceUSD = tokenPrice
+  tokenBlockData.totalValueLocked = token.totalValueLocked
+  tokenBlockData.totalValueLockedUSD = token.totalValueLockedUSD
+  tokenBlockData.save()
+
+  return tokenBlockData as TokenBlockData
 }
 
 export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayData {
