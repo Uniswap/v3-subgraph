@@ -50,6 +50,9 @@ export function feeTierToTickSpacing(feeTier: BigInt): BigInt {
   if (feeTier.equals(BigInt.fromI32(500))) {
     return BigInt.fromI32(10)
   }
+  if (feeTier.equals(BigInt.fromI32(100))) {
+    return BigInt.fromI32(1)
+  }
 
   throw Error('Unexpected fee tier')
 }
