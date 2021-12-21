@@ -14,7 +14,7 @@ export let WHITELIST_TOKENS: string[] = [
   '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' // DAI
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('10')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {

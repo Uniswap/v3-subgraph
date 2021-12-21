@@ -142,6 +142,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   // populate pre-regenesis pools if needed
   if (factory.populated == false) {
     populateEmptyPools(event)
+    factory.populated = true
   }
 
   pool.save()
