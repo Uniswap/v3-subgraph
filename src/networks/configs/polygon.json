@@ -1,0 +1,11 @@
+{
+  "network_name": "polygon",
+  "weth_address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  "stable_pool_address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+  "whitelist_tokens": [
+    { "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", "blurb": "WETH" },
+    { "address": "0x6b175474e89094c44da98b954eedeac495271d0f", "blurb": "DAI" }
+  ],
+  "stabelcoins": [{ "address": "0x6b175474e89094c44da98b954eedeac495271d0f", "blurb": "DAI" }],
+  "min_eth": 52
+}

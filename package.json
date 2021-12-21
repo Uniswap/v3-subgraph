@@ -6,6 +6,8 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
+    "prepare-const": "mustache src/networks/configs/polygon.json src/networks/constants.template.ts > src/networks/constants.ts",
+    "prepare-yaml": "mustache src/networks/configs/polygon.json subgraph.template.yaml  subgraph.yaml",
     "create-local": "graph create ianlapham/uniswap-v3 --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy ianlapham/uniswap-v3 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy": "graph deploy uniswap/uniswap-v3 --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
@@ -22,5 +24,8 @@
     "eslint-config-prettier": "^6.1.0",
     "prettier": "^1.18.2",
     "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
   }
 }
