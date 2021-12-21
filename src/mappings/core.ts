@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum, store } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Flash as FlashEvent,
@@ -20,7 +20,7 @@ import {
   updateTokenHourData,
   updateUniswapDayData
 } from '../utils/intervalUpdates'
-import { createTick, feeTierToTickSpacing } from '../utils/tick'
+import { createTick, createTickBurn, feeTierToTickSpacing } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
@@ -239,9 +239,20 @@ export function handleBurn(event: BurnEvent): void {
   // tick entities
   let lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
   let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
+  const lowerTickIdx = event.params.tickLower
+  const upperTickIdx = event.params.tickUpper
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
+
   let amount = event.params.amount
+
+  if (lowerTick === null) {
+    lowerTick = createTickBurn(lowerTickId, lowerTickIdx, pool.id, event)
+  }
+  if (upperTick === null) {
+    upperTick = createTickBurn(upperTickId, upperTickIdx, pool.id, event)
+  }
+
   lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amount)
   lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
   upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)

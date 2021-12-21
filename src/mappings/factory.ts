@@ -7,6 +7,7 @@ import { Pool, Token, Bundle } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt, Address } from '@graphprotocol/graph-ts'
+import { populateEmptyPools } from '../utils/backfill'
 
 export function handlePoolCreated(event: PoolCreated): void {
   // temp fix
@@ -18,7 +19,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   let factory = Factory.load(FACTORY_ADDRESS)
   if (factory === null) {
     factory = new Factory(FACTORY_ADDRESS)
-    factory.poolCount = ZERO_BI
+    factory.poolCount = BigInt.fromI32(104)
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
     factory.untrackedVolumeUSD = ZERO_BD
@@ -30,6 +31,7 @@ export function handlePoolCreated(event: PoolCreated): void {
     factory.totalValueLockedETHUntracked = ZERO_BD
     factory.txCount = ZERO_BI
     factory.owner = ADDRESS_ZERO
+    factory.populated = false
 
     // create new bundle for tracking eth price
     let bundle = new Bundle('1')
@@ -137,8 +139,12 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.collectedFeesToken1 = ZERO_BD
   pool.collectedFeesUSD = ZERO_BD
 
+  // populate pre-regenesis pools if needed
+  if (factory.populated == false) {
+    populateEmptyPools(event)
+  }
+
   pool.save()
-  // create the tracked contract based on the template
   PoolTemplate.create(event.params.pool)
   token0.save()
   token1.save()

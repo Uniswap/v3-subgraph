@@ -83,60 +83,47 @@ function savePositionSnapshot(position: Position, event: ethereum.Event): void {
 
 export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
-
   // position was not able to be fetched
   if (position == null) {
     return
   }
-
   // temp fix
   if (Address.fromString(position.pool).equals(Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'))) {
     return
   }
-
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
+  if (token0 == null || token1 == null) {
+    return
+  }
 
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-
   position.liquidity = position.liquidity.plus(event.params.liquidity)
   position.depositedToken0 = position.depositedToken0.plus(amount0)
   position.depositedToken1 = position.depositedToken1.plus(amount1)
-
   updateFeeVars(position!, event, event.params.tokenId)
-
   position.save()
-
   savePositionSnapshot(position!, event)
 }
 
 export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
-
-  // position was not able to be fetched
   if (position == null) {
     return
   }
-
-  // temp fix
-  if (Address.fromString(position.pool).equals(Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'))) {
-    return
-  }
-
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
+  if (token0 == null || token1 == null) {
+    return
+  }
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-
   position.liquidity = position.liquidity.minus(event.params.liquidity)
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
-
   position = updateFeeVars(position!, event, event.params.tokenId)
-
   position.save()
-
   savePositionSnapshot(position!, event)
 }
 
@@ -155,18 +142,19 @@ export function handleCollect(event: Collect): void {
 
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
+
+  if (token0 == null || token1 == null) {
+    return
+  }
+
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
   position.collectedToken0 = position.collectedToken0.plus(amount0)
   position.collectedToken1 = position.collectedToken1.plus(amount1)
-
   position.collectedFeesToken0 = position.collectedToken0.minus(position.withdrawnToken0)
   position.collectedFeesToken1 = position.collectedToken1.minus(position.withdrawnToken1)
-
   position = updateFeeVars(position!, event, event.params.tokenId)
-
   position.save()
-
   savePositionSnapshot(position!, event)
 }
 

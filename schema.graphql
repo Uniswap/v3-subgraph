@@ -24,6 +24,9 @@ type Factory @entity {
   # TVL derived in ETH untracked
   totalValueLockedETHUntracked: BigDecimal!
 
+  # flag for if new pools populated
+  populated: Boolean
+
   # current owner of the factory
   owner: ID!
 }
