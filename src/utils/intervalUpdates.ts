@@ -34,6 +34,7 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
     uniswapDayData.volumeUSDUntracked = ZERO_BD
     uniswapDayData.feesUSD = ZERO_BD
   }
+
   uniswapDayData.tvlUSD = uniswap.totalValueLockedUSD
   uniswapDayData.txCount = uniswap.txCount
   uniswapDayData.save()
