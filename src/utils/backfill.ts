@@ -43,7 +43,8 @@ function populateToken(tokenAddress: string): void {
  * before regenesis.
  */
 export function populateEmptyPools(event: ethereum.Event): void {
-  for (let i = 0; i < 3; ++i) {
+  let length = POOL_MAPPINGS.length
+  for (let i = 0; i < length; ++i) {
     let poolMapping = POOL_MAPPINGS[i]
     let newAddress = poolMapping[1]
     let token0Address = poolMapping[2]
