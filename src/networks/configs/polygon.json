@@ -1,5 +1,8 @@
 {
   "network_name": "polygon",
+  "start_block": 12369621,
+  "factory_address": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+  "manager_address": "0xc36442b4a4522e871399cd717abdd847ab11fe88",
   "weth_address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
   "stable_pool_address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
   "whitelist_tokens": [
@@ -7,5 +10,6 @@
     { "address": "0x6b175474e89094c44da98b954eedeac495271d0f", "blurb": "DAI" }
   ],
   "stabelcoins": [{ "address": "0x6b175474e89094c44da98b954eedeac495271d0f", "blurb": "DAI" }],
-  "min_eth": 52
+  "min_eth": 0.5,
+  "error_pool": "0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248"
 }

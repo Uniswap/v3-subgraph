@@ -1,16 +1,15 @@
 /* eslint-disable prefer-const */
-import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
+import { ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt, Address } from '@graphprotocol/graph-ts'
-import { WHITELIST_TOKENS } from '../networks/constants'
+import { WHITELIST_TOKENS, FACTORY_ADDRESS, ERROR_POOL } from '../networks/constants'
 
 export function handlePoolCreated(event: PoolCreated): void {
-  // temp fix
-  if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
+  if (event.params.pool == Address.fromHexString(ERROR_POOL)) {
     return
   }
 

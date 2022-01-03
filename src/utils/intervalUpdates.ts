@@ -13,8 +13,8 @@ import {
   TickDayData,
   Tick
 } from './../types/schema'
-import { FACTORY_ADDRESS } from './constants'
 import { ethereum } from '@graphprotocol/graph-ts'
+import { FACTORY_ADDRESS } from '../networks/constants'
 
 /**
  * Tracks global aggregate data over daily windows

@@ -43,7 +43,6 @@ function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
       position.transaction = loadTransaction(event).id
       position.feeGrowthInside0LastX128 = positionResult.value8
       position.feeGrowthInside1LastX128 = positionResult.value9
-
       position.amountDepositedUSD = ZERO_BD
       position.amountWithdrawnUSD = ZERO_BD
       position.amountCollectedUSD = ZERO_BD
@@ -162,7 +161,6 @@ export function handleCollect(event: Collect): void {
     return
   }
 
-
   let bundle = Bundle.load('1')
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
@@ -178,7 +176,6 @@ export function handleCollect(event: Collect): void {
     .times(token0.derivedETH.times(bundle.ethPriceUSD))
     .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
   position.amountCollectedUSD = position.amountCollectedUSD.plus(newCollectUSD)
-
 
   position = updateFeeVars(position!, event, event.params.tokenId)
   position.save()
