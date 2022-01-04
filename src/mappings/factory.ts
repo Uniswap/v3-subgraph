@@ -7,6 +7,7 @@ import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 import { WHITELIST_TOKENS, FACTORY_ADDRESS, ERROR_POOL } from '../networks/constants'
+import { populateEmptyPools } from '../utils/backfill'
 
 export function handlePoolCreated(event: PoolCreated): void {
   if (event.params.pool == Address.fromHexString(ERROR_POOL)) {
@@ -135,6 +136,12 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.collectedFeesToken0 = ZERO_BD
   pool.collectedFeesToken1 = ZERO_BD
   pool.collectedFeesUSD = ZERO_BD
+
+  // populate pre-regenesis pools if needed
+  if (factory.populated == false) {
+    populateEmptyPools(event)
+    factory.populated = true
+  }
 
   pool.save()
   // create the tracked contract based on the template

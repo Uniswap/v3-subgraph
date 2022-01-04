@@ -1,0 +1,16 @@
+{
+  "network_name": "optimism",
+  "start_block": 0,
+  "should_backfill": true,
+  "factory_address": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+  "manager_address": "0xc36442b4a4522e871399cd717abdd847ab11fe88",
+  "weth_address": "0x4200000000000000000000000000000000000006",
+  "stable_pool_address": "0x03af20bdaaffb4cc0a521796a223f7d85e2aac31",
+  "whitelist_tokens": [
+    { "address": "0x4200000000000000000000000000000000000006", "blurb": "WETH" },
+    { "address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", "blurb": "DAI" }
+  ],
+  "stabelcoins": [{ "address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", "blurb": "DAI" }],
+  "min_eth": 10,
+  "error_pool": ""
+}

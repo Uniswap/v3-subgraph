@@ -26,6 +26,9 @@ type Factory @entity {
 
   # current owner of the factory
   owner: ID!
+
+  # used for optimism only, flag if backfill complete
+  populated: Boolean
 }
 
 # stores for USD calculations
