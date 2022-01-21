@@ -4,8 +4,8 @@ repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
 graft:
-  base: QmS13421u6qsbVdBCrZhdRaZw2wH67drwF3urmueJvvJ5P
-  block: 13591197
+  base: QmZeCuoZeadgHkGwLwMeguyqUKz1WPWQYKcKyMCeQqGhsF
+  block: 12673736
 dataSources:
   - kind: ethereum/contract
     name: Factory
