@@ -11,6 +11,7 @@
     { "address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", "blurb": "DAI" }
   ],
   "stabelcoins": [{ "address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", "blurb": "DAI" }],
+  "stableIsToken0": true,
   "min_eth": 10,
   "error_pool": ""
 }

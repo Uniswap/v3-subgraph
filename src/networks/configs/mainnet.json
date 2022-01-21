@@ -1,6 +1,9 @@
 {
   "network_name": "mainnet",
   "start_block": 12369621,
+  "no_graft": false,
+  "graft_id": "QmZeCuoZeadgHkGwLwMeguyqUKz1WPWQYKcKyMCeQqGhsF",
+  "graft_block": 12673736,
   "should_backfill": false,
   "factory_address": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
   "manager_address": "0xc36442b4a4522e871399cd717abdd847ab11fe88",
@@ -26,7 +29,8 @@
     { "address": "0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8", "blurb": "yCurv" },
     { "address": "0x956f47f50a910163d8bf957cf5846d573e7f87ca", "blurb": "FEI" },
     { "address": "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0", "blurb": "MATIC" },
-    { "address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9", "blurb": "AAVE" }
+    { "address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9", "blurb": "AAVE" },
+    { "address": "0xfe2e637202056d30016725477c5da089ab0a043a", "blurb": "sETH2" }
   ],
   "stabelcoins": [
     { "address": "0x6b175474e89094c44da98b954eedeac495271d0f", "blurb": "DAI" },
@@ -36,6 +40,7 @@
     { "address": "0x956f47f50a910163d8bf957cf5846d573e7f87ca", "blurb": "FEI" },
     { "address": "0x4dd28568d05f09b02220b09c2cb307bfd837cb95", "blurb": "" }
   ],
-  "min_eth": 0.5,
+  "stableIsToken0": true,
+  "min_eth": 52,
   "error_pool": "0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248"
 }

@@ -6,6 +6,7 @@ import { exponentToBigDecimal, safeDiv } from '../utils/index'
 import {
   MINIMUM_ETH_LOCKED,
   STABLE_COINS,
+  STABLE_IS_TOKEN_0,
   STABLE_POOL_ADDRESS,
   WETH_ADDRESS,
   WHITELIST_TOKENS
@@ -28,7 +29,11 @@ export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let stablePool = Pool.load(STABLE_POOL_ADDRESS) // stable is token0
   if (stablePool !== null) {
-    return stablePool.token0Price
+    if (STABLE_IS_TOKEN_0) {
+      return stablePool.token0Price
+    } else {
+      return stablePool.token1Price
+    }
   } else {
     return ZERO_BD
   }
