@@ -10,7 +10,7 @@ Mustache templating is used to populate network specific constants. These are us
 
 ### Network Config
 
-Network properties are defined in the networks/configs folder. To add a new network, create a new config file and fill out the required fields.
+Network properties are defined in the [configs](src/networks/configs) folder. To add a new network, create a new config file and fill out the required fields.
 
 ### Dev
 
@@ -29,8 +29,3 @@ yarn codegen
 yarn build
 ```
 
-### Subgraph Endpoint
-
-Synced at: https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-v3-subgraph?selected=playground
-
-Pending Changes at same URL
