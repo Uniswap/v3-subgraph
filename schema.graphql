@@ -218,20 +218,10 @@ type Position @entity {
   withdrawnToken0: BigDecimal!
   # amount of token 1 ever withdrawn from position (without fees)
   withdrawnToken1: BigDecimal!
-  # all time collected, including burn withdraws
-  collectedToken0: BigDecimal!
-  # all time collected, including burn withdraws
-  collectedToken1: BigDecimal!
   # all time collected fees in token0
   collectedFeesToken0: BigDecimal!
   # all time collected fees in token1
   collectedFeesToken1: BigDecimal!
-  # Total amount deposited in terms of USD
-  amountDepositedUSD: BigDecimal!
-  # Total amount withdrawn in terms of USD
-  amountWithdrawnUSD: BigDecimal!
-  # Total amount collected in terms of USD
-  amountCollectedUSD: BigDecimal!
   # tx in which the position was initialized
   transaction: Transaction!
   # vars needed for fee computation

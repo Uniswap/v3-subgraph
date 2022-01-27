@@ -23,6 +23,31 @@ import {
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
 import { FACTORY_ADDRESS } from '../networks/constants'
 
+function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
+  let poolAddress = event.address
+  // not all ticks are initialized so obtaining null is expected behavior
+  let poolContract = PoolABI.bind(poolAddress)
+  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
+  tick.feeGrowthOutside0X128 = tickResult.value2
+  tick.feeGrowthOutside1X128 = tickResult.value3
+  tick.save()
+
+  updateTickDayData(tick!, event)
+}
+
+function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
+  let poolAddress = event.address
+  let tick = Tick.load(
+    poolAddress
+      .toHexString()
+      .concat('#')
+      .concat(tickId.toString())
+  )
+  if (tick !== null) {
+    updateTickFeeVarsAndSave(tick!, event)
+  }
+}
+
 export function handleInitialize(event: Initialize): void {
   let pool = Pool.load(event.address.toHexString())
   pool.sqrtPrice = event.params.sqrtPriceX96
@@ -499,29 +524,4 @@ export function handleFlash(event: FlashEvent): void {
   pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
   pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
-}
-
-function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
-  let poolAddress = event.address
-  // not all ticks are initialized so obtaining null is expected behavior
-  let poolContract = PoolABI.bind(poolAddress)
-  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
-  tick.feeGrowthOutside0X128 = tickResult.value2
-  tick.feeGrowthOutside1X128 = tickResult.value3
-  tick.save()
-
-  updateTickDayData(tick!, event)
-}
-
-function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
-  let poolAddress = event.address
-  let tick = Tick.load(
-    poolAddress
-      .toHexString()
-      .concat('#')
-      .concat(tickId.toString())
-  )
-  if (tick !== null) {
-    updateTickFeeVarsAndSave(tick!, event)
-  }
 }
