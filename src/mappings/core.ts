@@ -454,6 +454,8 @@ export function handleSwap(event: SwapEvent): void {
   token1DayData.save()
   uniswapDayData.save()
   poolDayData.save()
+  token0HourData.save()
+  token1HourData.save()
   poolHourData.save()
   factory.save()
   pool.save()
