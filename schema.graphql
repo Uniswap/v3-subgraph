@@ -6,15 +6,15 @@ type Factory @entity {
   # amoutn of transactions all time
   txCount: BigInt!
   # total volume all time in derived USD
-  totalVolumeUSD: BigDecimal!
+  volumeUSD: BigDecimal!
   # total volume all time in derived ETH
-  totalVolumeETH: BigDecimal!
-  # total swap fees all time in USD
-  totalFeesUSD: BigDecimal!
-  # total swap fees all time in USD
-  totalFeesETH: BigDecimal!
+  volumeETH: BigDecimal!
   # all volume even through less reliable USD values
-  untrackedVolumeUSD: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
+  # total swap fees all time in USD
+  feesUSD: BigDecimal!
+  # total swap fees all time in USD
+  feesETH: BigDecimal!
   # TVL derived in USD
   totalValueLockedUSD: BigDecimal!
   # TVL derived in ETH
@@ -23,7 +23,6 @@ type Factory @entity {
   totalValueLockedUSDUntracked: BigDecimal!
   # TVL derived in ETH untracked
   totalValueLockedETHUntracked: BigDecimal!
-
   # current owner of the factory
   owner: ID!
 }
@@ -51,7 +50,7 @@ type Token @entity {
   # volume in derived USD
   volumeUSD: BigDecimal!
   # volume in USD even on pools with less reliable USD values
-  untrackedVolumeUSD: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # transactions across all pools that include this token
@@ -62,8 +61,6 @@ type Token @entity {
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
   totalValueLockedUSD: BigDecimal!
-  # TVL derived in USD untracked
-  totalValueLockedUSDUntracked: BigDecimal!
   # derived price in ETH
   derivedETH: BigDecimal!
   # pools token is in that are white listed for USD pricing
@@ -108,27 +105,29 @@ type Pool @entity {
   # all time USD swapped
   volumeUSD: BigDecimal!
   # all time USD swapped, unfiltered for unreliable USD pools
-  untrackedVolumeUSD: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # all time number of transactions
   txCount: BigInt!
+  # total token 0 across all ticks
+  totalValueLockedToken0: BigDecimal!
+  # total token 1 across all ticks
+  totalValueLockedToken1: BigDecimal!
+  # TVL derived ETH
+  totalValueLockedETH: BigDecimal!
+  # TVL USD
+  totalValueLockedUSD: BigDecimal!
+  # TVL derived in ETH untracked
+  totalValueLockedETHUntracked: BigDecimal!
+  # TVL derived in USD untracked
+  totalValueLockedUSDUntracked: BigDecimal!
   # all time fees collected token0
   collectedFeesToken0: BigDecimal!
   # all time fees collected token1
   collectedFeesToken1: BigDecimal!
   # all time fees collected derived USD
   collectedFeesUSD: BigDecimal!
-  # total token 0 across all ticks
-  totalValueLockedToken0: BigDecimal!
-  # total token 1 across all ticks
-  totalValueLockedToken1: BigDecimal!
-  # tvl derived ETH
-  totalValueLockedETH: BigDecimal!
-  # tvl USD
-  totalValueLockedUSD: BigDecimal!
-  # TVL derived in USD untracked
-  totalValueLockedUSDUntracked: BigDecimal!
   # Fields used to help derived relationship
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # hourly snapshots of pool data
@@ -150,6 +149,10 @@ type Tick @entity {
   poolAddress: String
   # tick index
   tickIdx: BigInt!
+  # created time
+  createdAtTimestamp: BigInt!
+  # created block
+  createdAtBlockNumber: BigInt!
   # pointer to pool
   pool: Pool!
   # total liquidity pool has as tick lower or upper
@@ -160,110 +163,6 @@ type Tick @entity {
   price0: BigDecimal!
   # calculated price of token1 of tick within this pool - constant
   price1: BigDecimal!
-  # lifetime volume of token0 with this tick in range
-  volumeToken0: BigDecimal!
-  # lifetime volume of token1 with this tick in range
-  volumeToken1: BigDecimal!
-  # lifetime volume in derived USD with this tick in range
-  volumeUSD: BigDecimal!
-  # lifetime volume in untracked USD with this tick in range
-  untrackedVolumeUSD: BigDecimal!
-  # fees in USD
-  feesUSD: BigDecimal!
-  # all time collected fees in token0
-  collectedFeesToken0: BigDecimal!
-  # all time collected fees in token1
-  collectedFeesToken1: BigDecimal!
-  # all time collected fees in USD
-  collectedFeesUSD: BigDecimal!
-  # created time
-  createdAtTimestamp: BigInt!
-  # created block
-  createdAtBlockNumber: BigInt!
-  # Fields used to help derived relationship
-  liquidityProviderCount: BigInt! # used to detect new exchanges
-  # derived fields
-  # swaps: [Swap!]! @derivedFrom(field: "tick")
-  # vars needed for fee computation
-  feeGrowthOutside0X128: BigInt!
-  feeGrowthOutside1X128: BigInt!
-}
-
-type Position @entity {
-  # Positions created through NonfungiblePositionManager
-  # NFT token id
-  id: ID!
-  # owner of the NFT
-  owner: Bytes!
-  # pool position is within
-  pool: Pool!
-  # allow indexing by tokens
-  token0: Token!
-  # allow indexing by tokens
-  token1: Token!
-  # lower tick of the position
-  tickLower: Tick!
-  # upper tick of the position
-  tickUpper: Tick!
-  # total position liquidity
-  liquidity: BigInt!
-  # amount of token 0 ever deposited to position
-  depositedToken0: BigDecimal!
-  # amount of token 1 ever deposited to position
-  depositedToken1: BigDecimal!
-  # amount of token 0 ever withdrawn from position (without fees)
-  withdrawnToken0: BigDecimal!
-  # amount of token 1 ever withdrawn from position (without fees)
-  withdrawnToken1: BigDecimal!
-  # all time collected fees in token0
-  collectedFeesToken0: BigDecimal!
-  # all time collected fees in token1
-  collectedFeesToken1: BigDecimal!
-  # Total amount deposited in terms of USD
-  amountDepositedUSD: BigDecimal!
-  # Total amount withdrawn in terms of USD
-  amountWithdrawnUSD: BigDecimal!
-  # Total amount collected in terms of USD
-  amountCollectedUSD: BigDecimal!
-  # tx in which the position was initialized
-  transaction: Transaction!
-  # vars needed for fee computation
-  feeGrowthInside0LastX128: BigInt!
-  feeGrowthInside1LastX128: BigInt!
-}
-
-type PositionSnapshot @entity {
-  # <NFT token id>#<block number>
-  id: ID!
-  # owner of the NFT
-  owner: Bytes!
-  # pool the position is within
-  pool: Pool!
-  # position of which the snap was taken of
-  position: Position!
-  # block in which the snap was created
-  blockNumber: BigInt!
-  # timestamp of block in which the snap was created
-  timestamp: BigInt!
-  # total position liquidity
-  liquidity: BigInt!
-  # amount of token 0 ever deposited to position
-  depositedToken0: BigDecimal!
-  # amount of token 1 ever deposited to position
-  depositedToken1: BigDecimal!
-  # amount of token 0 ever withdrawn from position (without fees)
-  withdrawnToken0: BigDecimal!
-  # amount of token 1 ever withdrawn from position (without fees)
-  withdrawnToken1: BigDecimal!
-  # all time collected fees in token0
-  collectedFeesToken0: BigDecimal!
-  # all time collected fees in token1
-  collectedFeesToken1: BigDecimal!
-  # tx in which the snapshot was initialized
-  transaction: Transaction!
-  # internal vars needed for fee computation
-  feeGrowthInside0LastX128: BigInt!
-  feeGrowthInside1LastX128: BigInt!
 }
 
 type Transaction @entity {
@@ -449,12 +348,12 @@ type UniswapDayData @entity {
   volumeUSD: BigDecimal!
   # total daily volume in Uniswap derived in terms of USD untracked
   volumeUSDUntracked: BigDecimal!
+  # tvl in terms of USD
+  totalValueLockedUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
   # number of daily transactions
   txCount: BigInt!
-  # tvl in terms of USD
-  tvlUSD: BigDecimal!
 }
 
 # Data accumulated and condensed into day stats for each pool
@@ -479,8 +378,8 @@ type PoolDayData @entity {
   feeGrowthGlobal0X128: BigInt!
   # tracker for global fee growth
   feeGrowthGlobal1X128: BigInt!
-  # tvl derived in USD at end of period
-  tvlUSD: BigDecimal!
+  # TVL derived in USD at end of period
+  totalValueLockedUSD: BigDecimal!
   # volume in token0
   volumeToken0: BigDecimal!
   # volume in token1
@@ -524,7 +423,7 @@ type PoolHourData @entity {
   # tracker for global fee growth
   feeGrowthGlobal1X128: BigInt!
   # tvl derived in USD at end of period
-  tvlUSD: BigDecimal!
+  totalValueLockedUSD: BigDecimal!
   # volume in token0
   volumeToken0: BigDecimal!
   # volume in token1
@@ -545,57 +444,6 @@ type PoolHourData @entity {
   close: BigDecimal!
 }
 
-type TickHourData @entity {
-  # format: <pool address>-<tick index>-<timestamp>
-  id: ID!
-  # unix timestamp for start of hour
-  periodStartUnix: Int!
-  # pointer to pool
-  pool: Pool!
-  # pointer to tick
-  tick: Tick!
-  # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigInt!
-  # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigInt!
-  # hourly volume of token0 with this tick in range
-  volumeToken0: BigDecimal!
-  # hourly volume of token1 with this tick in range
-  volumeToken1: BigDecimal!
-  # hourly volume in derived USD with this tick in range
-  volumeUSD: BigDecimal!
-  # fees in USD
-  feesUSD: BigDecimal!
-}
-
-# Data accumulated and condensed into day stats for each exchange
-# Note: this entity gets saved only if there is a change during the day
-type TickDayData @entity {
-  # format: <pool address>-<tick index>-<timestamp>
-  id: ID!
-  # timestamp rounded to current day by dividing by 86400
-  date: Int!
-  # pointer to pool
-  pool: Pool!
-  # pointer to tick
-  tick: Tick!
-  # total liquidity pool has as tick lower or upper at end of period
-  liquidityGross: BigInt!
-  # how much liquidity changes when tick crossed at end of period
-  liquidityNet: BigInt!
-  # hourly volume of token0 with this tick in range
-  volumeToken0: BigDecimal!
-  # hourly volume of token1 with this tick in range
-  volumeToken1: BigDecimal!
-  # hourly volume in derived USD with this tick in range
-  volumeUSD: BigDecimal!
-  # fees in USD
-  feesUSD: BigDecimal!
-  # vars needed for fee computation
-  feeGrowthOutside0X128: BigInt!
-  feeGrowthOutside1X128: BigInt!
-}
-
 type TokenDayData @entity {
   # token address concatendated with date
   id: ID!
@@ -608,7 +456,7 @@ type TokenDayData @entity {
   # volume in derived USD
   volumeUSD: BigDecimal!
   # volume in USD even on pools with less reliable USD values
-  untrackedVolumeUSD: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
@@ -639,7 +487,7 @@ type TokenHourData @entity {
   # volume in derived USD
   volumeUSD: BigDecimal!
   # volume in USD even on pools with less reliable USD values
-  untrackedVolumeUSD: BigDecimal!
+  volumeUSDUntracked: BigDecimal!
   # liquidity across all pools in token units
   totalValueLocked: BigDecimal!
   # liquidity across all pools in derived USD
