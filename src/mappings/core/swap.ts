@@ -76,15 +76,6 @@ export function handleSwap(event: SwapEvent): void {
   token1.volumeUSD = token1.volumeUSD.plus(volumeUSD)
   token1.volumeUSDUntracked = token1.volumeUSDUntracked.plus(volumeUSDUntracked)
 
-  // Update TVL values.
-  let oldPoolTVLETH = pool.totalValueLockedETH
-  let oldPoolTVLETHUntracked = pool.totalValueLockedETHUntracked
-  pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
-  pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
-  token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
-  token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
-  updateDerivedTVLAmounts(pool as Pool, factory as Factory, oldPoolTVLETH, oldPoolTVLETHUntracked)
-
   // Update the pool with the new active liquidity, price, and tick.
   pool.liquidity = event.params.liquidity
   pool.tick = BigInt.fromI32(event.params.tick as i32)
@@ -101,6 +92,15 @@ export function handleSwap(event: SwapEvent): void {
   bundle.save()
   token0.derivedETH = findEthPerToken(token0 as Token)
   token1.derivedETH = findEthPerToken(token1 as Token)
+
+  // Update TVL values.
+  let oldPoolTVLETH = pool.totalValueLockedETH
+  let oldPoolTVLETHUntracked = pool.totalValueLockedETHUntracked
+  pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
+  pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
+  token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
+  token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
+  updateDerivedTVLAmounts(pool as Pool, factory as Factory, oldPoolTVLETH, oldPoolTVLETHUntracked)
 
   // Create Swap event.
   let transaction = loadTransaction(event)
