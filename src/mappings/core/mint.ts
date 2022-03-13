@@ -1,6 +1,5 @@
 /* eslint-disable prefer-const */
-import { Bundle, Factory, Mint, Pool, Tick, Token } from '../../types/schema'
-import { createTick } from '../../utils/tick'
+import { Bundle, Factory, Mint, Pool, Token } from '../../types/schema'
 import { BigInt } from '@graphprotocol/graph-ts'
 import { Mint as MintEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../../utils'
@@ -73,25 +72,6 @@ export function handleMint(event: MintEvent): void {
   mint.tickLower = BigInt.fromI32(event.params.tickLower)
   mint.tickUpper = BigInt.fromI32(event.params.tickUpper)
   mint.logIndex = event.logIndex
-
-  // Update tick entities.
-  let lowerTickIdx = event.params.tickLower
-  let upperTickIdx = event.params.tickUpper
-  let lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
-  let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
-  let lowerTick = Tick.load(lowerTickId)
-  let upperTick = Tick.load(upperTickId)
-  if (lowerTick === null) {
-    lowerTick = createTick(lowerTickId, lowerTickIdx, pool.id, event)
-  }
-  if (upperTick === null) {
-    upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
-  }
-  let amount = event.params.amount
-  lowerTick.liquidityGross = lowerTick.liquidityGross.plus(amount)
-  lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
-  upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
-  upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
 
   updateUniswapDayData(event)
   updatePoolDayData(event)
