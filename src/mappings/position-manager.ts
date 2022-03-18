@@ -37,6 +37,8 @@ function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
       position.depositedToken0 = ZERO_BD
       position.depositedToken1 = ZERO_BD
       position.withdrawnToken0 = ZERO_BD
+      position.collectedToken0 = ZERO_BD
+      position.collectedToken1 = ZERO_BD
       position.withdrawnToken1 = ZERO_BD
       position.collectedFeesToken0 = ZERO_BD
       position.collectedFeesToken1 = ZERO_BD
