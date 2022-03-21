@@ -219,12 +219,6 @@ type Position @entity {
   collectedFeesToken0: BigDecimal!
   # all time collected fees in token1
   collectedFeesToken1: BigDecimal!
-  # Total amount deposited in terms of USD
-  amountDepositedUSD: BigDecimal!
-  # Total amount withdrawn in terms of USD
-  amountWithdrawnUSD: BigDecimal!
-  # Total amount collected in terms of USD
-  amountCollectedUSD: BigDecimal!
   # tx in which the position was initialized
   transaction: Transaction!
   # vars needed for fee computation
