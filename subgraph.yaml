@@ -3,103 +3,993 @@ description: Uniswap is a decentralized protocol for automated token exchange on
 repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
-graft:
-  base: QmPrb5mvZj3ycUugZgwLWCvK93jfXfhvfjRXrFk4tRmyCX
-  block: 14292820
 features:
   - nonFatalErrors
 dataSources:
-  - kind: ethereum/contract
-    name: Factory
-    network: mainnet
-    source:
-      address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
-      abi: Factory
-      startBlock: 12369621
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/factory.ts
-      entities:
-        - Pool
-        - Token
-      abis:
-        - name: Factory
-          file: ./abis/factory.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: ERC20SymbolBytes
-          file: ./abis/ERC20SymbolBytes.json
-        - name: ERC20NameBytes
-          file: ./abis/ERC20NameBytes.json
-        - name: Pool
-          file: ./abis/pool.json
-      eventHandlers:
-        - event: PoolCreated(indexed address,indexed address,indexed uint24,int24,address)
-          handler: handlePoolCreated
-  - kind: ethereum/contract
-    name: NonfungiblePositionManager
-    network: mainnet
-    source:
-      address: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
-      abi: NonfungiblePositionManager
-      startBlock: 12369651
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/position-manager.ts
-      entities:
-        - Pool
-        - Token
-      abis:
-        - name: NonfungiblePositionManager
-          file: ./abis/NonfungiblePositionManager.json
-        - name: Pool
-          file: ./abis/pool.json
-        - name: Factory
-          file: ./abis/factory.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
-          handler: handleIncreaseLiquidity
-        - event: DecreaseLiquidity(indexed uint256,uint128,uint256,uint256)
-          handler: handleDecreaseLiquidity
-        - event: Collect(indexed uint256,address,uint256,uint256)
-          handler: handleCollect
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-templates:
-  - kind: ethereum/contract
-    name: Pool
-    network: mainnet
-    source:
-      abi: Pool
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/core.ts
-      entities:
-        - Pool
-        - Token
-      abis:
-        - name: Pool
-          file: ./abis/pool.json
-        - name: Factory
-          file: ./abis/factory.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: Initialize(uint160,int24)
-          handler: handleInitialize
-        - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
-          handler: handleSwap
-        - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
-          handler: handleMint
-        - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
-          handler: handleBurn
-        - event: Flash(indexed address,indexed address,uint256,uint256,uint256,uint256)
-          handler: handleFlash
+    - kind: ethereum/contract
+      name: Factory
+      network: mainnet
+      source:
+        address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+        abi: Factory
+        startBlock: 12369621
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/factory.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+          - name: ERC20SymbolBytes
+            file: ./abis/ERC20SymbolBytes.json
+          - name: ERC20NameBytes
+            file: ./abis/ERC20NameBytes.json
+          - name: Pool
+            file: ./abis/pool.json
+        eventHandlers:
+          - event: PoolCreated(indexed address,indexed address,indexed uint24,int24,address)
+            handler: handlePoolCreated
+    - kind: ethereum/contract
+      name: Pool1
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168'
+        startBlock: 13754443
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool2
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xdf50Fbde8180c8785842C8E316EBe06F542D3443'
+        startBlock: 13605124
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool3
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x6c6Bc977E13Df9b0de53b251522280BB72383700'
+        startBlock: 12369760
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool4
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x735a26a57A0A0069dfABd41595A970faF5E1ee8b'
+        startBlock: 14615707
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool5
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xbB2e5C2FF298FD96E166f90c8ABAcAF714Df14F8'
+        startBlock: 12370594
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool6
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x8dB1b906d47dFc1D84A87fc49bd0522e285b98b9'
+        startBlock: 14526075
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool7
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x97e7d56A0408570bA1a7852De36350f7713906ec'
+        startBlock: 12523889
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool8
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x69061B8a0214a8D10145D8471730151434ca54FF'
+        startBlock: 13905460
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool9
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xfECeCEbf44D38858A0C478C2c4afA2601F5352Fb'
+        startBlock: 14312594
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool10
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x151CcB92bc1eD5c6D0F9Adb5ceC4763cEb66AC7f'
+        startBlock: 12372402
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool11
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640'
+        startBlock: 12376729
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool12
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xe5d028350093a743A9769e6FD7F5546eEdDAA320'
+        startBlock: 14424497
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool13
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x2dd31cc03Ed996A99Fbfdffa07f8f4604B1a2eC1'
+        startBlock: 13217877
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool14
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x9fEE77D8B5050A55c16D0446E6eAb06a6A24cd06'
+        startBlock: 13749149
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool15
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x7EE092FD479185Dd741E3E6994F255bB3624f765'
+        startBlock: 12720865
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool16
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x11B7a6bc0259ed6Cf9DB8F499988F9eCc7167bf5'
+        startBlock: 12515690
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool17
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'
+        startBlock: 12370624
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool18
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xaf9060D26826964C1B9329582e23b4AdBf7679e3'
+        startBlock: 14298819
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool19
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xb9C4a5522a2f8bA9E2fF7063Df8C02ed443337A3'
+        startBlock: 13578353
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool20
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x4585FE77225b41b697C938B018E2Ac67Ac5a20c0'
+        startBlock: 12376387
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool21
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD'
+        startBlock: 12369821
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool22
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'
+        startBlock: 12370624
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool23
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x1a80afe14143637C0b7609e6e276464e4F748014'
+        startBlock: 12376610
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool24
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x0Eb86eEC804F21EE77038b71783ab0A24AfeD649'
+        startBlock: 14584247
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool25
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x7ED3F364668cd2b9449a8660974a26A092C64849'
+        startBlock: 13576174
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool26
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xEF9A9283440b2D7eFB9c7dCc17e94e234D5CccCD'
+        startBlock: 14320296
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool27
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x9496D107a4b90c7d18c703e8685167f90ac273B0'
+        startBlock: 13565756
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool28
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x8c54aA2A32a779e6f6fBea568aD85a19E0109C26'
+        startBlock: 12495535
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool29
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x22a0738bDe54050FfC04408063Fd5FbDc1205BDf'
+        startBlock: 12385480
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool30
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640'
+        startBlock: 12376729
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool31
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xb82d251b7e92832dCcb7F3C6F03Ae20f2D7eE597'
+        startBlock: 13865974
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool32
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0x3416cF6C708Da44DB2624D63ea0AAef7113527C6'
+        startBlock: 13609065
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+    - kind: ethereum/contract
+      name: Pool33
+      network: mainnet
+      source:
+        abi: Pool
+        address: '0xD7Dcb0eb6AaB643b85ba74cf9997c840fE32e695'
+        startBlock: 14454303
+      mapping:
+        kind: ethereum/events
+        apiVersion: 0.0.4
+        language: wasm/assemblyscript
+        file: ./src/mappings/core.ts
+        entities:
+          - Pool
+          - Token
+        abis:
+          - name: Pool
+            file: ./abis/pool.json
+          - name: Factory
+            file: ./abis/factory.json
+          - name: ERC20
+            file: ./abis/ERC20.json
+        eventHandlers:
+          - event: Initialize(uint160,int24)
+            handler: handleInitialize
+          - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+            handler: handleBurn
+          - event: Collect(indexed address,address,indexed int24,indexed int24,uint128,uint128)
+            handler: handleCollect
+

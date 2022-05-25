@@ -4,7 +4,6 @@ import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../ut
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
-import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 
@@ -139,7 +138,6 @@ export function handlePoolCreated(event: PoolCreated): void {
 
   pool.save()
   // create the tracked contract based on the template
-  PoolTemplate.create(event.params.pool)
   token0.save()
   token1.save()
   factory.save()
