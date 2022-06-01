@@ -11,7 +11,13 @@ const DAI_WETH_03_POOL = '0x03af20bdaaffb4cc0a521796a223f7d85e2aac31'
 // usually tokens that many tokens are paired with
 export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS, // WETH,
-  '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' // DAI
+  '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
+  '0x4200000000000000000000000000000000000042', // OP
+  '0x7f5c764cbc14f9669b88837ca1490cca17c31607', // USDC
+  '0x9e1028f5f1d5ede59748ffcee5532509976840e0', // PERP
+  '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', // LYRA
+  '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58', // USDT
+  '0x68f180fcce6836688e9084f035309e29bf0a2095' // WBTC
 ]
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('10')
