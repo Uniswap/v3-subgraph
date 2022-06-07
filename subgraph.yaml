@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: Carthage is a decentralized protocol for automated token exchange on Candle.
-repository: https://github.com/Carthage/v3-subgraph
+repository: https://github.com/Carthageprotocol/v3-subgraph
 schema:
   file: ./schema.graphql
 graft:
