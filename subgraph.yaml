@@ -3,9 +3,6 @@ description: Carthage is a decentralized protocol for automated token exchange o
 repository: https://github.com/Carthageprotocol/v3-subgraph
 schema:
   file: ./schema.graphql
-graft:
-  base: QmSGd2GREu8QzGgqXA626cyYbF65TGXj3gmk96CDBNQ9zG
-  block: 200000
 features:
   - nonFatalErrors
 dataSources:
