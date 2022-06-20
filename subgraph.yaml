@@ -4,8 +4,8 @@ repository: https://github.com/Carthageprotocol/v3-subgraph
 schema:
   file: ./schema.graphql
 graft:
-  base: QmPrb5mvZj3ycUugZgwLWCvK93jfXfhvfjRXrFk4tRmyCX
-  block: 14292820
+  base: QmSGd2GREu8QzGgqXA626cyYbF65TGXj3gmk96CDBNQ9zG
+  block: 200000
 features:
   - nonFatalErrors
 dataSources:
