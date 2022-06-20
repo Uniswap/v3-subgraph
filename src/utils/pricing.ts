@@ -5,14 +5,14 @@ import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
 const WETH_ADDRESS = '0xb750990F953B36F806d0327678eCFB4eEFd16979'
-const USDC_WETH_03_POOL = '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8'
+const USDC_WETH_03_POOL = '0x6d067063e40963b9cb8F6C8576ee0c256bCf33cA' //updated to cndl version
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS, // WETH
-  '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
+  '0xad43669cbAC863e33449d423261E525de8da0Ff4', // DAI  updated to cndl version
+  '0x95A0A7953F9292838C0614D690005D5c716E718E', // USDC  - updated to cndl version
   '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
   '0x0000000000085d4780b73119b644ae5ecd22b376', // TUSD
   '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
@@ -28,14 +28,14 @@ export let WHITELIST_TOKENS: string[] = [
   '0x111111111117dc0aa78b770fa6a738034120c302', // 1INCH
   '0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8', // yCurv
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
-  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
+  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC  updated to cndl version
   '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
   '0xfe2e637202056d30016725477c5da089ab0a043a' // sETH2
 ]
 
 let STABLE_COINS: string[] = [
-  '0x6b175474e89094c44da98b954eedeac495271d0f',
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  '0xad43669cbAC863e33449d423261E525de8da0Ff4', // DAI  updated to cndl version
+  '0x95A0A7953F9292838C0614D690005D5c716E718E', // USDC  - updated to cndl version
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
   '0x0000000000085d4780b73119b644ae5ecd22b376',
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
