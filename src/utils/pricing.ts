@@ -4,8 +4,8 @@ import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
-const WETH_ADDRESS = '0xb750990F953B36F806d0327678eCFB4eEFd16979'
-const USDC_WETH_03_POOL = '0x6d067063e40963b9cb8F6C8576ee0c256bCf33cA' //updated to cndl version
+const WETH_ADDRESS = '0x85FA00f55492B0437b3925381fAaf0E024747627'
+const USDC_WETH_03_POOL = '0x4F4E1ccFa1D3B5730372f5C89B1dF248F56CBbE4' //updated to cndl version
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
