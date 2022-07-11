@@ -2,7 +2,7 @@ import {
   Address,
   BigInt,
 } from "@graphprotocol/graph-ts"
-  
+
 // Initialize a Token Definition with the attributes
 export class StaticTokenDefinition {
   address : Address
@@ -23,11 +23,11 @@ export class StaticTokenDefinition {
     let staticDefinitions = new Array<StaticTokenDefinition>(6)
 
     // Add DGD
-    let tokenDGD = new StaticTokenDefinition(
-      Address.fromString('0xe0b7927c4af23765cb51314a0e0521a9645f0e2a'),
-      'DGD',
-      'DGD',
-      BigInt.fromI32(9)
+    let tokenUSDC = new StaticTokenDefinition(
+      Address.fromString('0x95A0A7953F9292838C0614D690005D5c716E718E'),
+      'USDC',
+      'USDC',
+      BigInt.fromI32(6)
     )
     staticDefinitions.push(tokenDGD)
 
