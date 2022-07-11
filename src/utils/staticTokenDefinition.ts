@@ -29,7 +29,7 @@ export class StaticTokenDefinition {
       'USDC',
       BigInt.fromI32(6)
     )
-    staticDefinitions.push(tokenDGD)
+    staticDefinitions.push(tokenUSDC)
 
     // Add AAVE
     let tokenAAVE = new StaticTokenDefinition(
