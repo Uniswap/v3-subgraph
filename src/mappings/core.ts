@@ -28,7 +28,7 @@ export function handleInitialize(event: Initialize): void {
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   pool.save()
-  
+
   // update token prices
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
@@ -273,7 +273,7 @@ export function handleSwap(event: SwapEvent): void {
   let pool = Pool.load(event.address.toHexString())
 
   // hot fix for bad pricing
-  if (pool.id == '0x9663f2ca0454accad3e094448ea6f77443880454') {
+  if (pool.id == '0x6d067063e40963b9cb8F6C8576ee0c256bCf33cA') {
     return
   }
 
