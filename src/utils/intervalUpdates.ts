@@ -84,6 +84,7 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   poolDayData.tick = pool.tick
   poolDayData.tvlUSD = pool.totalValueLockedUSD
   poolDayData.txCount = poolDayData.txCount.plus(ONE_BI)
+  poolDayData.close = pool.token0Price
   poolDayData.save()
 
   return poolDayData as PoolDayData
