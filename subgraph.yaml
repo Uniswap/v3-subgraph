@@ -41,7 +41,6 @@ dataSources:
     source:
       address: '0xB307B497aF3fDDF68c27ce0356876dC6b88602D7'
       abi: NonfungiblePositionManager
-      startBlock: 20000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
