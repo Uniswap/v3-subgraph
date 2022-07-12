@@ -8,7 +8,7 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: ethereum
+    network: mainnet
     source:
       address: '0x5Bb7BAE25728e9e51c25466D2A15FaE97834FD95'
       abi: Factory
@@ -37,7 +37,7 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: ethereum
+    network: mainnet
     source:
       address: '0xB307B497aF3fDDF68c27ce0356876dC6b88602D7'
       abi: NonfungiblePositionManager
@@ -71,7 +71,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: ethereum
+    network: mainnet
     source:
       abi: Pool
     mapping:
