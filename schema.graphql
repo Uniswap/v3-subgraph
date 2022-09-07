@@ -45,7 +45,7 @@ type Token @entity {
   # token decimals
   decimals: BigInt!
   # token total supply
-  totalSupply: BigInt!
+  totalSupply: BigInt
   # volume in token units
   volume: BigDecimal!
   # volume in derived USD
