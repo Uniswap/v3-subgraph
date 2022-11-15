@@ -3,7 +3,7 @@ description: A copy of Uniswap's Arbitrum subgraph
 # graft:
 #   base: QmYrooNJpZZkpsMxG44wJgkbnSbEsT9B8wbStADdrydewT
 #   block: 5363973
-repository: https://github.com/Uniswap/uniswap-v3-subgraph
+repository: https://github.com/vintageplayer/v3-subgraph
 schema:
   file: ./schema.graphql
 features:
