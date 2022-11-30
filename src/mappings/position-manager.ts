@@ -157,9 +157,11 @@ export function handleCollect(event: Collect): void {
   }
 
   let token0 = Token.load(position.token0)
+  let token1 = Token.load(position.token1)
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
   position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
-  position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount0)
+  position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount1)
 
   position = updateFeeVars(position!, event, event.params.tokenId)
   position.save()
