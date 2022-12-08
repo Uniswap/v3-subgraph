@@ -6,10 +6,9 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "prepare-const": "mustache src/networks/configs/$NETWORK.json src/networks/constants.template.ts > src/networks/constants.ts",
-    "prepare-yaml": "mustache src/networks/configs/$NETWORK.json subgraph.template.yaml  subgraph.yaml",
-    "deploy": "graph deploy $SUBGRAPH_NAME --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
-    "watch-local": "graph deploy $SUBGRAPH_NAME --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
+    "prepare-const": "mustache src/configs/$NETWORK.json src/networks/constants.template.ts > src/networks/constants.ts",
+    "prepare-yaml": "mustache src/configs/$NETWORK.json subgraph.template.yaml  subgraph.yaml", 
+    "deploy": "graph deploy $SUBGRAPH_NAME --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
