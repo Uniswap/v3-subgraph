@@ -3,14 +3,17 @@ description: Uniswap  is a decentralized protocol for automated token exchange o
 repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
+graft: 
+  base: QmZeCuoZeadgHkGwLwMeguyqUKz1WPWQYKcKyMCeQqGhsF
+  block: 12673736   
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: matic
+    network: mainnet
     source:
       address: '0x1f98431c8ad98523631ae4a59f267346ea31f984'
       abi: Factory
-      startBlock: 22757547
+      startBlock: 12369621
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -33,50 +36,17 @@ dataSources:
       eventHandlers:
         - event: PoolCreated(indexed address,indexed address,indexed uint24,int24,address)
           handler: handlePoolCreated
-  - kind: ethereum/contract
-    name: NonfungiblePositionManager
-    network: matic
-    source:
-      address: '0xc36442b4a4522e871399cd717abdd847ab11fe88'
-      abi: NonfungiblePositionManager
-      startBlock: 22757547
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/position-manager.ts
-      entities:
-        - Pool
-        - Token
-      abis:
-        - name: NonfungiblePositionManager
-          file: ./abis/NonfungiblePositionManager.json
-        - name: Pool
-          file: ./abis/pool.json
-        - name: Factory
-          file: ./abis/factory.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
-          handler: handleIncreaseLiquidity
-        - event: DecreaseLiquidity(indexed uint256,uint128,uint256,uint256)
-          handler: handleDecreaseLiquidity
-        - event: Collect(indexed uint256,address,uint256,uint256)
-          handler: handleCollect
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: matic
+    network: mainnet
     source:
       abi: Pool
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/core.ts
+      file: ./src/mappings/core/index.ts
       entities:
         - Pool
         - Token

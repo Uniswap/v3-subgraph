@@ -1,6 +1,6 @@
 build/
 node_modules/
 src/types/
-src/networks/constants.ts
+src/networkConstants/constants.ts
 .DS_STORE
 yarn-error.log

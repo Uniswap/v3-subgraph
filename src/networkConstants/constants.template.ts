@@ -25,7 +25,7 @@ export const STABLE_POOL_ADDRESS = '{{stable_pool_address}}'
 export const STABLE_IS_TOKEN_0 = {{stableIsToken0}}
 
 // minimum eth required in pool to count usd values towards global prices 
-export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('{{min_eth}}')
+export let MINIMUM_ETH_LOCKED = BigDecimal.fromString('{{min_eth}}')
 
 // pool that breaks with subgraph logic 
 export const ERROR_POOL = '{{error_pool}}'

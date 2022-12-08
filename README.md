@@ -28,4 +28,3 @@ NETWORK=mainet yarn run prepare-yaml mainnet
 yarn codegen
 yarn build
 ```
-

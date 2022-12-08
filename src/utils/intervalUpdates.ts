@@ -9,19 +9,15 @@ import {
   TokenDayData,
   TokenHourData,
   Bundle,
-  PoolHourData,
-  TickDayData,
-  Tick
+  PoolHourData
 } from './../types/schema'
-import { ethereum } from '@graphprotocol/graph-ts'
-import { FACTORY_ADDRESS } from '../networks/constants'
+import { BigDecimal, ethereum } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  let uniswap = Factory.load(FACTORY_ADDRESS)
+export function updateUniswapDayData(uniswap: Factory, event: ethereum.Event): UniswapDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded
   let dayStartTimestamp = dayID * 86400
@@ -34,13 +30,13 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
     uniswapDayData.volumeUSDUntracked = ZERO_BD
     uniswapDayData.feesUSD = ZERO_BD
   }
-  uniswapDayData.tvlUSD = uniswap.totalValueLockedUSD
+  uniswapDayData.totalValueLockedUSD = uniswap.totalValueLockedUSD
   uniswapDayData.txCount = uniswap.txCount
   uniswapDayData.save()
   return uniswapDayData as UniswapDayData
 }
 
-export function updatePoolDayData(event: ethereum.Event): PoolDayData {
+export function updatePoolDayData(pool: Pool, event: ethereum.Event): PoolDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
@@ -48,7 +44,6 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
     .toHexString()
     .concat('-')
     .concat(dayID.toString())
-  let pool = Pool.load(event.address.toHexString())
   let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
     poolDayData = new PoolDayData(dayPoolID)
@@ -82,14 +77,14 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   poolDayData.token0Price = pool.token0Price
   poolDayData.token1Price = pool.token1Price
   poolDayData.tick = pool.tick
-  poolDayData.tvlUSD = pool.totalValueLockedUSD
+  poolDayData.totalValueLockedUSD = pool.totalValueLockedUSD
   poolDayData.txCount = poolDayData.txCount.plus(ONE_BI)
   poolDayData.save()
 
   return poolDayData as PoolDayData
 }
 
-export function updatePoolHourData(event: ethereum.Event): PoolHourData {
+export function updatePoolHourData(pool: Pool, event: ethereum.Event): PoolHourData {
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
@@ -97,7 +92,7 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
     .toHexString()
     .concat('-')
     .concat(hourIndex.toString())
-  let pool = Pool.load(event.address.toHexString())
+
   let poolHourData = PoolHourData.load(hourPoolID)
   if (poolHourData === null) {
     poolHourData = new PoolHourData(hourPoolID)
@@ -132,7 +127,7 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
   poolHourData.feeGrowthGlobal1X128 = pool.feeGrowthGlobal1X128
   poolHourData.close = pool.token0Price
   poolHourData.tick = pool.tick
-  poolHourData.tvlUSD = pool.totalValueLockedUSD
+  poolHourData.totalValueLockedUSD = pool.totalValueLockedUSD
   poolHourData.txCount = poolHourData.txCount.plus(ONE_BI)
   poolHourData.save()
 
@@ -149,7 +144,11 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     .toString()
     .concat('-')
     .concat(dayID.toString())
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+
+  let tokenPrice: BigDecimal = ZERO_BD
+  if (bundle) {
+    token.derivedETH.times(bundle.ethPriceUSD)
+  }
 
   let tokenDayData = TokenDayData.load(tokenDayID)
   if (tokenDayData === null) {
@@ -159,7 +158,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     tokenDayData.volume = ZERO_BD
     tokenDayData.volumeUSD = ZERO_BD
     tokenDayData.feesUSD = ZERO_BD
-    tokenDayData.untrackedVolumeUSD = ZERO_BD
+    tokenDayData.volumeUSDUntracked = ZERO_BD
     tokenDayData.open = tokenPrice
     tokenDayData.high = tokenPrice
     tokenDayData.low = tokenPrice
@@ -175,7 +174,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   }
 
   tokenDayData.close = tokenPrice
-  tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPriceUSD)
+  tokenDayData.priceUSD = tokenPrice
   tokenDayData.totalValueLocked = token.totalValueLocked
   tokenDayData.totalValueLockedUSD = token.totalValueLockedUSD
   tokenDayData.save()
@@ -193,7 +192,11 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
     .concat('-')
     .concat(hourIndex.toString())
   let tokenHourData = TokenHourData.load(tokenHourID)
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+
+  let tokenPrice: BigDecimal = ZERO_BD
+  if (bundle) {
+    token.derivedETH.times(bundle.ethPriceUSD)
+  }
 
   if (tokenHourData === null) {
     tokenHourData = new TokenHourData(tokenHourID)
@@ -201,7 +204,7 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
     tokenHourData.token = token.id
     tokenHourData.volume = ZERO_BD
     tokenHourData.volumeUSD = ZERO_BD
-    tokenHourData.untrackedVolumeUSD = ZERO_BD
+    tokenHourData.volumeUSDUntracked = ZERO_BD
     tokenHourData.feesUSD = ZERO_BD
     tokenHourData.open = tokenPrice
     tokenHourData.high = tokenPrice
@@ -224,30 +227,4 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   tokenHourData.save()
 
   return tokenHourData as TokenHourData
-}
-
-export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayData {
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let tickDayDataID = tick.id.concat('-').concat(dayID.toString())
-  let tickDayData = TickDayData.load(tickDayDataID)
-  if (tickDayData === null) {
-    tickDayData = new TickDayData(tickDayDataID)
-    tickDayData.date = dayStartTimestamp
-    tickDayData.pool = tick.pool
-    tickDayData.tick = tick.id
-  }
-  tickDayData.liquidityGross = tick.liquidityGross
-  tickDayData.liquidityNet = tick.liquidityNet
-  tickDayData.volumeToken0 = tick.volumeToken0
-  tickDayData.volumeToken1 = tick.volumeToken0
-  tickDayData.volumeUSD = tick.volumeUSD
-  tickDayData.feesUSD = tick.feesUSD
-  tickDayData.feeGrowthOutside0X128 = tick.feeGrowthOutside0X128
-  tickDayData.feeGrowthOutside1X128 = tick.feeGrowthOutside1X128
-
-  tickDayData.save()
-
-  return tickDayData as TickDayData
 }

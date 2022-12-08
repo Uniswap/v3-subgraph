@@ -7,7 +7,7 @@ import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSu
 import { Pool as PoolTemplate } from '../types/templates'
 import { ERC20 } from '../types/Factory/ERC20'
 import { convertTokenToDecimal } from '.'
-import { WHITELIST_TOKENS } from '../networks/constants'
+import { WHITELIST_TOKENS } from '../networkConstants/constants'
 import { POOL_MAPPINGS } from './backfillPools'
 
 function populateToken(tokenAddress: string): void {
@@ -28,10 +28,8 @@ function populateToken(tokenAddress: string): void {
   token.volume = ZERO_BD
   token.volumeUSD = ZERO_BD
   token.feesUSD = ZERO_BD
-  token.untrackedVolumeUSD = ZERO_BD
   token.totalValueLocked = ZERO_BD
   token.totalValueLockedUSD = ZERO_BD
-  token.totalValueLockedUSDUntracked = ZERO_BD
   token.txCount = ZERO_BI
   token.poolCount = ZERO_BI
   token.whitelistPools = []
@@ -52,28 +50,29 @@ export function populateEmptyPools(event: ethereum.Event): void {
 
     let poolContract = PoolABI.bind(newAddress)
     let pool = new Pool(newAddress.toHexString()) as Pool
-    pool.createdAtBlockNumber = event.block.number
-    pool.createdAtTimestamp = event.block.timestamp
     pool.token0 = token0Address.toHexString()
     pool.token1 = token1Address.toHexString()
-    pool.liquidity = poolContract.liquidity()
+    pool.createdAtTimestamp = event.block.timestamp
+    pool.createdAtBlockNumber = event.block.number
+    pool.liquidityProviderCount = ZERO_BI
+    pool.txCount = ZERO_BI
+    pool.liquidity = ZERO_BI
     pool.sqrtPrice = ZERO_BI
     pool.feeGrowthGlobal0X128 = ZERO_BI
     pool.feeGrowthGlobal1X128 = ZERO_BI
     pool.token0Price = ZERO_BD
     pool.token1Price = ZERO_BD
     pool.observationIndex = ZERO_BI
-    pool.liquidityProviderCount = ZERO_BI
-    pool.txCount = ZERO_BI
     pool.totalValueLockedToken0 = ZERO_BD
     pool.totalValueLockedToken1 = ZERO_BD
-    pool.totalValueLockedETH = ZERO_BD
     pool.totalValueLockedUSD = ZERO_BD
+    pool.totalValueLockedETH = ZERO_BD
     pool.totalValueLockedUSDUntracked = ZERO_BD
+    pool.totalValueLockedETHUntracked = ZERO_BD
     pool.volumeToken0 = ZERO_BD
     pool.volumeToken1 = ZERO_BD
     pool.volumeUSD = ZERO_BD
-    pool.untrackedVolumeUSD = ZERO_BD
+    pool.volumeUSDUntracked = ZERO_BD
     pool.feesUSD = ZERO_BD
     pool.collectedFeesToken0 = ZERO_BD
     pool.collectedFeesToken1 = ZERO_BD
@@ -88,6 +87,10 @@ export function populateEmptyPools(event: ethereum.Event): void {
     populateToken(token1Address.toHexString())
     let token0 = Token.load(token0Address.toHexString())
     let token1 = Token.load(token1Address.toHexString())
+
+    if (token0 == null || token1 == null) {
+      continue
+    }
 
     if (WHITELIST_TOKENS.includes(pool.token0)) {
       let newPools = token1.whitelistPools
