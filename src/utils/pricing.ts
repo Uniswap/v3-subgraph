@@ -4,8 +4,8 @@ import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
-const WBNB_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const USDC_WBNB_03_POOL = '0x99c760F66D5B3b6c1116f97D396234C936b544d0'
+const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+const USDC_WBNB_03_POOL = '0x99c760f66d5b3b6c1116f97d396234c936b544d0'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
@@ -14,11 +14,11 @@ export let WHITELIST_TOKENS: string[] = [
 ]
 
 let STABLE_COINS: string[] = [
-  '0x55d398326f99059fF775485246999027B3197955', // USDT
-  '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // USDC
+  '0x55d398326f99059ff775485246999027b3197955', // USDT
+  '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // USDC
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('1')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
 
 let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
@@ -35,7 +35,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(USDC_WBNB_03_POOL) // dai is token0
+  let usdcPool = Pool.load(USDC_WBNB_03_POOL) // usdc is token0
   if (usdcPool !== null) {
     return usdcPool.token0Price
   } else {
