@@ -1,17 +1,17 @@
 {
-  "name": "uniswap-v3-subgraph",
-  "version": "1.0.0",
-  "repository": "https://github.com/graphprotocol/uniswap-v3-subgraph",
+  "name": "pegasys-v2-subgraph",
+  "version": "0.0.1",
+  "repository": "https://github.com/pegasys-fi/v2-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "create-local": "graph create ianlapham/uniswap-v3 --node http://127.0.0.1:8020",
-    "deploy-local": "graph deploy ianlapham/uniswap-v3 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
-    "deploy": "graph deploy ianlapham/uniswap-v3-subgraph --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
-    "deploy-dev": "graph deploy sommelier/uniswap-v3 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
-    "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
-    "watch-local": "graph deploy ianlapham/uniswap-v3 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
+    "create": "graph create pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy",
+    "deploy": "graph deploy pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/  --debug",
+    "remove": "graph remove pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/",
+    "deploy-dev": "graph deploy pollum-io/pegasys-v2 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
+    "deploy-local": "graph deploy pollum-io/pegasys-v2 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "watch-local": "graph deploy pollum-io/pegasys-v2 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",

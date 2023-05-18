@@ -1,7 +1,7 @@
 import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
 /* eslint-disable prefer-const */
 import {
-  UniswapDayData,
+  PegasysDayData,
   Factory,
   Pool,
   PoolDayData,
@@ -20,24 +20,24 @@ import { ethereum } from '@graphprotocol/graph-ts'
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  let uniswap = Factory.load(FACTORY_ADDRESS)
+export function updatePegasysDayData(event: ethereum.Event): PegasysDayData {
+  let pegasys = Factory.load(FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded
   let dayStartTimestamp = dayID * 86400
-  let uniswapDayData = UniswapDayData.load(dayID.toString())
-  if (uniswapDayData === null) {
-    uniswapDayData = new UniswapDayData(dayID.toString())
-    uniswapDayData.date = dayStartTimestamp
-    uniswapDayData.volumeETH = ZERO_BD
-    uniswapDayData.volumeUSD = ZERO_BD
-    uniswapDayData.volumeUSDUntracked = ZERO_BD
-    uniswapDayData.feesUSD = ZERO_BD
+  let pegasysDayData = PegasysDayData.load(dayID.toString())
+  if (pegasysDayData === null) {
+    pegasysDayData = new PegasysDayData(dayID.toString())
+    pegasysDayData.date = dayStartTimestamp
+    pegasysDayData.volumeSYS = ZERO_BD
+    pegasysDayData.volumeUSD = ZERO_BD
+    pegasysDayData.volumeUSDUntracked = ZERO_BD
+    pegasysDayData.feesUSD = ZERO_BD
   }
-  uniswapDayData.tvlUSD = uniswap.totalValueLockedUSD
-  uniswapDayData.txCount = uniswap.txCount
-  uniswapDayData.save()
-  return uniswapDayData as UniswapDayData
+  pegasysDayData.tvlUSD = pegasys.totalValueLockedUSD
+  pegasysDayData.txCount = pegasys.txCount
+  pegasysDayData.save()
+  return pegasysDayData as PegasysDayData
 }
 
 export function updatePoolDayData(event: ethereum.Event): PoolDayData {
@@ -149,7 +149,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     .toString()
     .concat('-')
     .concat(dayID.toString())
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+  let tokenPrice = token.derivedSYS.times(bundle.sysPriceUSD)
 
   let tokenDayData = TokenDayData.load(tokenDayID)
   if (tokenDayData === null) {
@@ -175,7 +175,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   }
 
   tokenDayData.close = tokenPrice
-  tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPriceUSD)
+  tokenDayData.priceUSD = token.derivedSYS.times(bundle.sysPriceUSD)
   tokenDayData.totalValueLocked = token.totalValueLocked
   tokenDayData.totalValueLockedUSD = token.totalValueLockedUSD
   tokenDayData.save()
@@ -193,7 +193,7 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
     .concat('-')
     .concat(hourIndex.toString())
   let tokenHourData = TokenHourData.load(tokenHourID)
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+  let tokenPrice = token.derivedSYS.times(bundle.sysPriceUSD)
 
   if (tokenHourData === null) {
     tokenHourData = new TokenHourData(tokenHourID)

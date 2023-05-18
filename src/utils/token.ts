@@ -4,7 +4,7 @@ import { ERC20SymbolBytes } from '../types/Factory/ERC20SymbolBytes'
 import { ERC20NameBytes } from '../types/Factory/ERC20NameBytes'
 import { StaticTokenDefinition } from './staticTokenDefinition'
 import { BigInt, Address } from '@graphprotocol/graph-ts'
-import { isNullEthValue } from '.'
+import { isNullSysValue } from '.'
 
 export function fetchTokenSymbol(tokenAddress: Address): string {
   let contract = ERC20.bind(tokenAddress)
@@ -17,12 +17,12 @@ export function fetchTokenSymbol(tokenAddress: Address): string {
     let symbolResultBytes = contractSymbolBytes.try_symbol()
     if (!symbolResultBytes.reverted) {
       // for broken pairs that have no symbol function exposed
-      if (!isNullEthValue(symbolResultBytes.value.toHexString())) {
+      if (!isNullSysValue(symbolResultBytes.value.toHexString())) {
         symbolValue = symbolResultBytes.value.toString()
       } else {
         // try with the static definition
         let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
-        if(staticTokenDefinition != null) {
+        if (staticTokenDefinition != null) {
           symbolValue = staticTokenDefinition.symbol
         }
       }
@@ -45,12 +45,12 @@ export function fetchTokenName(tokenAddress: Address): string {
     let nameResultBytes = contractNameBytes.try_name()
     if (!nameResultBytes.reverted) {
       // for broken exchanges that have no name function exposed
-      if (!isNullEthValue(nameResultBytes.value.toHexString())) {
+      if (!isNullSysValue(nameResultBytes.value.toHexString())) {
         nameValue = nameResultBytes.value.toString()
       } else {
         // try with the static definition
         let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
-        if(staticTokenDefinition != null) {
+        if (staticTokenDefinition != null) {
           nameValue = staticTokenDefinition.name
         }
       }
@@ -82,7 +82,7 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt {
   } else {
     // try with the static definition
     let staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
-    if(staticTokenDefinition != null) {
+    if (staticTokenDefinition != null) {
       return staticTokenDefinition.decimals
     }
   }
