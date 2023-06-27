@@ -2,6 +2,6 @@
 
 ### Subgraph Endpoint 
 
-Synced at: https://rollux.graph.pegasys.fi/subgraphs/name/pollum-io/pegasys-v2
+Synced at: https://rollux.graph.pegasys.fi/subgraphs/name/pollum-io/pegasys-v3
 
 Pending Changes at same URL
