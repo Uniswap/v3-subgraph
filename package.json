@@ -1,17 +1,17 @@
 {
-  "name": "pegasys-v2-subgraph",
+  "name": "pegasys-v3-subgraph",
   "version": "0.0.1",
-  "repository": "https://github.com/pegasys-fi/v2-subgraph",
+  "repository": "https://github.com/pegasys-fi/v3-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "create": "graph create pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy",
-    "deploy": "graph deploy pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/  --debug",
-    "remove": "graph remove pollum-io/pegasys-v2 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/",
-    "deploy-dev": "graph deploy pollum-io/pegasys-v2 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
-    "deploy-local": "graph deploy pollum-io/pegasys-v2 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
-    "watch-local": "graph deploy pollum-io/pegasys-v2 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
+    "create": "graph create pollum-io/pegasys-v3 --node https://rollux.graph.pegasys.fi/deploy",
+    "deploy": "graph deploy pollum-io/pegasys-v3 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/  --debug",
+    "remove": "graph remove pollum-io/pegasys-v3 --node https://rollux.graph.pegasys.fi/deploy --ipfs https://rollux.ipfs.pegasys.fi/",
+    "deploy-dev": "graph deploy pollum-io/pegasys-v3 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
+    "deploy-local": "graph deploy pollum-io/pegasys-v3 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "watch-local": "graph deploy pollum-io/pegasys-v3 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",

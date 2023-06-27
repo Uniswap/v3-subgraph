@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: Pegasys is a decentralized protocol for automated token exchange on Syscoin.
-repository: https://github.com/pegasys-fi/v2-subgraph
+repository: https://github.com/pegasys-fi/v3-subgraph
 schema:
   file: ./schema.graphql
 features:
@@ -10,9 +10,9 @@ dataSources:
     name: Factory
     network: syscoin
     source:
-      address: '0x84dfc5dCE8F4Fa28B6A67C79373e8650854b7B16'
+      address: '0xeAa20BEA58979386A7d37BAeb4C1522892c74640'
       abi: Factory
-      startBlock: 215160
+      startBlock: 87429
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -39,9 +39,9 @@ dataSources:
     name: NonfungiblePositionManager
     network: syscoin
     source:
-      address: '0xc224d913A70c2AaF34B6f72479995B114020ad8b'
+      address: '0x4dB158Eec5c5d63F9A09535882b835f36d3fd012'
       abi: NonfungiblePositionManager
-      startBlock: 215160
+      startBlock: 87486
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

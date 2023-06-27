@@ -1163,7 +1163,7 @@
         "type": "bytes"
       }
     ],
-    "name": "pegasysV2MintCallback",
+    "name": "pegasysV3MintCallback",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
