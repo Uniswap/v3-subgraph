@@ -5,7 +5,7 @@ import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
 const WSYS_ADDRESS = '0x4200000000000000000000000000000000000006'
-const USDC_WSYS_03_POOL = '0x391bca3c3c5a71e369d284b0cd81a7fe8c097e20'
+const USDT_WSYS_03_POOL = '0xe203b2633cedfcc44083521ef057779c7c64c9cb'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
@@ -43,7 +43,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 
 export function getSysPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(USDC_WSYS_03_POOL) // dai is token1
+  let usdcPool = Pool.load(USDT_WSYS_03_POOL) // dai is token1
   if (usdcPool !== null) {
     return usdcPool.token0Price
   } else {
