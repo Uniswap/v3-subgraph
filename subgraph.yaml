@@ -18,7 +18,7 @@ dataSources:
       startBlock: 44429774
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       file: ./src/mappings/factory.ts
       entities:
@@ -47,7 +47,7 @@ dataSources:
       startBlock: 44487119
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       file: ./src/mappings/position-manager.ts
       entities:
@@ -79,7 +79,7 @@ templates:
       abi: Pool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
