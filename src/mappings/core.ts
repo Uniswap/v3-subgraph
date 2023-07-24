@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
+import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token, User } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
@@ -18,7 +18,8 @@ import {
   updateTickDayData,
   updateTokenDayData,
   updateTokenHourData,
-  updatePegasysDayData
+  updatePegasysDayData,
+  updateUserDayData
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
 
@@ -272,6 +273,14 @@ export function handleSwap(event: SwapEvent): void {
   let factory = Factory.load(FACTORY_ADDRESS)
   let pool = Pool.load(event.address.toHexString())
 
+  // Load or create user
+  let user = User.load(event.transaction.from.toHexString())
+  if (user == null) {
+    user = new User(event.transaction.from.toHexString())
+    user.totalVolume = ZERO_BD
+    user.txCount = 0
+  }
+
   // hot fix for bad pricing
   if (pool.id == '0x9663f2ca0454accad3e094448ea6f77443880454') {
     return
@@ -366,6 +375,10 @@ export function handleSwap(event: SwapEvent): void {
   token0.derivedSYS = findSysPerToken(token0 as Token)
   token1.derivedSYS = findSysPerToken(token1 as Token)
 
+  // update user metrics
+  user.totalVolume = user.totalVolume.plus(amountTotalUSDTracked)
+  user.txCount += 1
+
   /**
    * Things afffected by new USD rates
    */
@@ -413,6 +426,7 @@ export function handleSwap(event: SwapEvent): void {
   let token1DayData = updateTokenDayData(token1 as Token, event)
   let token0HourData = updateTokenHourData(token0 as Token, event)
   let token1HourData = updateTokenHourData(token1 as Token, event)
+  let userDayData = updateUserDayData(event)
 
   // update volume metrics
   pegasysDayData.volumeSYS = pegasysDayData.volumeSYS.plus(amountTotalSYSTracked)
@@ -449,6 +463,9 @@ export function handleSwap(event: SwapEvent): void {
   token1HourData.untrackedVolumeUSD = token1HourData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
   token1HourData.feesUSD = token1HourData.feesUSD.plus(feesUSD)
 
+  userDayData.totalVolume = userDayData.totalVolume.plus(amountTotalUSDTracked)
+  userDayData.txCount += 1
+
   swap.save()
   token0DayData.save()
   token1DayData.save()
@@ -461,6 +478,8 @@ export function handleSwap(event: SwapEvent): void {
   pool.save()
   token0.save()
   token1.save()
+  user.save()
+  userDayData.save()
 
   // Update inner vars of current or crossed ticks
   let newTick = pool.tick!

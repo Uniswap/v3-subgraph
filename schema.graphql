@@ -651,3 +651,25 @@ type TokenHourData @entity {
   # close price USD
   close: BigDecimal!
 }
+
+type User @entity {
+  # user address
+  id: ID!
+  # total volume of all trades performed by this User across all tracked tokens.
+  totalVolume: BigDecimal!
+  # total number of swaps this Trader has performed across all tracked tokens.
+  txCount: Int!
+}
+
+type UserDayData @entity {
+  # user address concatendated with date
+  id: ID!
+  # user address
+  address: String
+  # timestamp rounded to current day by dividing by 86400
+  date: Int!
+  # total daily volume in trades performed by the User across all tracked tokens derived in terms of USD
+  totalVolume: BigDecimal!
+  # number of daily transactions performed by the User
+  txCount: Int!
+}

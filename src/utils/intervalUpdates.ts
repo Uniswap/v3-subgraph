@@ -11,7 +11,8 @@ import {
   Bundle,
   PoolHourData,
   TickDayData,
-  Tick
+  Tick,
+  UserDayData
 } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum } from '@graphprotocol/graph-ts'
@@ -250,4 +251,27 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
   tickDayData.save()
 
   return tickDayData as TickDayData
+}
+
+export function updateUserDayData(event: ethereum.Event): UserDayData {
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let userDayID = event.transaction.from.toHexString()
+    .toString()
+    .concat('-')
+    .concat(dayID.toString())
+
+  let userDayData = UserDayData.load(userDayID)
+  if (userDayData === null) {
+    userDayData = new UserDayData(userDayID)
+    userDayData.date = dayStartTimestamp
+    userDayData.address = event.transaction.from.toHexString()
+    userDayData.totalVolume = ZERO_BD
+    userDayData.txCount = 0
+  }
+
+  userDayData.save()
+
+  return userDayData as UserDayData
 }
