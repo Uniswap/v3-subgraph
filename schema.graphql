@@ -11,7 +11,7 @@ type Factory @entity {
   totalVolumeETH: BigDecimal!
   # total swap fees all time in USD
   totalFeesUSD: BigDecimal!
-  # total swap fees all time in USD
+  # total swap fees all time in ETH
   totalFeesETH: BigDecimal!
   # all volume even through less reliable USD values
   untrackedVolumeUSD: BigDecimal!
