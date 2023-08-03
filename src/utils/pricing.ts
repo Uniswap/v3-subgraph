@@ -4,29 +4,18 @@ import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
-const WAVAX_ADDRESS = '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
-const WAVAX_USDC_03_POOL = '0x1b323f29f54461a7b61B7e66F1a93E4cDe032167'
+const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
+const WETH_USDC_05_POOL = '0x4C36388bE6F416A29C8d8Eee81C771cE6bE14B18'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
-  WAVAX_ADDRESS, // WAVAX
-  '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70', // DAI.e
-  '0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a', // DAI
-  '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664', // USDC.e
+  WETH_ADDRESS, // WETH
   '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
-  '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', // USDT.e
-  '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', // USDt
-  '0x130966628846BFd36ff31a822705796e8cb8C18D', // MIM
 ]
 
 let STABLE_COINS: string[] = [
-  '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70', // DAI.e
-  '0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a', // DAI
-  '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664', // USDC.e
   '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
-  '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', // USDT.e
-  '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', // USDt
 ]
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
@@ -46,7 +35,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(WAVAX_USDC_03_POOL)
+  let usdcPool = Pool.load(WETH_USDC_05_POOL)
   if (usdcPool !== null) {
     return usdcPool.token0Price
   } else {
@@ -59,7 +48,7 @@ export function getEthPriceInUSD(): BigDecimal {
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 export function findEthPerToken(token: Token): BigDecimal {
-  if (token.id == WAVAX_ADDRESS) {
+  if (token.id == WETH_ADDRESS) {
     return ONE_BD
   }
   let whiteList = token.whitelistPools
