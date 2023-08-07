@@ -5,7 +5,7 @@ import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
 const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
-const WETH_USDC_05_POOL = '0x4C36388bE6F416A29C8d8Eee81C771cE6bE14B18'
+const WETH_USDC_05_POOL = 'j'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
@@ -37,7 +37,7 @@ export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdcPool = Pool.load(WETH_USDC_05_POOL)
   if (usdcPool !== null) {
-    return usdcPool.token0Price
+    return usdcPool.token1Price
   } else {
     return ZERO_BD
   }
