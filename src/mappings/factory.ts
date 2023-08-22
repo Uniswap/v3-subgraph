@@ -15,6 +15,18 @@ export function handlePoolCreated(event: PoolCreated): void {
     return
   }
 
+  // fix for pool overflow - this pool has a token that overflows on one of its values, but theres no way in 
+  // assembly ts to error catch for this. 
+  // Transaction - https://optimistic.etherscan.io/tx/0x16312a52237ce08e4bb7534648f4c8da6cd4c192f0b955cf6770b2d347f19d2b
+  if (
+    event.params.pool   === Address.fromHexString('0x282b7d6bef6c78927f394330dca297eca2bd18cd') 
+    || event.params.pool === Address.fromHexString('0x5738de8d0b864d5ef5d65b9e05b421b71f2c2eb4') 
+    || event.params.pool === Address.fromHexString('0x5500721e5a063f0396c5e025a640e8491eb89aac')
+    || event.params.pool === Address.fromHexString('0x1ffd370f9d01f75de2cc701956886acec9749e80')
+  ) {
+    return 
+  }
+
   // load factory
   let factory = Factory.load(FACTORY_ADDRESS)
   if (factory === null) {
