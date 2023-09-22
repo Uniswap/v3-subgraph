@@ -3,7 +3,7 @@ type Factory @entity {
   id: ID!
   # amount of pools created
   poolCount: BigInt!
-  # amoutn of transactions all time
+  # amount of transactions all time
   txCount: BigInt!
   # total volume all time in derived USD
   totalVolumeUSD: BigDecimal!
