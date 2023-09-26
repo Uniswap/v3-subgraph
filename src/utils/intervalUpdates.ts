@@ -11,7 +11,7 @@ import {
   Bundle,
   PoolHourData,
   TickDayData,
-  Tick
+  Tick,
 } from './../types/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum } from '@graphprotocol/graph-ts'
@@ -44,10 +44,7 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let dayPoolID = event.address
-    .toHexString()
-    .concat('-')
-    .concat(dayID.toString())
+  let dayPoolID = event.address.toHexString().concat('-').concat(dayID.toString())
   let pool = Pool.load(event.address.toHexString())
   let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
@@ -93,10 +90,7 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let hourPoolID = event.address
-    .toHexString()
-    .concat('-')
-    .concat(hourIndex.toString())
+  let hourPoolID = event.address.toHexString().concat('-').concat(hourIndex.toString())
   let pool = Pool.load(event.address.toHexString())
   let poolHourData = PoolHourData.load(hourPoolID)
   if (poolHourData === null) {
@@ -145,10 +139,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let tokenDayID = token.id
-    .toString()
-    .concat('-')
-    .concat(dayID.toString())
+  let tokenDayID = token.id.toString().concat('-').concat(dayID.toString())
   let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
   let tokenDayData = TokenDayData.load(tokenDayID)
@@ -188,10 +179,7 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let tokenHourID = token.id
-    .toString()
-    .concat('-')
-    .concat(hourIndex.toString())
+  let tokenHourID = token.id.toString().concat('-').concat(hourIndex.toString())
   let tokenHourData = TokenHourData.load(tokenHourID)
   let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 

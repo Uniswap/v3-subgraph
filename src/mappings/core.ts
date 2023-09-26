@@ -7,7 +7,7 @@ import {
   Flash as FlashEvent,
   Initialize,
   Mint as MintEvent,
-  Swap as SwapEvent
+  Swap as SwapEvent,
 } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
@@ -18,7 +18,7 @@ import {
   updateTickDayData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData
+  updateUniswapDayData,
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
 
@@ -28,7 +28,7 @@ export function handleInitialize(event: Initialize): void {
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   pool.save()
-  
+
   // update token prices
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
@@ -303,7 +303,7 @@ export function handleSwap(event: SwapEvent): void {
 
   // get amount that should be tracked only - div 2 because cant count both input and output as volume
   let amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
-    BigDecimal.fromString('2')
+    BigDecimal.fromString('2'),
   )
   let amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
   let amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
@@ -471,10 +471,7 @@ export function handleSwap(event: SwapEvent): void {
     loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
   }
 
-  let numIters = oldTick
-    .minus(newTick)
-    .abs()
-    .div(tickSpacing)
+  let numIters = oldTick.minus(newTick).abs().div(tickSpacing)
 
   if (numIters.gt(BigInt.fromI32(100))) {
     // In case more than 100 ticks need to be updated ignore the update in
@@ -520,12 +517,7 @@ function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
 
 function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
   let poolAddress = event.address
-  let tick = Tick.load(
-    poolAddress
-      .toHexString()
-      .concat('#')
-      .concat(tickId.toString())
-  )
+  let tick = Tick.load(poolAddress.toHexString().concat('#').concat(tickId.toString()))
   if (tick !== null) {
     updateTickFeeVarsAndSave(tick!, event)
   }

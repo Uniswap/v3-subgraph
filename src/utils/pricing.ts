@@ -30,7 +30,7 @@ export let WHITELIST_TOKENS: string[] = [
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
   '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
-  '0xfe2e637202056d30016725477c5da089ab0a043a' // sETH2
+  '0xfe2e637202056d30016725477c5da089ab0a043a', // sETH2
 ]
 
 let STABLE_COINS: string[] = [
@@ -39,7 +39,7 @@ let STABLE_COINS: string[] = [
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
   '0x0000000000085d4780b73119b644ae5ecd22b376',
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
-  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95'
+  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95',
 ]
 
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
@@ -48,10 +48,7 @@ let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   let num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   let denom = BigDecimal.fromString(Q192.toString())
-  let price1 = num
-    .div(denom)
-    .times(exponentToBigDecimal(token0.decimals))
-    .div(exponentToBigDecimal(token1.decimals))
+  let price1 = num.div(denom).times(exponentToBigDecimal(token0.decimals)).div(exponentToBigDecimal(token1.decimals))
 
   let price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
@@ -129,7 +126,7 @@ export function getTrackedAmountUSD(
   tokenAmount0: BigDecimal,
   token0: Token,
   tokenAmount1: BigDecimal,
-  token1: Token
+  token1: Token,
 ): BigDecimal {
   let bundle = Bundle.load('1')
   let price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
