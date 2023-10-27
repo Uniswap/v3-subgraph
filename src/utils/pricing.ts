@@ -48,10 +48,9 @@ let Q192 = 2 ** 192
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   let num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   let denom = BigDecimal.fromString(Q192.toString())
-  let price1 = num
-    .div(denom)
-    .times(exponentToBigDecimal(token0.decimals))
-    .div(exponentToBigDecimal(token1.decimals))
+  let price1 = safeDiv(safeDiv(num,denom)
+    .times(exponentToBigDecimal(token0.decimals)), 
+   exponentToBigDecimal(token1.decimals))
 
   let price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
@@ -80,7 +79,7 @@ export function findEthPerToken(token: Token): BigDecimal {
   // need to update this to actually detect best rate based on liquidity distribution
   let largestLiquidityETH = ZERO_BD
   let priceSoFar = ZERO_BD
-  let bundle = Bundle.load('1')
+  let bundle = Bundle.load('1')!
 
   // hardcoded fix for incorrect rates
   // if whitelist includes token - get the safe price
@@ -90,11 +89,14 @@ export function findEthPerToken(token: Token): BigDecimal {
     for (let i = 0; i < whiteList.length; ++i) {
       let poolAddress = whiteList[i]
       let pool = Pool.load(poolAddress)
-
+      if(pool) {
       if (pool.liquidity.gt(ZERO_BI)) {
         if (pool.token0 == token.id) {
           // whitelist token is token1
           let token1 = Token.load(pool.token1)
+          if(token1) {
+
+         
           // get the derived ETH in pool
           let ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
           if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
@@ -103,8 +105,10 @@ export function findEthPerToken(token: Token): BigDecimal {
             priceSoFar = pool.token1Price.times(token1.derivedETH as BigDecimal)
           }
         }
+        }
         if (pool.token1 == token.id) {
           let token0 = Token.load(pool.token0)
+          if(token0) {
           // get the derived ETH in pool
           let ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
           if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
@@ -113,8 +117,10 @@ export function findEthPerToken(token: Token): BigDecimal {
             priceSoFar = pool.token0Price.times(token0.derivedETH as BigDecimal)
           }
         }
+        }
       }
     }
+  }
   }
   return priceSoFar // nothing was found return 0
 }
@@ -131,7 +137,7 @@ export function getTrackedAmountUSD(
   tokenAmount1: BigDecimal,
   token1: Token
 ): BigDecimal {
-  let bundle = Bundle.load('1')
+  let bundle = Bundle.load('1')!
   let price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
   let price1USD = token1.derivedETH.times(bundle.ethPriceUSD)
 
