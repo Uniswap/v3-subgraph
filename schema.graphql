@@ -191,7 +191,7 @@ type Tick @entity {
 
 type Position @entity {
   # Positions created through NonfungiblePositionManager
-  # NFT token id
+  # Pool - Recipient - TickUpper - TickLower
   id: ID!
   # owner of the NFT
   owner: Bytes!
