@@ -352,7 +352,6 @@ export function handleSwap(event: SwapEvent): void {
       pool.totalValueLockedToken0 = pool.totalValueLockedToken0.plus(amount0)
       pool.totalValueLockedToken1 = pool.totalValueLockedToken1.plus(amount1)
 
-      // update token0 data
       token0.volume = token0.volume.plus(amount0Abs)
       token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
       token0.volumeUSD = token0.volumeUSD.plus(amountTotalUSDTracked)
