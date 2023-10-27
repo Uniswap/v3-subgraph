@@ -59,7 +59,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdcPool = Pool.load(USDC_WETH_03_POOL) // dai is token0
-  if (usdcPool !== null) {
+  if (usdcPool) {
     return usdcPool.token0Price
   } else {
     return ZERO_BD

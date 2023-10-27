@@ -93,7 +93,7 @@ export function handleMint(event: MintEvent): void {
       // Pools liquidity tracks the currently active liquidity given pools current tick.
       // We only want to update it on mint if the new position includes the current tick.
       if (
-        pool.tick !== null &&
+        pool.tick &&
         BigInt.fromI32(event.params.tickLower).le(pool.tick as BigInt) &&
         BigInt.fromI32(event.params.tickUpper).gt(pool.tick as BigInt)
       ) {
@@ -139,11 +139,11 @@ export function handleMint(event: MintEvent): void {
       let lowerTick = Tick.load(lowerTickId)
       let upperTick = Tick.load(upperTickId)
 
-      if (lowerTick === null) {
+      if (!lowerTick) {
         lowerTick = createTick(lowerTickId, lowerTickIdx, pool.id, event)
       }
 
-      if (upperTick === null) {
+      if (!upperTick) {
         upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
       }
 
@@ -214,7 +214,7 @@ export function handleBurn(event: BurnEvent): void {
       // Pools liquidity tracks the currently active liquidity given pools current tick.
       // We only want to update it on burn if the position being burnt includes the current tick.
       if (
-        pool.tick !== null &&
+        pool.tick &&
         BigInt.fromI32(event.params.tickLower).le(pool.tick as BigInt) &&
         BigInt.fromI32(event.params.tickUpper).gt(pool.tick as BigInt)
       ) {
@@ -542,7 +542,7 @@ function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void 
       .concat('#')
       .concat(tickId.toString())
   )
-  if (tick !== null) {
+  if (tick) {
     updateTickFeeVarsAndSave(tick, event)
   }
 }

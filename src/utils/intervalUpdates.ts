@@ -26,7 +26,7 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
   let dayID = timestamp / 86400 // rounded
   let dayStartTimestamp = dayID * 86400
   let uniswapDayData = UniswapDayData.load(dayID.toString())
-  if (uniswapDayData === null) {
+  if (!uniswapDayData) {
     uniswapDayData = new UniswapDayData(dayID.toString())
     uniswapDayData.date = dayStartTimestamp
     uniswapDayData.volumeETH = ZERO_BD
@@ -51,7 +51,7 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   let pool = Pool.load(event.address.toHexString())!
 
   let poolDayData = PoolDayData.load(dayPoolID)
-  if (poolDayData === null) {
+  if (!poolDayData) {
     poolDayData = new PoolDayData(dayPoolID)
     poolDayData.date = dayStartTimestamp
     poolDayData.pool = pool.id
@@ -101,7 +101,7 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
     .concat(hourIndex.toString())
   let pool = Pool.load(event.address.toHexString())!
   let poolHourData = PoolHourData.load(hourPoolID)
-  if (poolHourData === null) {
+  if (!poolHourData) {
     poolHourData = new PoolHourData(hourPoolID)
     poolHourData.periodStartUnix = hourStartUnix
     poolHourData.pool = pool.id
@@ -154,7 +154,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
   let tokenDayData = TokenDayData.load(tokenDayID)
-  if (tokenDayData === null) {
+  if (!tokenDayData) {
     tokenDayData = new TokenDayData(tokenDayID)
     tokenDayData.date = dayStartTimestamp
     tokenDayData.token = token.id
@@ -197,7 +197,7 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   let tokenHourData = TokenHourData.load(tokenHourID)
   let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
-  if (tokenHourData === null) {
+  if (!tokenHourData) {
     tokenHourData = new TokenHourData(tokenHourID)
     tokenHourData.periodStartUnix = hourStartUnix
     tokenHourData.token = token.id
@@ -234,7 +234,7 @@ export function updateTickDayData(tick: Tick, event: ethereum.Event): TickDayDat
   let dayStartTimestamp = dayID * 86400
   let tickDayDataID = tick.id.concat('-').concat(dayID.toString())
   let tickDayData = TickDayData.load(tickDayDataID)
-  if (tickDayData === null) {
+  if (!tickDayData) {
     tickDayData = new TickDayData(tickDayDataID)
     tickDayData.date = dayStartTimestamp
     tickDayData.pool = tick.pool
