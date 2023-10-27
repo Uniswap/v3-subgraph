@@ -8,12 +8,12 @@ import {
 } from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
 import { Bundle, Position, PositionSnapshot, Token } from '../types/schema'
 import { ADDRESS_ZERO, factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
 
 function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
   let position = Position.load(tokenId.toString())
-  if (position === null) {
+  if (!position) {
     let contract = NonfungiblePositionManager.bind(event.address)
     let positionCall = contract.try_positions(tokenId)
 
@@ -99,19 +99,25 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
 
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
-
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+  let amount0 = BigDecimal.zero()
+  let amount1 = BigDecimal.zero()
+  if(token0){
+    amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+  }
+  if(token1){
+    amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+  }
+  
 
   position.liquidity = position.liquidity.plus(event.params.liquidity)
   position.depositedToken0 = position.depositedToken0.plus(amount0)
   position.depositedToken1 = position.depositedToken1.plus(amount1)
 
-  updateFeeVars(position!, event, event.params.tokenId)
+  updateFeeVars(position, event, event.params.tokenId)
 
   position.save()
 
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
@@ -134,16 +140,23 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
 
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+
+  let amount0 = BigDecimal.zero()
+  let amount1 = BigDecimal.zero()
+  if(token0){
+    amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+  }
+  if(token1){
+    amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+  }
 
   position.liquidity = position.liquidity.minus(event.params.liquidity)
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
 
-  position = updateFeeVars(position!, event, event.params.tokenId)
+  position = updateFeeVars(position, event, event.params.tokenId)
   position.save()
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleCollect(event: Collect): void {
@@ -157,13 +170,16 @@ export function handleCollect(event: Collect): void {
   }
 
   let token0 = Token.load(position.token0)
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
-  position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount0)
+  if(token0){
+    let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+    position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
+    position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount0)
+  }
+ 
 
-  position = updateFeeVars(position!, event, event.params.tokenId)
+  position = updateFeeVars(position, event, event.params.tokenId)
   position.save()
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleTransfer(event: Transfer): void {
@@ -177,5 +193,5 @@ export function handleTransfer(event: Transfer): void {
   position.owner = event.params.to
   position.save()
 
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }

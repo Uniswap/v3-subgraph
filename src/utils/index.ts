@@ -20,6 +20,14 @@ export function safeDiv(amount0: BigDecimal, amount1: BigDecimal): BigDecimal {
   }
 }
 
+export function safeDivBigInt(amount0: BigInt, amount1: BigInt): BigInt {
+  if (amount1.equals(ZERO_BI)) {
+    return ZERO_BI
+  } else {
+    return amount0.div(amount1)
+  }
+}
+
 export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecimal {
   if (power.equals(ZERO_BI)) {
     return ONE_BD
@@ -77,17 +85,21 @@ export function convertTokenToDecimal(tokenAmount: BigInt, exchangeDecimals: Big
 }
 
 export function convertEthToDecimal(eth: BigInt): BigDecimal {
-  return eth.toBigDecimal().div(exponentToBigDecimal(18))
+  return eth.toBigDecimal().div(exponentToBigDecimal(BigInt.fromI32(18)))
 }
 
 export function loadTransaction(event: ethereum.Event): Transaction {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
-  if (transaction === null) {
+  if (!transaction) {
     transaction = new Transaction(event.transaction.hash.toHexString())
   }
   transaction.blockNumber = event.block.number
   transaction.timestamp = event.block.timestamp
-  transaction.gasUsed = event.transaction.gasUsed
+  let receipt = event.receipt;
+  if(receipt){
+    transaction.gasUsed = receipt.gasUsed
+  }
+  
   transaction.gasPrice = event.transaction.gasPrice
   transaction.save()
   return transaction as Transaction
