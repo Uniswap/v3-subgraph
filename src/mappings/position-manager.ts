@@ -5,8 +5,8 @@ import {
   IncreaseLiquidity,
   NonfungiblePositionManager,
   Transfer
-} from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
-import { Bundle, Position, PositionSnapshot, Token } from '../types/schema'
+} from '../../generated/NonfungiblePositionManager/NonfungiblePositionManager'
+import { Bundle, Position, PositionSnapshot, Token } from '../../generated/schema'
 import { ADDRESS_ZERO, factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { Address, BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
@@ -101,13 +101,12 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   let token1 = Token.load(position.token1)
   let amount0 = BigDecimal.zero()
   let amount1 = BigDecimal.zero()
-  if(token0){
+  if (token0) {
     amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   }
-  if(token1){
+  if (token1) {
     amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
   }
-  
 
   position.liquidity = position.liquidity.plus(event.params.liquidity)
   position.depositedToken0 = position.depositedToken0.plus(amount0)
@@ -143,10 +142,10 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
 
   let amount0 = BigDecimal.zero()
   let amount1 = BigDecimal.zero()
-  if(token0){
+  if (token0) {
     amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   }
-  if(token1){
+  if (token1) {
     amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
   }
 
@@ -170,12 +169,11 @@ export function handleCollect(event: Collect): void {
   }
 
   let token0 = Token.load(position.token0)
-  if(token0){
+  if (token0) {
     let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
     position.collectedFeesToken0 = position.collectedFeesToken0.plus(amount0)
     position.collectedFeesToken1 = position.collectedFeesToken1.plus(amount0)
   }
- 
 
   position = updateFeeVars(position, event, event.params.tokenId)
   position.save()
