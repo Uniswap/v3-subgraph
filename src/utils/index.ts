@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal, ethereum } from '@graphprotocol/graph-ts'
-import { Transaction } from '../types/schema'
+import { Transaction } from '../../generated/schema'
 import { ONE_BI, ZERO_BI, ZERO_BD, ONE_BD } from '../utils/constants'
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -95,11 +95,11 @@ export function loadTransaction(event: ethereum.Event): Transaction {
   }
   transaction.blockNumber = event.block.number
   transaction.timestamp = event.block.timestamp
-  let receipt = event.receipt;
-  if(receipt){
+  let receipt = event.receipt
+  if (receipt) {
     transaction.gasUsed = receipt.gasUsed
   }
-  
+
   transaction.gasPrice = event.transaction.gasPrice
   transaction.save()
   return transaction as Transaction

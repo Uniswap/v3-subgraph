@@ -12,7 +12,7 @@ import {
   PoolHourData,
   TickDayData,
   Tick
-} from './../types/schema'
+} from '../../generated/schema'
 import { FACTORY_ADDRESS } from './constants'
 import { ethereum } from '@graphprotocol/graph-ts'
 
@@ -88,7 +88,6 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   poolDayData.save()
 
   return poolDayData as PoolDayData
-
 }
 
 export function updatePoolHourData(event: ethereum.Event): PoolHourData {

@@ -1,10 +1,10 @@
 import { WHITELIST_TOKENS } from './../utils/pricing'
 /* eslint-disable prefer-const */
 import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
-import { Factory } from '../types/schema'
-import { PoolCreated } from '../types/Factory/Factory'
-import { Pool, Token, Bundle } from '../types/schema'
-import { Pool as PoolTemplate } from '../types/templates'
+import { Factory } from '../../generated/schema'
+import { PoolCreated } from '../../generated/Factory/Factory'
+import { Pool, Token, Bundle } from '../../generated/schema'
+import { Pool as PoolTemplate } from '../../generated/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
 import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 
