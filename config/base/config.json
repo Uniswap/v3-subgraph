@@ -1,0 +1,6 @@
+{
+  "network": "base",
+  "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+  "nonfungiblepositionmanager": "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1",
+  "startblock": "2009445"
+}
