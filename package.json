@@ -12,7 +12,13 @@
     "deploy-dev": "graph deploy sommelier/uniswap-v3 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
     "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
     "watch-local": "graph deploy ianlapham/uniswap-v3 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001",
-    "prepare:ethereum": "cross-env ts-node ./script/prepareNetwork.ts ethereum && cross-env mustache config/ethereum/config.json subgraph.template.yaml > subgraph.yaml"
+    "prepare:arbitrum-one": "cross-env ts-node ./script/prepareNetwork.ts arbitrum-one && cross-env mustache config/arbitrum-one/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:avax": "cross-env ts-node ./script/prepareNetwork.ts avax && cross-env mustache config/avax/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:base": "cross-env ts-node ./script/prepareNetwork.ts base && cross-env mustache config/base/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:celo": "cross-env ts-node ./script/prepareNetwork.ts celo && cross-env mustache config/celo/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:ethereum": "cross-env ts-node ./script/prepareNetwork.ts ethereum && cross-env mustache config/ethereum/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:optimism": "cross-env ts-node ./script/prepareNetwork.ts optimism && cross-env mustache config/optimism/config.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:polygon": "cross-env ts-node ./script/prepareNetwork.ts polygon && cross-env mustache config/polygon/config.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.60.0",
