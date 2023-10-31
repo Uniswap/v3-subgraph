@@ -8,4 +8,4 @@ subgraph.yaml
 .vscode
 package-lock.json
 yarn.lock
-src/utils/constants.ts
+/src/utils/constants.ts
