@@ -11,7 +11,8 @@
     "deploy": "graph deploy ianlapham/uniswap-v3-subgraph --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
     "deploy-dev": "graph deploy sommelier/uniswap-v3 --ipfs http://35.197.14.14:5000/ --node http://35.197.14.14:8020/ --debug",
     "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
-    "watch-local": "graph deploy ianlapham/uniswap-v3 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
+    "watch-local": "graph deploy ianlapham/uniswap-v3 --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001",
+    "prepare:ethereum": "cross-env ts-node ./script/prepareNetwork.ts ethereum && cross-env mustache config/ethereum/ethereum.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.60.0",
@@ -21,6 +22,12 @@
     "eslint": "^6.2.2",
     "eslint-config-prettier": "^6.1.0",
     "prettier": "^1.18.2",
-    "typescript": "^3.5.2"
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^18.11.18",
+    "mustache": "^3.1.0",
+    "cross-env": "^7.0.3",
+    "fs-extra": "^11.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   }
 }
