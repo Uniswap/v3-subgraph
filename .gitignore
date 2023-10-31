@@ -4,3 +4,8 @@ node_modules/
 src/types/
 .DS_STORE
 yarn-error.log
+subgraph.yaml
+.vscode
+package-lock.json
+yarn.lock
+src/utils/constants.ts

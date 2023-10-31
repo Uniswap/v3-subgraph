@@ -1,5 +1,6 @@
 import * as path from 'path'
 import * as fsExtra from 'fs-extra'
+const process = require('process')
 
 export enum SUPPORTED {
   ARBITRUM = 'arbitrum-one',
