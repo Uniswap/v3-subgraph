@@ -1,11 +1,11 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: Uniswap is a decentralized protocol for automated token exchange on Ethereum.
 repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
 graft:
   base: QmUKRxaVLRpn18UA9mwukAwRQudH9TfBW5wiKCWEJghUS8
-  block: 25459720
+  block: 52769644
 dataSources:
   - kind: ethereum/contract
     name: Factory
@@ -16,7 +16,7 @@ dataSources:
       startBlock: 22757547
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/factory.ts
       entities:
@@ -45,7 +45,7 @@ dataSources:
       startBlock: 22760586
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/position-manager.ts
       entities:
@@ -77,7 +77,7 @@ templates:
       abi: Pool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
