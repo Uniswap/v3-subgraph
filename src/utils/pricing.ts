@@ -19,7 +19,8 @@ export let WHITELIST_TOKENS: string[] = [
 let STABLE_COINS: string[] = ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']
 let MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
 
-let Q192 = 2 ** 192
+let Q192 = BigInt.fromI32(2).pow(192 as u8)
+
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   let num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   let denom = BigDecimal.fromString(Q192.toString())
