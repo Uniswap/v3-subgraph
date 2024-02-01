@@ -139,21 +139,24 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   let bundle = Bundle.load('1')!
   let token0 = Token.load(position.token0)!
   let token1 = Token.load(position.token1)!
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
-  position.liquidity = position.liquidity.minus(event.params.liquidity)
-  position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
-  position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
+  if (token0 && token1) {
+    let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+    let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
-  let newWithdrawUSD = amount0
-    .times(token0.derivedETH.times(bundle.ethPriceUSD))
-    .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
-  position.amountWithdrawnUSD = position.amountWithdrawnUSD.plus(newWithdrawUSD)
+    position.liquidity = position.liquidity.minus(event.params.liquidity)
+    position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
+    position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
 
-  position = updateFeeVars(position, event, event.params.tokenId)
-  position.save()
-  savePositionSnapshot(position, event)
+    let newWithdrawUSD = amount0
+      .times(token0.derivedETH.times(bundle.ethPriceUSD))
+      .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
+    position.amountWithdrawnUSD = position.amountWithdrawnUSD.plus(newWithdrawUSD)
+
+    position = updateFeeVars(position, event, event.params.tokenId)
+    position.save()
+    savePositionSnapshot(position, event)
+  }
 }
 
 export function handleCollect(event: Collect): void {
@@ -167,24 +170,27 @@ export function handleCollect(event: Collect): void {
   }
 
   let bundle = Bundle.load('1')!
-  let token0 = Token.load(position.token0)!
-  let token1 = Token.load(position.token1)!
-  let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
-  let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
-  position.collectedToken0 = position.collectedToken0.plus(amount0)
-  position.collectedToken1 = position.collectedToken1.plus(amount1)
+  let token0 = Token.load(position.token0)
+  let token1 = Token.load(position.token1)
 
-  position.collectedFeesToken0 = position.collectedToken0.minus(position.withdrawnToken0)
-  position.collectedFeesToken1 = position.collectedToken1.minus(position.withdrawnToken1)
+  if (token0 && token1) {
+    let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
+    let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
+    position.collectedToken0 = position.collectedToken0.plus(amount0)
+    position.collectedToken1 = position.collectedToken1.plus(amount1)
 
-  let newCollectUSD = amount0
-    .times(token0.derivedETH.times(bundle.ethPriceUSD))
-    .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
-  position.amountCollectedUSD = position.amountCollectedUSD.plus(newCollectUSD)
+    position.collectedFeesToken0 = position.collectedToken0.minus(position.withdrawnToken0)
+    position.collectedFeesToken1 = position.collectedToken1.minus(position.withdrawnToken1)
 
-  position = updateFeeVars(position, event, event.params.tokenId)
-  position.save()
-  savePositionSnapshot(position, event)
+    let newCollectUSD = amount0
+      .times(token0.derivedETH.times(bundle.ethPriceUSD))
+      .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
+    position.amountCollectedUSD = position.amountCollectedUSD.plus(newCollectUSD)
+
+    position = updateFeeVars(position, event, event.params.tokenId)
+    position.save()
+    savePositionSnapshot(position, event)
+  }
 }
 
 export function handleTransfer(event: Transfer): void {
