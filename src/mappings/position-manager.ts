@@ -102,9 +102,9 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   position.liquidity = position.liquidity.plus(event.params.liquidity)
   position.depositedToken0 = position.depositedToken0.plus(amount0)
   position.depositedToken1 = position.depositedToken1.plus(amount1)
-  updateFeeVars(position!, event, event.params.tokenId)
+  updateFeeVars(position, event, event.params.tokenId)
   position.save()
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
@@ -122,9 +122,9 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   position.liquidity = position.liquidity.minus(event.params.liquidity)
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
-  position = updateFeeVars(position!, event, event.params.tokenId)
+  position = updateFeeVars(position, event, event.params.tokenId)
   position.save()
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleCollect(event: Collect): void {
@@ -153,9 +153,9 @@ export function handleCollect(event: Collect): void {
   position.collectedToken1 = position.collectedToken1.plus(amount1)
   position.collectedFeesToken0 = position.collectedToken0.minus(position.withdrawnToken0)
   position.collectedFeesToken1 = position.collectedToken1.minus(position.withdrawnToken1)
-  position = updateFeeVars(position!, event, event.params.tokenId)
+  position = updateFeeVars(position, event, event.params.tokenId)
   position.save()
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
 
 export function handleTransfer(event: Transfer): void {
@@ -169,5 +169,5 @@ export function handleTransfer(event: Transfer): void {
   position.owner = event.params.to
   position.save()
 
-  savePositionSnapshot(position!, event)
+  savePositionSnapshot(position, event)
 }
