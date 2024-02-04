@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal, ethereum } from '@graphprotocol/graph-ts'
 import { Transaction } from '../types/schema'
-import { ONE_BI, ZERO_BI, ZERO_BD, ONE_BD, TWO_BI, } from '../utils/constants'
+import { ONE_BI, ZERO_BI, ZERO_BD, ONE_BD, TWO_BI } from '../utils/constants'
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
@@ -24,25 +24,13 @@ export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecima
   if (power.equals(ZERO_BI)) {
     return ONE_BD
   }
-
   let negativePower = power.lt(ZERO_BI)
-  let evenPower = ZERO_BD.plus(value)
+  let result = ZERO_BD.plus(value)
   let powerAbs = power.abs()
-  let oddPower = ONE_BD
-
-  while (powerAbs.lt(ONE_BI)) {
-    if (powerAbs % TWO_BI == ZERO_BI) {
-      evenPower = evenPower * evenPower
-      powerAbs = powerAbs/TWO_BI
-    } else {
-      oddPower = evenPower * oddPower
-      evenPower = evenPower * evenPower
-      powerAbs = (powerAbs - ONE_BI) / TWO_BI
-    }
+  for (let i = ONE_BI; i.lt(powerAbs); i = i.plus(ONE_BI)) {
+    result = result.times(value)
   }
 
-  let result = evenPower * oddPower
-  
   if (negativePower) {
     result = safeDiv(ONE_BD, result)
   }
@@ -99,7 +87,7 @@ export function loadTransaction(event: ethereum.Event): Transaction {
   }
   transaction.blockNumber = event.block.number
   transaction.timestamp = event.block.timestamp
-  transaction.gasUsed = event.transaction.gasUsed
+  transaction.gasUsed = BigInt.zero() //needs to be moved to transaction receipt
   transaction.gasPrice = event.transaction.gasPrice
   transaction.save()
   return transaction as Transaction
