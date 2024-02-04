@@ -9,18 +9,16 @@ const USDC_WBNB_03_POOL = '0x6bcb0Ba386E9de0C29006e46B2f01f047cA1806E'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
-export let WHITELIST_TOKENS: string[] = [
-  WBNB_ADDRESS,
-]
+export let WHITELIST_TOKENS: string[] = [WBNB_ADDRESS]
 
 let STABLE_COINS: string[] = [
   '0x55d398326f99059ff775485246999027b3197955', // USDT
-  '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // USDC
+  '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d' // USDC
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('0')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('300')
 
-let Q192 = 2 ** 192
+let Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   let num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   let denom = BigDecimal.fromString(Q192.toString())
@@ -74,7 +72,7 @@ export function findBnbPerToken(token: Token): BigDecimal {
       if (!pool) {
         return ZERO_BD
       }
-    
+
       if (pool.liquidity.gt(ZERO_BI)) {
         if (pool.token0 == token.id) {
           // whitelist token is token1
@@ -82,7 +80,7 @@ export function findBnbPerToken(token: Token): BigDecimal {
           if (!token1) {
             return ZERO_BD
           }
-        
+
           // get the derived ETH in pool
           let ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
           if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
@@ -96,7 +94,7 @@ export function findBnbPerToken(token: Token): BigDecimal {
           if (!token0) {
             return ZERO_BD
           }
-        
+
           // get the derived ETH in pool
           let ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
           if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
