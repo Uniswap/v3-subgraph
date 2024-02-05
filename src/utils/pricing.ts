@@ -16,7 +16,7 @@ export let WHITELIST_TOKENS: string[] = [
   '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' // USDT
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('4')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
 
 let Q192 = BigInt.fromI32(2).pow(192 as u8)
 
