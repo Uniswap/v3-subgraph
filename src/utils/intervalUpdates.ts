@@ -49,7 +49,7 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
     .concat('-')
     .concat(dayID.toString())
   let pool = Pool.load(event.address.toHexString())!
-  let poolDayData = PoolDayData.load(dayPoolID)!
+  let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
     poolDayData = new PoolDayData(dayPoolID)
     poolDayData.date = dayStartTimestamp
