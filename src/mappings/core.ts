@@ -431,22 +431,22 @@ export function handleSwap(event: SwapEvent): void {
 
   token0DayData.volume = token0DayData.volume.plus(amount0Abs)
   token0DayData.volumeUSD = token0DayData.volumeUSD.plus(amountTotalUSDTracked)
-  token0DayData.untrackedVolumeUSD = token0DayData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
+  token0DayData.untrackedVolumeUSD = token0DayData.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   token0DayData.feesUSD = token0DayData.feesUSD.plus(feesUSD)
 
   token0HourData.volume = token0HourData.volume.plus(amount0Abs)
   token0HourData.volumeUSD = token0HourData.volumeUSD.plus(amountTotalUSDTracked)
-  token0HourData.untrackedVolumeUSD = token0HourData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
+  token0HourData.untrackedVolumeUSD = token0HourData.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   token0HourData.feesUSD = token0HourData.feesUSD.plus(feesUSD)
 
   token1DayData.volume = token1DayData.volume.plus(amount1Abs)
   token1DayData.volumeUSD = token1DayData.volumeUSD.plus(amountTotalUSDTracked)
-  token1DayData.untrackedVolumeUSD = token1DayData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
+  token1DayData.untrackedVolumeUSD = token1DayData.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   token1DayData.feesUSD = token1DayData.feesUSD.plus(feesUSD)
 
   token1HourData.volume = token1HourData.volume.plus(amount1Abs)
   token1HourData.volumeUSD = token1HourData.volumeUSD.plus(amountTotalUSDTracked)
-  token1HourData.untrackedVolumeUSD = token1HourData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
+  token1HourData.untrackedVolumeUSD = token1HourData.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   token1HourData.feesUSD = token1HourData.feesUSD.plus(feesUSD)
 
   swap.save()
