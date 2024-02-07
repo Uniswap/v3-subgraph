@@ -8,14 +8,6 @@ export class StaticTokenDefinition {
   name: string
   decimals: BigInt
 
-  // Initialize a Token Definition with its attributes
-  constructor(address: Address, symbol: string, name: string, decimals: BigInt) {
-    this.address = address
-    this.symbol = symbol
-    this.name = name
-    this.decimals = decimals
-  }
-
   // Get all tokens with a static defintion
   static getStaticDefinitions(): Array<StaticTokenDefinition> {
     const staticDefinitions: Array<StaticTokenDefinition> = [
