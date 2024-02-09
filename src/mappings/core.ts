@@ -269,7 +269,7 @@ export function handleSwap(event: SwapEvent): void {
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
-  let oldTick = pool.tick!
+  let oldTick = pool.tick
 
   // need absolute amounts for volume
   let amount0Abs = amount0
@@ -447,26 +447,28 @@ export function handleSwap(event: SwapEvent): void {
     loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
   }
 
-  let numIters = oldTick
-    .minus(newTick)
-    .abs()
-    .div(tickSpacing)
+  if (oldTick) {
+    let numIters = oldTick
+      .minus(newTick)
+      .abs()
+      .div(tickSpacing)
 
-  if (numIters.gt(BigInt.fromI32(100))) {
-    // In case more than 100 ticks need to be updated ignore the update in
-    // order to avoid timeouts. From testing this behavior occurs only upon
-    // pool initialization. This should not be a big issue as the ticks get
-    // updated later. For early users this error also disappears when calling
-    // collect
-  } else if (newTick.gt(oldTick)) {
-    let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
-    for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
-      loadTickUpdateFeeVarsAndSave(i.toI32(), event)
-    }
-  } else if (newTick.lt(oldTick)) {
-    let firstInitialized = oldTick.minus(modulo)
-    for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
-      loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+    if (numIters.gt(BigInt.fromI32(100))) {
+      // In case more than 100 ticks need to be updated ignore the update in
+      // order to avoid timeouts. From testing this behavior occurs only upon
+      // pool initialization. This should not be a big issue as the ticks get
+      // updated later. For early users this error also disappears when calling
+      // collect
+    } else if (newTick.gt(oldTick)) {
+      let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
+      for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
+        loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+      }
+    } else if (newTick.lt(oldTick)) {
+      let firstInitialized = oldTick.minus(modulo)
+      for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
+        loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+      }
     }
   }
 }
