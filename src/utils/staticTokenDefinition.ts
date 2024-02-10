@@ -16,18 +16,15 @@ export class StaticTokenDefinition {
     this.decimals = decimals
   }
 
-  // Get all tokens with a static defintion
   static getStaticDefinitions(): Array<StaticTokenDefinition> {
-    let staticDefinitions = new Array<StaticTokenDefinition>(6)
-
-    // Add WETH
-    let tokenWETH = new StaticTokenDefinition(
-      Address.fromString('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
-      'WETH',
-      'Wrapped Ethereum',
-      BigInt.fromI32(18)
-    )
-    staticDefinitions.push(tokenWETH)
+    const staticDefinitions: Array<StaticTokenDefinition> = [
+      {
+        address: Address.fromString('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
+        symbol: 'WETH',
+        name: 'Wrapped Ethereum',
+        decimals: BigInt.fromI32(18)
+      }
+    ]
 
     return staticDefinitions
   }
