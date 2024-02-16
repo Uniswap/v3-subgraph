@@ -17,7 +17,7 @@ export let WHITELIST_TOKENS: string[] = [
 ]
 
 let STABLE_COINS: string[] = ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('300')
 
 let Q192 = BigInt.fromI32(2).pow(192 as u8)
 
