@@ -1,13 +1,14 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: A copy of Uniswap's Arbitrum subgraph
-# graft:
-#   base: QmYrooNJpZZkpsMxG44wJgkbnSbEsT9B8wbStADdrydewT
-#   block: 5363973
+graft:
+  base: QmYrooNJpZZkpsMxG44wJgkbnSbEsT9B8wbStADdrydewT
+  block: 174340000
 repository: https://github.com/vintageplayer/v3-subgraph
 schema:
   file: ./schema.graphql
 features:
   - nonFatalErrors
+  - grafting
 dataSources:
   - kind: ethereum/contract
     name: Factory
@@ -18,7 +19,7 @@ dataSources:
       startBlock: 175
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/factory.ts
       entities:
@@ -46,7 +47,7 @@ templates:
       abi: Pool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
@@ -68,5 +69,5 @@ templates:
           handler: handleMint
         - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
           handler: handleBurn
-        - event: Flash(indexed address,indexed address,uint256,uint256,uint256,uint256)
-          handler: handleFlash
+        # - event: Flash(indexed address,indexed address,uint256,uint256,uint256,uint256)
+        #   handler: handleFlash

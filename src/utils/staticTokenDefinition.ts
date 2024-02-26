@@ -8,36 +8,22 @@ export class StaticTokenDefinition {
   name: string
   decimals: BigInt
 
-  // Initialize a Token Definition with its attributes
-  constructor(address: Address, symbol: string, name: string, decimals: BigInt) {
-    this.address = address
-    this.symbol = symbol
-    this.name = name
-    this.decimals = decimals
-  }
-
   // Get all tokens with a static defintion
   static getStaticDefinitions(): Array<StaticTokenDefinition> {
-    let staticDefinitions = new Array<StaticTokenDefinition>(6)
-
-    // Add WETH
-    let tokenWETH = new StaticTokenDefinition(
-      Address.fromString('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
-      'WETH',
-      'Wrapped Ethereum',
-      BigInt.fromI32(18)
-    )
-    staticDefinitions.push(tokenWETH)
-
-    // USDC
-    let tokenUSDC = new StaticTokenDefinition(
-      Address.fromString('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'),
-      'USDC',
-      'USD Coin',
-      BigInt.fromI32(6)
-    )
-    staticDefinitions.push(tokenUSDC)
-
+    const staticDefinitions: Array<StaticTokenDefinition> = [
+      {
+        address: Address.fromString('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
+        symbol: 'WETH',
+        name: 'Wrapped Ethereum',
+        decimals: BigInt.fromI32(18)
+      },
+      {
+        address: Address.fromString('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'),
+        symbol: 'USDC',
+        name: 'USD Coin',
+        decimals: BigInt.fromI32(6)
+      }
+    ]
     return staticDefinitions
   }
 
