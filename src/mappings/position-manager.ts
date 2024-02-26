@@ -137,8 +137,8 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   }
 
   let bundle = Bundle.load('1')!
-  let token0 = Token.load(position.token0)!
-  let token1 = Token.load(position.token1)!
+  let token0 = Token.load(position.token0)
+  let token1 = Token.load(position.token1)
 
   if (token0 && token1) {
     let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)

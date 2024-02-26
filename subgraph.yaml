@@ -4,8 +4,8 @@ repository: https://github.com/Uniswap/uniswap-v3-subgraph
 schema:
   file: ./schema.graphql
 graft:
-  base: QmW4KFgDgFPmhPhaQB3yMVzxmm9wBJDuwkhSatgJGdjuVa
-  block: 53307000
+  base: QmUkd3YS9VFkNtUquV47ynNEjkbPE8KH3YoYixgdddM6hg
+  block: 53603000
 features:
   - nonFatalErrors
   - grafting
