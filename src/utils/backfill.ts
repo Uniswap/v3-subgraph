@@ -89,34 +89,37 @@ export function populateEmptyPools(event: ethereum.Event): void {
     let token0 = Token.load(token0Address.toHexString())
     let token1 = Token.load(token1Address.toHexString())
 
-    if (WHITELIST_TOKENS.includes(pool.token0)) {
-      let newPools = token1.whitelistPools
-      newPools.push(pool.id)
-      token1.whitelistPools = newPools
+    if (token0 && token1) {
+      if (WHITELIST_TOKENS.includes(pool.token0)) {
+        let newPools = token1.whitelistPools
+        newPools.push(pool.id)
+        token1.whitelistPools = newPools
+      }
+
+      if (WHITELIST_TOKENS.includes(token1.id)) {
+        let newPools = token0.whitelistPools
+        newPools.push(pool.id)
+        token0.whitelistPools = newPools
+      }
+
+      // populate the TVL by call contract balanceOf
+      let token0Contract = ERC20.bind(Address.fromString(pool.token0))
+      let tvlToken0Raw = token0Contract.balanceOf(Address.fromString(pool.id))
+      let tvlToken0Adjusted = convertTokenToDecimal(tvlToken0Raw, token0.decimals)
+      pool.totalValueLockedToken0 = tvlToken0Adjusted
+      token0.totalValueLocked = tvlToken0Adjusted
+
+      let token1Contract = ERC20.bind(Address.fromString(pool.token1))
+      let tvlToken1Raw = token1Contract.balanceOf(Address.fromString(pool.id))
+      let tvlToken1Adjusted = convertTokenToDecimal(tvlToken1Raw, token1.decimals)
+      pool.totalValueLockedToken1 = tvlToken1Adjusted
+      token1.totalValueLocked = tvlToken1Adjusted
+
+      // add pool to tracked address and store entities
+      PoolTemplate.create(Address.fromString(pool.id))
+      token0.save()
+      token1.save()
+      pool.save()
     }
-    if (WHITELIST_TOKENS.includes(token1.id)) {
-      let newPools = token0.whitelistPools
-      newPools.push(pool.id)
-      token0.whitelistPools = newPools
-    }
-
-    // populate the TVL by call contract balanceOf
-    let token0Contract = ERC20.bind(Address.fromString(pool.token0))
-    let tvlToken0Raw = token0Contract.balanceOf(Address.fromString(pool.id))
-    let tvlToken0Adjusted = convertTokenToDecimal(tvlToken0Raw, token0.decimals)
-    pool.totalValueLockedToken0 = tvlToken0Adjusted
-    token0.totalValueLocked = tvlToken0Adjusted
-
-    let token1Contract = ERC20.bind(Address.fromString(pool.token1))
-    let tvlToken1Raw = token1Contract.balanceOf(Address.fromString(pool.id))
-    let tvlToken1Adjusted = convertTokenToDecimal(tvlToken1Raw, token1.decimals)
-    pool.totalValueLockedToken1 = tvlToken1Adjusted
-    token1.totalValueLocked = tvlToken1Adjusted
-
-    // add pool to tracked address and store entities
-    PoolTemplate.create(Address.fromString(pool.id))
-    token0.save()
-    token1.save()
-    pool.save()
   }
 }
