@@ -4,20 +4,19 @@ import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
 
-const WETH_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
-const USDC_WETH_03_POOL = '0x0e44ceb592acfc5d3f09d996302eb4c499ff8c10'
+const WETH_ADDRESS = '0x4300000000000000000000000000000000000004'
+const USDB_ADDRESS = '0x4300000000000000000000000000000000000003' // native blast stablecoin
+const USDC_WETH_03_POOL = '0xf52b4b69123cbcf07798ae8265642793b2e8990c'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS, // WETH
-  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
-  '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
-  '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063' // DAI
+  USDB_ADDRESS // USDB
 ]
 
-let STABLE_COINS: string[] = ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('300')
+let STABLE_COINS: string[] = [USDB_ADDRESS]
+let MINIMUM_ETH_LOCKED = BigDecimal.fromString('1')
 
 let Q192 = BigInt.fromI32(2).pow(192 as u8)
 
