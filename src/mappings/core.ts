@@ -291,7 +291,7 @@ export function handleSwap(event: SwapEvent): void {
   let token1 = Token.load(pool.token1)
 
   if (token0 && token1) {
-    let oldTick = pool.tick!
+    let oldTick = pool.tick
 
     // amounts - 0/1 are token deltas: can be positive or negative
     let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -474,35 +474,37 @@ export function handleSwap(event: SwapEvent): void {
     token0.save()
     token1.save()
 
-    // Update inner vars of current or crossed ticks
-    let newTick = pool.tick!
-    let tickSpacing = feeTierToTickSpacing(pool.feeTier)
-    let modulo = newTick.mod(tickSpacing)
-    if (modulo.equals(ZERO_BI)) {
-      // Current tick is initialized and needs to be updated
-      loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
-    }
-
-    let numIters = oldTick
-      .minus(newTick)
-      .abs()
-      .div(tickSpacing)
-
-    if (numIters.gt(BigInt.fromI32(100))) {
-      // In case more than 100 ticks need to be updated ignore the update in
-      // order to avoid timeouts. From testing this behavior occurs only upon
-      // pool initialization. This should not be a big issue as the ticks get
-      // updated later. For early users this error also disappears when calling
-      // collect
-    } else if (newTick.gt(oldTick)) {
-      let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
-      for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
-        loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+    if (oldTick) {
+      // Update inner vars of current or crossed ticks
+      let newTick = pool.tick
+      let tickSpacing = feeTierToTickSpacing(pool.feeTier)
+      let modulo = newTick.mod(tickSpacing)
+      if (modulo.equals(ZERO_BI)) {
+        // Current tick is initialized and needs to be updated
+        loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
       }
-    } else if (newTick.lt(oldTick)) {
-      let firstInitialized = oldTick.minus(modulo)
-      for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
-        loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+
+      let numIters = oldTick
+        .minus(newTick)
+        .abs()
+        .div(tickSpacing)
+
+      if (numIters.gt(BigInt.fromI32(100))) {
+        // In case more than 100 ticks need to be updated ignore the update in
+        // order to avoid timeouts. From testing this behavior occurs only upon
+        // pool initialization. This should not be a big issue as the ticks get
+        // updated later. For early users this error also disappears when calling
+        // collect
+      } else if (newTick.gt(oldTick)) {
+        let firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
+        for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
+          loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+        }
+      } else if (newTick.lt(oldTick)) {
+        let firstInitialized = oldTick.minus(modulo)
+        for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
+          loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+        }
       }
     }
   }
