@@ -5,7 +5,7 @@ schema:
   file: ./schema.graphql
 graft:
   base: QmZeCuoZeadgHkGwLwMeguyqUKz1WPWQYKcKyMCeQqGhsF
-  block: 19165000
+  block: 19470000
 features:
   - nonFatalErrors
   - grafting
