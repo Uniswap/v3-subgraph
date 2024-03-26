@@ -15,7 +15,6 @@ import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToT
 import {
   updatePoolDayData,
   updatePoolHourData,
-  updateTickDayData,
   updateTokenDayData,
   updateTokenHourData,
   updateUniswapDayData
@@ -165,10 +164,6 @@ export function handleMint(event: MintEvent): void {
     pool.save()
     factory.save()
     mint.save()
-
-    // Update inner tick vars and save the ticks
-    updateTickFeeVarsAndSave(lowerTick, event)
-    updateTickFeeVarsAndSave(upperTick, event)
   }
 }
 
@@ -257,9 +252,6 @@ export function handleBurn(event: BurnEvent): void {
       lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
       upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
       upperTick.liquidityNet = upperTick.liquidityNet.plus(amount)
-
-      updateTickFeeVarsAndSave(lowerTick, event)
-      updateTickFeeVarsAndSave(upperTick, event)
     }
     updateUniswapDayData(event)
     updatePoolDayData(event)
@@ -521,18 +513,6 @@ export function handleFlash(event: FlashEvent): void {
   pool.save()
 }
 
-function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
-  let poolAddress = event.address
-  // not all ticks are initialized so obtaining null is expected behavior
-  let poolContract = PoolABI.bind(poolAddress)
-  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
-  tick.feeGrowthOutside0X128 = tickResult.value2
-  tick.feeGrowthOutside1X128 = tickResult.value3
-  tick.save()
-
-  updateTickDayData(tick, event)
-}
-
 function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
   let poolAddress = event.address
   let tick = Tick.load(
@@ -541,7 +521,4 @@ function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void 
       .concat('#')
       .concat(tickId.toString())
   )
-  if (tick !== null) {
-    updateTickFeeVarsAndSave(tick, event)
-  }
 }
