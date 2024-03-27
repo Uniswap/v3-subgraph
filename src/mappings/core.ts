@@ -407,9 +407,6 @@ export function handleSwap(event: SwapEvent): void {
     swap.sqrtPriceX96 = event.params.sqrtPriceX96
     swap.logIndex = event.logIndex
 
-    // update fee growth
-    let poolContract = PoolABI.bind(event.address)
-
     // interval data
     let uniswapDayData = updateUniswapDayData(event)
     let poolDayData = updatePoolDayData(event)
