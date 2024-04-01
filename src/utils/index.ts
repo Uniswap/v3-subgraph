@@ -38,6 +38,34 @@ export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecima
   return result
 }
 
+export function fastPowImpl(value: BigDecimal, power: i32): BigDecimal {
+  if (power == 0) {
+    return ONE_BD;
+  }
+
+  if (power == 1) {
+    return value;
+  }
+
+  let halfPower = power / 2;
+  let halfResult = fastPowImpl(value, halfPower);
+  let result = halfResult.times(halfResult);
+  if (power % 2 == 1) {
+    result = result.times(value);
+  }
+  return result;
+}
+
+export function fastPow(value: BigDecimal, power: i32): BigDecimal {
+  if (power < 0) {
+    let result = fastPowImpl(value, -power);
+    result = safeDiv(ONE_BD, result);
+    return result;
+  }
+
+  return fastPowImpl(value, power);
+}
+
 export function tokenAmountToDecimal(tokenAmount: BigInt, exchangeDecimals: BigInt): BigDecimal {
   if (exchangeDecimals == ZERO_BI) {
     return tokenAmount.toBigDecimal()
