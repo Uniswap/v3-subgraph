@@ -20,7 +20,17 @@ export function safeDiv(amount0: BigDecimal, amount1: BigDecimal): BigDecimal {
   }
 }
 
-export function fastPowImpl(value: BigDecimal, power: i32): BigDecimal {
+/**
+ * Implements exponentiation by squaring
+ * (see https://en.wikipedia.org/wiki/Exponentiation_by_squaring )
+ * to minimize the number of BigDecimal operations and their impact on performance.
+ */
+export function fastPow(value: BigDecimal, power: i32): BigDecimal {
+  if (power < 0) {
+    let result = fastPow(value, -power);
+    return safeDiv(ONE_BD, result);
+  }
+
   if (power == 0) {
     return ONE_BD;
   }
@@ -30,22 +40,16 @@ export function fastPowImpl(value: BigDecimal, power: i32): BigDecimal {
   }
 
   let halfPower = power / 2;
-  let halfResult = fastPowImpl(value, halfPower);
+  let halfResult = fastPow(value, halfPower);
+
+  // Use the fact that x ^ (2n) = (x ^ n) * (x ^ n) and we can compute (x ^ n) only once.
   let result = halfResult.times(halfResult);
+
+  // For odd powers, x ^ (2n + 1) = (x ^ 2n) * x
   if (power % 2 == 1) {
     result = result.times(value);
   }
   return result;
-}
-
-export function fastPow(value: BigDecimal, power: i32): BigDecimal {
-  if (power < 0) {
-    let result = fastPowImpl(value, -power);
-    result = safeDiv(ONE_BD, result);
-    return result;
-  }
-
-  return fastPowImpl(value, power);
 }
 
 export function tokenAmountToDecimal(tokenAmount: BigInt, exchangeDecimals: BigInt): BigDecimal {
