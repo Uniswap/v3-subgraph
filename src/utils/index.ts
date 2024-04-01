@@ -25,9 +25,9 @@ export function safeDiv(amount0: BigDecimal, amount1: BigDecimal): BigDecimal {
  * (see https://en.wikipedia.org/wiki/Exponentiation_by_squaring )
  * to minimize the number of BigDecimal operations and their impact on performance.
  */
-export function fastPow(value: BigDecimal, power: i32): BigDecimal {
+export function fastExponentiation(value: BigDecimal, power: i32): BigDecimal {
   if (power < 0) {
-    let result = fastPow(value, -power);
+    let result = fastExponentiation(value, -power);
     return safeDiv(ONE_BD, result);
   }
 
@@ -40,7 +40,7 @@ export function fastPow(value: BigDecimal, power: i32): BigDecimal {
   }
 
   let halfPower = power / 2;
-  let halfResult = fastPow(value, halfPower);
+  let halfResult = fastExponentiation(value, halfPower);
 
   // Use the fact that x ^ (2n) = (x ^ n) * (x ^ n) and we can compute (x ^ n) only once.
   let result = halfResult.times(halfResult);
