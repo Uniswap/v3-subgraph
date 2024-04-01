@@ -1,14 +1,16 @@
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal, ethereum } from '@graphprotocol/graph-ts'
 import { Transaction } from '../types/schema'
-import { ONE_BI, ZERO_BI, ZERO_BD, ONE_BD } from '../utils/constants'
+import { ZERO_BI, ZERO_BD, ONE_BD } from '../utils/constants'
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
-  let bd = BigDecimal.fromString('1')
-  for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
-    bd = bd.times(BigDecimal.fromString('10'))
+  let resultString = '1';
+
+  for (let i = 0; i < decimals.toI32(); i++) {
+    resultString += '0';
   }
-  return bd
+
+  return BigDecimal.fromString(resultString);
 }
 
 // return 0 if denominator is 0 in division
