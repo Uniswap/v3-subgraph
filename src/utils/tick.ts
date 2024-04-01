@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
-import { bigDecimalExponated, safeDiv } from '.'
+import { fastPow, safeDiv } from '.'
 import { Tick } from '../types/schema'
 import { Mint as MintEvent } from '../types/templates/Pool/Pool'
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
@@ -21,7 +21,7 @@ export function createTick(tickId: string, tickIdx: i32, poolId: string, event: 
   tick.price1 = ONE_BD
 
   // 1.0001^tick is token1/token0.
-  let price0 = bigDecimalExponated(BigDecimal.fromString('1.0001'), BigInt.fromI32(tickIdx))
+  let price0 = fastPow(BigDecimal.fromString('1.0001'), tickIdx);
   tick.price0 = price0
   tick.price1 = safeDiv(ONE_BD, price0)
 
