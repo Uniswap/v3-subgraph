@@ -1,12 +1,12 @@
-import { WHITELIST_TOKENS } from './../utils/pricing'
-/* eslint-disable prefer-const */
-import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
-import { Factory } from '../types/schema'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+
 import { PoolCreated } from '../types/Factory/Factory'
-import { Pool, Token, Bundle } from '../types/schema'
+import { Factory } from '../types/schema'
+import { Bundle, Pool, Token } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
-import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
-import { log, BigInt, Address } from '@graphprotocol/graph-ts'
+import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../utils/token'
+import { ADDRESS_ZERO, FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
+import { WHITELIST_TOKENS } from './../utils/pricing'
 
 export function handlePoolCreated(event: PoolCreated): void {
   // temp fix
@@ -32,14 +32,14 @@ export function handlePoolCreated(event: PoolCreated): void {
     factory.owner = ADDRESS_ZERO
 
     // create new bundle for tracking eth price
-    let bundle = new Bundle('1')
+    const bundle = new Bundle('1')
     bundle.ethPriceUSD = ZERO_BD
     bundle.save()
   }
 
   factory.poolCount = factory.poolCount.plus(ONE_BI)
 
-  let pool = new Pool(event.params.pool.toHexString()) as Pool
+  const pool = new Pool(event.params.pool.toHexString()) as Pool
   let token0 = Token.load(event.params.token0.toHexString())
   let token1 = Token.load(event.params.token1.toHexString())
 
@@ -49,7 +49,7 @@ export function handlePoolCreated(event: PoolCreated): void {
     token0.symbol = fetchTokenSymbol(event.params.token0)
     token0.name = fetchTokenName(event.params.token0)
     token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
-    let decimals = fetchTokenDecimals(event.params.token0)
+    const decimals = fetchTokenDecimals(event.params.token0)
 
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
@@ -76,7 +76,7 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.symbol = fetchTokenSymbol(event.params.token1)
     token1.name = fetchTokenName(event.params.token1)
     token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
-    let decimals = fetchTokenDecimals(event.params.token1)
+    const decimals = fetchTokenDecimals(event.params.token1)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
       log.debug('mybug the decimal on token 0 was null', [])
@@ -98,12 +98,12 @@ export function handlePoolCreated(event: PoolCreated): void {
 
   // update white listed pools
   if (WHITELIST_TOKENS.includes(token0.id)) {
-    let newPools = token1.whitelistPools
+    const newPools = token1.whitelistPools
     newPools.push(pool.id)
     token1.whitelistPools = newPools
   }
   if (WHITELIST_TOKENS.includes(token1.id)) {
-    let newPools = token0.whitelistPools
+    const newPools = token0.whitelistPools
     newPools.push(pool.id)
     token0.whitelistPools = newPools
   }

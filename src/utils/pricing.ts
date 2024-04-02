@@ -1,15 +1,15 @@
-/* eslint-disable prefer-const */
-import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
-import { Bundle, Pool, Token } from './../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+
 import { exponentToBigDecimal, safeDiv } from '../utils/index'
+import { Bundle, Pool, Token } from './../types/schema'
+import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const USDC_WETH_03_POOL = '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
-export let WHITELIST_TOKENS: string[] = [
+export const WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS, // WETH
   '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
   '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
@@ -30,36 +30,33 @@ export let WHITELIST_TOKENS: string[] = [
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
   '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
-  '0xfe2e637202056d30016725477c5da089ab0a043a' // sETH2
+  '0xfe2e637202056d30016725477c5da089ab0a043a', // sETH2
 ]
 
-let STABLE_COINS: string[] = [
+const STABLE_COINS: string[] = [
   '0x6b175474e89094c44da98b954eedeac495271d0f',
   '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
   '0x0000000000085d4780b73119b644ae5ecd22b376',
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
-  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95'
+  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95',
 ]
 
-let MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
+const MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
 
-let Q192 = BigInt.fromI32(2).pow(192 as u8)
+const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
-  let num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
-  let denom = BigDecimal.fromString(Q192.toString())
-  let price1 = num
-    .div(denom)
-    .times(exponentToBigDecimal(token0.decimals))
-    .div(exponentToBigDecimal(token1.decimals))
+  const num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
+  const denom = BigDecimal.fromString(Q192.toString())
+  const price1 = num.div(denom).times(exponentToBigDecimal(token0.decimals)).div(exponentToBigDecimal(token1.decimals))
 
-  let price0 = safeDiv(BigDecimal.fromString('1'), price1)
+  const price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
 }
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(USDC_WETH_03_POOL) // dai is token0
+  const usdcPool = Pool.load(USDC_WETH_03_POOL) // dai is token0
   if (usdcPool !== null) {
     return usdcPool.token0Price
   } else {
@@ -75,12 +72,12 @@ export function findEthPerToken(token: Token): BigDecimal {
   if (token.id == WETH_ADDRESS) {
     return ONE_BD
   }
-  let whiteList = token.whitelistPools
+  const whiteList = token.whitelistPools
   // for now just take USD from pool with greatest TVL
   // need to update this to actually detect best rate based on liquidity distribution
   let largestLiquidityETH = ZERO_BD
   let priceSoFar = ZERO_BD
-  let bundle = Bundle.load('1')!
+  const bundle = Bundle.load('1')!
 
   // hardcoded fix for incorrect rates
   // if whitelist includes token - get the safe price
@@ -88,17 +85,17 @@ export function findEthPerToken(token: Token): BigDecimal {
     priceSoFar = safeDiv(ONE_BD, bundle.ethPriceUSD)
   } else {
     for (let i = 0; i < whiteList.length; ++i) {
-      let poolAddress = whiteList[i]
-      let pool = Pool.load(poolAddress)
+      const poolAddress = whiteList[i]
+      const pool = Pool.load(poolAddress)
 
       if (pool) {
         if (pool.liquidity.gt(ZERO_BI)) {
           if (pool.token0 == token.id) {
             // whitelist token is token1
-            let token1 = Token.load(pool.token1)
+            const token1 = Token.load(pool.token1)
             // get the derived ETH in pool
             if (token1) {
-              let ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
+              const ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
               if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
                 largestLiquidityETH = ethLocked
                 // token1 per our token * Eth per token1
@@ -107,10 +104,10 @@ export function findEthPerToken(token: Token): BigDecimal {
             }
           }
           if (pool.token1 == token.id) {
-            let token0 = Token.load(pool.token0)
+            const token0 = Token.load(pool.token0)
             // get the derived ETH in pool
             if (token0) {
-              let ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
+              const ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
               if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_ETH_LOCKED)) {
                 largestLiquidityETH = ethLocked
                 // token0 per our token * ETH per token0
@@ -137,9 +134,9 @@ export function getTrackedAmountUSD(
   tokenAmount1: BigDecimal,
   token1: Token
 ): BigDecimal {
-  let bundle = Bundle.load('1')!
-  let price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
-  let price1USD = token1.derivedETH.times(bundle.ethPriceUSD)
+  const bundle = Bundle.load('1')!
+  const price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
+  const price1USD = token1.derivedETH.times(bundle.ethPriceUSD)
 
   // both are whitelist tokens, return sum of both amounts
   if (WHITELIST_TOKENS.includes(token0.id) && WHITELIST_TOKENS.includes(token1.id)) {

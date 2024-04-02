@@ -1,29 +1,28 @@
-import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
-/* eslint-disable prefer-const */
+import { ethereum } from '@graphprotocol/graph-ts'
+
 import {
-  UniswapDayData,
+  Bundle,
   Factory,
   Pool,
   PoolDayData,
+  PoolHourData,
   Token,
   TokenDayData,
   TokenHourData,
-  Bundle,
-  PoolHourData,
-  Tick
+  UniswapDayData,
 } from './../types/schema'
+import { ONE_BI, ZERO_BD, ZERO_BI } from './constants'
 import { FACTORY_ADDRESS } from './constants'
-import { ethereum } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
 export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  let uniswap = Factory.load(FACTORY_ADDRESS)!
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400 // rounded
-  let dayStartTimestamp = dayID * 86400
+  const uniswap = Factory.load(FACTORY_ADDRESS)!
+  const timestamp = event.block.timestamp.toI32()
+  const dayID = timestamp / 86400 // rounded
+  const dayStartTimestamp = dayID * 86400
   let uniswapDayData = UniswapDayData.load(dayID.toString())
   if (uniswapDayData === null) {
     uniswapDayData = new UniswapDayData(dayID.toString())
@@ -40,14 +39,11 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
 }
 
 export function updatePoolDayData(event: ethereum.Event): PoolDayData {
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayPoolID = event.address
-    .toHexString()
-    .concat('-')
-    .concat(dayID.toString())
-  let pool = Pool.load(event.address.toHexString())!
+  const timestamp = event.block.timestamp.toI32()
+  const dayID = timestamp / 86400
+  const dayStartTimestamp = dayID * 86400
+  const dayPoolID = event.address.toHexString().concat('-').concat(dayID.toString())
+  const pool = Pool.load(event.address.toHexString())!
   let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
     poolDayData = new PoolDayData(dayPoolID)
@@ -85,14 +81,11 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
 }
 
 export function updatePoolHourData(event: ethereum.Event): PoolHourData {
-  let timestamp = event.block.timestamp.toI32()
-  let hourIndex = timestamp / 3600 // get unique hour within unix history
-  let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let hourPoolID = event.address
-    .toHexString()
-    .concat('-')
-    .concat(hourIndex.toString())
-  let pool = Pool.load(event.address.toHexString())!
+  const timestamp = event.block.timestamp.toI32()
+  const hourIndex = timestamp / 3600 // get unique hour within unix history
+  const hourStartUnix = hourIndex * 3600 // want the rounded effect
+  const hourPoolID = event.address.toHexString().concat('-').concat(hourIndex.toString())
+  const pool = Pool.load(event.address.toHexString())!
   let poolHourData = PoolHourData.load(hourPoolID)
   if (poolHourData === null) {
     poolHourData = new PoolHourData(hourPoolID)
@@ -132,15 +125,12 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
 }
 
 export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
-  let bundle = Bundle.load('1')!
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let tokenDayID = token.id
-    .toString()
-    .concat('-')
-    .concat(dayID.toString())
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+  const bundle = Bundle.load('1')!
+  const timestamp = event.block.timestamp.toI32()
+  const dayID = timestamp / 86400
+  const dayStartTimestamp = dayID * 86400
+  const tokenDayID = token.id.toString().concat('-').concat(dayID.toString())
+  const tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
   let tokenDayData = TokenDayData.load(tokenDayID)
   if (tokenDayData === null) {
@@ -175,16 +165,13 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
 }
 
 export function updateTokenHourData(token: Token, event: ethereum.Event): TokenHourData {
-  let bundle = Bundle.load('1')!
-  let timestamp = event.block.timestamp.toI32()
-  let hourIndex = timestamp / 3600 // get unique hour within unix history
-  let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let tokenHourID = token.id
-    .toString()
-    .concat('-')
-    .concat(hourIndex.toString())
+  const bundle = Bundle.load('1')!
+  const timestamp = event.block.timestamp.toI32()
+  const hourIndex = timestamp / 3600 // get unique hour within unix history
+  const hourStartUnix = hourIndex * 3600 // want the rounded effect
+  const tokenHourID = token.id.toString().concat('-').concat(hourIndex.toString())
   let tokenHourData = TokenHourData.load(tokenHourID)
-  let tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
+  const tokenPrice = token.derivedETH.times(bundle.ethPriceUSD)
 
   if (tokenHourData === null) {
     tokenHourData = new TokenHourData(tokenHourID)
