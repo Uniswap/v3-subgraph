@@ -5,15 +5,44 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        node: ['12.x', '14.x']
-        os: [ubuntu-latest]
+  lint:
+    name: lint
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref || '' }}
+          token: ${{ secrets.github_token }}
+
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Commit lint fixes
+        if: github.event_name == 'pull_request'
+        run: |
+          git config --global user.name "${{ github.event.pull_request.user.login }}"
+          git config --global user.email "${{ github.event.pull_request.user.login }}@users.noreply.github.com"
+          if [ -z "$(git diff)" ]; then exit; fi
+          git commit -a -m "fix(lint): auto-fix [ci]"
+          git push
+  test:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -22,7 +51,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '18.x'
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -32,9 +61,9 @@ jobs:
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ matrix.os }}-yarn-
+            yarn-
 
       - name: Install dependencies
         run: yarn install

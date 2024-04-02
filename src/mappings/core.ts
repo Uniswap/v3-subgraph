@@ -1,17 +1,10 @@
 /* eslint-disable prefer-const */
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+
 import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
-import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import {
-  Burn as BurnEvent,
-  Flash as FlashEvent,
-  Initialize,
-  Mint as MintEvent,
-  Swap as SwapEvent
-} from '../types/templates/Pool/Pool'
+import { Burn as BurnEvent, Initialize, Mint as MintEvent, Swap as SwapEvent } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
-import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
+import { FACTORY_ADDRESS, ONE_BI, ZERO_BD } from '../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
@@ -19,7 +12,8 @@ import {
   updateTokenHourData,
   updateUniswapDayData
 } from '../utils/intervalUpdates'
-import { createTick, feeTierToTickSpacing } from '../utils/tick'
+import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
+import { createTick } from '../utils/tick'
 
 export function handleInitialize(event: Initialize): void {
   // update pool sqrt price and tick
@@ -289,8 +283,6 @@ export function handleSwap(event: SwapEvent): void {
   let token1 = Token.load(pool.token1)
 
   if (token0 && token1) {
-    let oldTick = pool.tick
-
     // amounts - 0/1 are token deltas: can be positive or negative
     let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
     let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
