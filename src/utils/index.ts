@@ -1,7 +1,7 @@
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
 import { Transaction } from '../types/schema'
-import { ZERO_BI, ZERO_BD, ONE_BD } from '../utils/constants'
+import { ONE_BD, ZERO_BD, ZERO_BI } from '../utils/constants'
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let resultString = '1'
@@ -29,7 +29,7 @@ export function safeDiv(amount0: BigDecimal, amount1: BigDecimal): BigDecimal {
  */
 export function fastExponentiation(value: BigDecimal, power: i32): BigDecimal {
   if (power < 0) {
-    let result = fastExponentiation(value, -power)
+    const result = fastExponentiation(value, -power)
     return safeDiv(ONE_BD, result)
   }
 
@@ -41,8 +41,8 @@ export function fastExponentiation(value: BigDecimal, power: i32): BigDecimal {
     return value
   }
 
-  let halfPower = power / 2
-  let halfResult = fastExponentiation(value, halfPower)
+  const halfPower = power / 2
+  const halfResult = fastExponentiation(value, halfPower)
 
   // Use the fact that x ^ (2n) = (x ^ n) * (x ^ n) and we can compute (x ^ n) only once.
   let result = halfResult.times(halfResult)
