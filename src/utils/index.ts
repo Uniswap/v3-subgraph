@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
 import { Transaction } from '../types/schema'
@@ -25,9 +24,9 @@ export function bigDecimalExponated(value: BigDecimal, power: BigInt): BigDecima
   if (power.equals(ZERO_BI)) {
     return ONE_BD
   }
-  let negativePower = power.lt(ZERO_BI)
+  const negativePower = power.lt(ZERO_BI)
   let result = ZERO_BD.plus(value)
-  let powerAbs = power.abs()
+  const powerAbs = power.abs()
   for (let i = ONE_BI; i.lt(powerAbs); i = i.plus(ONE_BI)) {
     result = result.times(value)
   }
