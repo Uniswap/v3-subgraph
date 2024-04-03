@@ -82,8 +82,5 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run GraphQL codegen
-        run: yarn codegen
-
       - name: Build project
         run: yarn build
