@@ -9,7 +9,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData
+  updateUniswapDayData,
 } from '../../utils/intervalUpdates'
 
 // Note: this handler need not adjust TVL because that is accounted for in the handleCollect handler
