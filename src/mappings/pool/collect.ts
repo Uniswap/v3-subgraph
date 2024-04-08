@@ -38,21 +38,23 @@ export function handleCollect(event: CollectEvent): void {
     token1 as Token
   )
 
-  let burnedAmountToken0 = ZERO_BD
-  let burnedAmountToken1 = ZERO_BD
-  const burns: Burn[] = transaction.burns.load()
-  for (let i = 0; i < burns.length; i++) {
-    if (burns[i].pool == pool.id) {
-      burnedAmountToken0 = burnedAmountToken0.plus(burns[i].amount0)
-      burnedAmountToken1 = burnedAmountToken1.plus(burns[i].amount1)
-    }
-  }
+  // let burnedAmountToken0 = ZERO_BD
+  // let burnedAmountToken1 = ZERO_BD
+  // const burns: Burn[] = transaction.burns.load()
+  // for (let i = 0; i < burns.length; i++) {
+  //   if (burns[i].pool == pool.id) {
+  //     burnedAmountToken0 = burnedAmountToken0.plus(burns[i].amount0)
+  //     burnedAmountToken1 = burnedAmountToken1.plus(burns[i].amount1)
+  //   }
+  // }
 
   // Because there was an amount burned, within this tx, by subtracting to full
   // collected amount, we end up double counting this difference. Thus, we only
   // reduce TVL by the difference between amount collected and amount burned.
-  const tvlDiffToken0 = collectedAmountToken0.minus(burnedAmountToken0)
-  const tvlDiffToken1 = collectedAmountToken1.minus(burnedAmountToken1)
+  // const tvlDiffToken0 = collectedAmountToken0.minus(burnedAmountToken0)
+  // const tvlDiffToken1 = collectedAmountToken1.minus(burnedAmountToken1)
+  const tvlDiffToken0 = collectedAmountToken0
+  const tvlDiffToken1 = collectedAmountToken1
 
   // Reset tvl aggregates until new amounts calculated
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(pool.totalValueLockedETH)
