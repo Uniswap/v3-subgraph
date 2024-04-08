@@ -48,6 +48,9 @@ export function handleBurn(event: BurnEvent): void {
       BigInt.fromI32(event.params.tickLower).le(pool.tick as BigInt) &&
       BigInt.fromI32(event.params.tickUpper).gt(pool.tick as BigInt)
     ) {
+      // todo: this liquidity can be calculated from the real reserves and
+      // current price instead of incrementally from every burned amount which
+      // may not be accurate: https://linear.app/uniswap/issue/DAT-336/fix-pool-liquidity
       pool.liquidity = pool.liquidity.minus(event.params.amount)
     }
 
