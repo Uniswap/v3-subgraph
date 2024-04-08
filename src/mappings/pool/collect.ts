@@ -9,7 +9,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData,
+  updateUniswapDayData
 } from '../../utils/intervalUpdates'
 import { getTrackedAmountUSD } from '../../utils/pricing'
 
@@ -71,7 +71,7 @@ export function handleCollect(event: CollectEvent): void {
   factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
   factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
-  const collect = new Collect(transaction.id + '#' + pool.txCount.toString())
+  const collect = new Collect(transaction.id + '-' + event.logIndex.toString())
   collect.transaction = transaction.id
   collect.timestamp = event.block.timestamp
   collect.pool = pool.id

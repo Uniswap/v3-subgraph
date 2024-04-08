@@ -9,7 +9,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData,
+  updateUniswapDayData
 } from '../../utils/intervalUpdates'
 
 // Note: this handler need not adjust TVL because that is accounted for in the handleCollect handler
@@ -56,7 +56,7 @@ export function handleBurn(event: BurnEvent): void {
 
     // burn entity
     const transaction = loadTransaction(event)
-    const burn = new Burn(transaction.id + '#' + pool.txCount.toString())
+    const burn = new Burn(transaction.id + '-' + event.logIndex.toString())
     burn.transaction = transaction.id
     burn.timestamp = transaction.timestamp
     burn.pool = pool.id
