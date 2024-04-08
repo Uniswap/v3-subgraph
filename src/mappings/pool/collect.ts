@@ -1,9 +1,9 @@
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigInt } from '@graphprotocol/graph-ts'
 
-import { Bundle, Burn, BurnLoader, Collect, Factory, Pool, Token } from '../../types/schema'
+import { Bundle, Collect, Factory, Pool, Token } from '../../types/schema'
 import { Collect as CollectEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD } from '../../utils/constants'
+import { FACTORY_ADDRESS, ONE_BI } from '../../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
