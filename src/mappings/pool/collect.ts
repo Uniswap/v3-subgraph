@@ -9,7 +9,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData
+  updateUniswapDayData,
 } from '../../utils/intervalUpdates'
 import { getTrackedAmountUSD } from '../../utils/pricing'
 
