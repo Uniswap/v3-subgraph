@@ -6,9 +6,6 @@ schema:
 features:
   - nonFatalErrors
   - grafting
-graft:
-  base: QmZMY9okvPQKzWUqKF8RiRYwqph7Pc4aQZLPhfGvm9xSf4
-  block: 13662965
 dataSources:
   - kind: ethereum/contract
     name: Factory
@@ -49,7 +46,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/mappings/core.ts
+      file: ./src/mappings/pool/index.ts
       entities:
         - Pool
         - Token
