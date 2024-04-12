@@ -127,7 +127,7 @@ export function handleSwap(event: SwapEvent): void {
 
     // create Swap event
     const transaction = loadTransaction(event)
-    const swap = new Swap(transaction.id + '#' + pool.txCount.toString())
+    const swap = new Swap(transaction.id + '-' + event.logIndex.toString())
     swap.transaction = transaction.id
     swap.timestamp = transaction.timestamp
     swap.pool = pool.id

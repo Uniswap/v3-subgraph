@@ -71,7 +71,7 @@ export function handleMint(event: MintEvent): void {
     factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
     const transaction = loadTransaction(event)
-    const mint = new Mint(transaction.id.toString() + '#' + pool.txCount.toString())
+    const mint = new Mint(transaction.id.toString() + '-' + event.logIndex.toString())
     mint.transaction = transaction.id
     mint.timestamp = transaction.timestamp
     mint.pool = pool.id

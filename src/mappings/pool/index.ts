@@ -1,6 +1,7 @@
 import { handleBurn } from './burn'
+import { handleCollect } from './collect'
 import { handleInitialize } from './initialize'
 import { handleMint } from './mint'
 import { handleSwap } from './swap'
 
-export { handleBurn, handleInitialize, handleMint, handleSwap }
+export { handleBurn, handleCollect, handleInitialize, handleMint, handleSwap }
