@@ -334,6 +334,45 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount",
+        "type": "uint128"
+      }
+    ],
+    "name": "burn",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount1",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "int24",
         "name": "tickLower",
         "type": "int24"
@@ -417,6 +456,55 @@
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount0Requested",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount1Requested",
+        "type": "uint128"
+      }
+    ],
+    "name": "collect",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "amount0",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount1",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
         "internalType": "uint128",
         "name": "amount0Requested",
         "type": "uint128"
@@ -441,6 +529,19 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentFee",
+    "outputs": [
+      {
+        "internalType": "uint24",
+        "name": "",
+        "type": "uint24"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -539,6 +640,44 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_nfpManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_token0",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_token1",
+        "type": "address"
+      },
+      {
+        "internalType": "uint24",
+        "name": "_fee",
+        "type": "uint24"
+      },
+      {
+        "internalType": "int24",
+        "name": "_tickSpacing",
+        "type": "int24"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint160",
         "name": "sqrtPriceX96",
         "type": "uint160"
@@ -547,6 +686,19 @@
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lastPeriod",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -622,6 +774,68 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount",
+        "type": "uint128"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount1",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nfpManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "index",
         "type": "uint256"
@@ -680,6 +894,147 @@
   {
     "inputs": [
       {
+        "internalType": "uint32",
+        "name": "period",
+        "type": "uint32"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      }
+    ],
+    "name": "periodCumulativesInside",
+    "outputs": [
+      {
+        "internalType": "uint160",
+        "name": "secondsPerLiquidityInsideX128",
+        "type": "uint160"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "period",
+        "type": "uint256"
+      }
+    ],
+    "name": "periods",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "previousPeriod",
+        "type": "uint32"
+      },
+      {
+        "internalType": "int24",
+        "name": "startTick",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "lastTick",
+        "type": "int24"
+      },
+      {
+        "internalType": "uint160",
+        "name": "endSecondsPerLiquidityPeriodX128",
+        "type": "uint160"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "period",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      }
+    ],
+    "name": "positionPeriodDebt",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "secondsDebtX96",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "period",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickLower",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickUpper",
+        "type": "int24"
+      }
+    ],
+    "name": "positionPeriodSecondsInRange",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "periodSecondsInsideX96",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"
@@ -689,27 +1044,27 @@
     "outputs": [
       {
         "internalType": "uint128",
-        "name": "_liquidity",
+        "name": "",
         "type": "uint128"
       },
       {
         "internalType": "uint256",
-        "name": "feeGrowthInside0LastX128",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "feeGrowthInside1LastX128",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "uint128",
-        "name": "tokensOwed0",
+        "name": "",
         "type": "uint128"
       },
       {
         "internalType": "uint128",
-        "name": "tokensOwed1",
+        "name": "",
         "type": "uint128"
       }
     ],
@@ -722,12 +1077,12 @@
     "outputs": [
       {
         "internalType": "uint128",
-        "name": "token0",
+        "name": "",
         "type": "uint128"
       },
       {
         "internalType": "uint128",
-        "name": "token1",
+        "name": "",
         "type": "uint128"
       }
     ],
@@ -737,16 +1092,37 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "feeProtocol0",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "feeProtocol1",
-        "type": "uint8"
+        "internalType": "bytes32[]",
+        "name": "slots",
+        "type": "bytes32[]"
       }
     ],
+    "name": "readStorage",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "returnData",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint24",
+        "name": "_fee",
+        "type": "uint24"
+      }
+    ],
+    "name": "setFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "setFeeProtocol",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -877,7 +1253,7 @@
     "inputs": [
       {
         "internalType": "int16",
-        "name": "wordPosition",
+        "name": "tick",
         "type": "int16"
       }
     ],
