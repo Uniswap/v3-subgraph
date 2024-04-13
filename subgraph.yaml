@@ -9,7 +9,7 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: frax-mainnet
     source:
       address: '0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42'
       abi: Factory
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: frax-mainnet
     source:
       abi: Pool
     mapping:
