@@ -4,32 +4,37 @@ import { exponentToBigDecimal, safeDiv } from '../utils/index'
 import { Bundle, Pool, Token } from './../types/schema'
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 
-export const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
-export const USDC_WETH_05_POOL = '0x4c36388be6f416a29c8d8eee81c771ce6be14b18'
+export const WETH_ADDRESS = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
+export const USDC_WETH_03_POOL = '0x17c14d2c404d167802b16c450d3c99f88f2c4f4d'
 export const STABLECOIN_IS_TOKEN0 = false
 
-const USDC_ADDRESS = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+const USDC_ADDRESS = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'
+const DAI_ADDRESS = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1'
+const USDT_ADDRESS = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
-export const WHITELIST_TOKENS: string[] = [WETH_ADDRESS, USDC_ADDRESS]
+export const WHITELIST_TOKENS: string[] = [WETH_ADDRESS, USDC_ADDRESS, DAI_ADDRESS, USDT_ADDRESS]
 
-export const STABLE_COINS: string[] = [USDC_ADDRESS]
+export const STABLE_COINS: string[] = [USDC_ADDRESS, DAI_ADDRESS, USDT_ADDRESS]
 
-export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('1')
+export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
 
 const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   const num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   const denom = BigDecimal.fromString(Q192.toString())
-  const price1 = num.div(denom).times(exponentToBigDecimal(token0.decimals)).div(exponentToBigDecimal(token1.decimals))
+  const price1 = num
+    .div(denom)
+    .times(exponentToBigDecimal(token0.decimals))
+    .div(exponentToBigDecimal(token1.decimals))
 
   const price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
 }
 
 export function getEthPriceInUSD(
-  stablecoinWrappedNativePoolAddress: string = USDC_WETH_05_POOL,
+  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
   stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0, // true is stablecoin is token0, false if stablecoin is token1
 ): BigDecimal {
   const stablecoinWrappedNativePool = Pool.load(stablecoinWrappedNativePoolAddress)
