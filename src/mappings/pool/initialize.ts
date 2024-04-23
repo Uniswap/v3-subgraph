@@ -9,8 +9,8 @@ import {
   MINIMUM_ETH_LOCKED,
   STABLE_COINS,
   STABLECOIN_IS_TOKEN0,
-  USDC_WETH_05_POOL,
-  WETH_ADDRESS,
+  WAVAX_ADDRESS,
+  WAVAX_USDC_05_POOL,
 } from '../../utils/pricing'
 
 export function handleInitialize(event: Initialize): void {
@@ -19,9 +19,9 @@ export function handleInitialize(event: Initialize): void {
 
 export function handleInitializeHelper(
   event: Initialize,
-  stablecoinWrappedNativePoolAddress: string = USDC_WETH_05_POOL,
+  stablecoinWrappedNativePoolAddress: string = WAVAX_USDC_05_POOL,
   stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
-  wrappedNativeAddress: string = WETH_ADDRESS,
+  wrappedNativeAddress: string = WAVAX_ADDRESS,
   stablecoinAddresses: string[] = STABLE_COINS,
   minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
 ): void {
