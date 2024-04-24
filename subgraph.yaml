@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: base
+    network: blast-mainnet
     source:
-      address: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD'
+      address: '0x792edAdE80af5fC680d96a2eD80A44247D2Cf6Fd'
       abi: Factory
-      startBlock: 2009445
+      startBlock: 400903
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: base
+    network: blast-mainnet
     source:
       abi: Pool
     mapping:
