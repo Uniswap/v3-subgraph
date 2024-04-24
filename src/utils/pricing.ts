@@ -4,40 +4,25 @@ import { exponentToBigDecimal, safeDiv } from '../utils/index'
 import { Bundle, Pool, Token } from './../types/schema'
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 
-export const WAVAX_ADDRESS = '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7'
-export const WAVAX_USDC_05_POOL = '0xfae3f424a0a47706811521e3ee268f00cfb5c45e'
-export const STABLECOIN_IS_TOKEN0 = false
+// todo: use a wmatic pool? check which has more liq first
+export const WETH_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
+export const USDC_WETH_03_POOL = '0x0e44ceb592acfc5d3f09d996302eb4c499ff8c10'
+export const STABLECOIN_IS_TOKEN0 = true
 
-const DAI_E_ADDRESS = '0xd586e7f844cea2f87f50152665bcbc2c279d8d70'
-const DAI_ADDRESS = '0xba7deebbfc5fa1100fb055a87773e1e99cd3507a'
-const USDC_E_ADDRESS = '0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664'
-const USDC_ADDRESS = '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e'
-const USDT_E_ADDRESS = '0xc7198437980c041c805a1edcba50c1ce5db95118'
-const USDT_ADDRESS = '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7'
+const USDC_ADDRESS = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
+const DAI_ADDRESS = '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063'
 
 // token where amounts should contribute to tracked volume and liquidity
-// usually tokens that many tokens are paired with s
+// usually tokens that many tokens are paired with
 export const WHITELIST_TOKENS: string[] = [
-  WAVAX_ADDRESS,
-  DAI_E_ADDRESS,
-  DAI_ADDRESS,
-  USDC_E_ADDRESS,
+  WETH_ADDRESS,
   USDC_ADDRESS,
-  USDT_E_ADDRESS,
-  USDT_ADDRESS,
-  '0x130966628846bfd36ff31a822705796e8cb8c18d', // mim
+  DAI_ADDRESS,
+  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
 ]
 
-export const STABLE_COINS: string[] = [
-  DAI_E_ADDRESS,
-  DAI_ADDRESS,
-  USDC_E_ADDRESS,
-  USDC_ADDRESS,
-  USDT_E_ADDRESS,
-  USDT_ADDRESS,
-]
-
-export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('1000')
+export const STABLE_COINS: string[] = [USDC_ADDRESS, DAI_ADDRESS]
+export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
 
 const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
@@ -53,7 +38,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 }
 
 export function getEthPriceInUSD(
-  stablecoinWrappedNativePoolAddress: string = WAVAX_USDC_05_POOL,
+  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
   stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0, // true is stablecoin is token0, false if stablecoin is token1
 ): BigDecimal {
   const stablecoinWrappedNativePool = Pool.load(stablecoinWrappedNativePoolAddress)
@@ -70,7 +55,7 @@ export function getEthPriceInUSD(
  **/
 export function findEthPerToken(
   token: Token,
-  wrappedNativeAddress: string = WAVAX_ADDRESS,
+  wrappedNativeAddress: string = WETH_ADDRESS,
   stablecoinAddresses: string[] = STABLE_COINS,
   minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
 ): BigDecimal {
