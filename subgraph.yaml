@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: avalanche
+    network: celo
     source:
-      address: '0x740b1c1de25031C31FF4fC9A62f554A55cdC1baD'
+      address: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc'
       abi: Factory
-      startBlock: 27832971
+      startBlock: 13916355
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: avalanche
+    network: celo
     source:
       abi: Pool
     mapping:

@@ -4,13 +4,13 @@ import { Bundle, Pool, Token } from '../../types/schema'
 import { Initialize } from '../../types/templates/Pool/Pool'
 import { updatePoolDayData, updatePoolHourData } from '../../utils/intervalUpdates'
 import {
+  CELO_NATIVE_ADDRESS,
+  CUSD_CELO_POOL_ADDRESS,
   findEthPerToken,
   getEthPriceInUSD,
   MINIMUM_ETH_LOCKED,
   STABLE_COINS,
   STABLECOIN_IS_TOKEN0,
-  WAVAX_ADDRESS,
-  WAVAX_USDC_05_POOL,
 } from '../../utils/pricing'
 
 export function handleInitialize(event: Initialize): void {
@@ -19,9 +19,9 @@ export function handleInitialize(event: Initialize): void {
 
 export function handleInitializeHelper(
   event: Initialize,
-  stablecoinWrappedNativePoolAddress: string = WAVAX_USDC_05_POOL,
+  stablecoinWrappedNativePoolAddress: string = CUSD_CELO_POOL_ADDRESS,
   stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
-  wrappedNativeAddress: string = WAVAX_ADDRESS,
+  wrappedNativeAddress: string = CELO_NATIVE_ADDRESS,
   stablecoinAddresses: string[] = STABLE_COINS,
   minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
 ): void {
