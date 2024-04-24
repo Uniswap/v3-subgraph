@@ -8,10 +8,12 @@ import { STATIC_TOKEN_DEFINITIONS, StaticTokenDefinition } from '../utils/static
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../utils/token'
 import { ADDRESS_ZERO, FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
 import { WHITELIST_TOKENS } from './../utils/pricing'
+import { populateEmptyPools } from '../utils/backfill'
 
 // The subgraph handler must have this signature to be able to handle events,
 // however, we invoke a helper in order to inject dependencies for unit tests.
 export function handlePoolCreated(event: PoolCreated): void {
+<<<<<<< HEAD
   handlePoolCreatedHelper(event)
 }
 
@@ -24,6 +26,17 @@ export function handlePoolCreatedHelper(
 ): void {
   // temp fix
   if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
+=======
+  // fix for pool overflow - this pool has a token that overflows on one of its values, but theres no way in
+  // assembly ts to error catch for this.
+  // Transaction - https://optimistic.etherscan.io/tx/0x16312a52237ce08e4bb7534648f4c8da6cd4c192f0b955cf6770b2d347f19d2b
+  if (
+    event.params.pool === Address.fromHexString('0x282b7d6bef6c78927f394330dca297eca2bd18cd') ||
+    event.params.pool === Address.fromHexString('0x5738de8d0b864d5ef5d65b9e05b421b71f2c2eb4') ||
+    event.params.pool === Address.fromHexString('0x5500721e5a063f0396c5e025a640e8491eb89aac') ||
+    event.params.pool === Address.fromHexString('0x1ffd370f9d01f75de2cc701956886acec9749e80')
+  ) {
+>>>>>>> 3b4a84e (update network to optimism)
     return
   }
 
@@ -48,6 +61,8 @@ export function handlePoolCreatedHelper(
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = ZERO_BD
     bundle.save()
+
+    populateEmptyPools(event)
   }
 
   factory.poolCount = factory.poolCount.plus(ONE_BI)

@@ -26,4 +26,11 @@ export const getStaticDefinition = (
   return null
 }
 
-export const STATIC_TOKEN_DEFINITIONS: Array<StaticTokenDefinition> = []
+export const STATIC_TOKEN_DEFINITIONS: Array<StaticTokenDefinition> = [
+  {
+    address: Address.fromString('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
+    symbol: 'WETH',
+    name: 'Wrapped Ethereum',
+    decimals: BigInt.fromI32(18)
+  }
+]
