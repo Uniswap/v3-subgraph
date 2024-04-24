@@ -8,9 +8,9 @@ export const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
 export const DAI_WETH_03_POOL = '0x03af20bdaaffb4cc0a521796a223f7d85e2aac31'
 export const STABLECOIN_IS_TOKEN0 = false
 
-const DAI_ADDRESS = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' // DAI
-const USDC_ADDRESS = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC
-const USDT_ADDRESS = '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58' // USDT
+const DAI_ADDRESS = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1'
+const USDC_ADDRESS = '0x7f5c764cbc14f9669b88837ca1490cca17c31607'
+const USDT_ADDRESS = '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with

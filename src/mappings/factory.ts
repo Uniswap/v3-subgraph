@@ -13,7 +13,6 @@ import { populateEmptyPools } from '../utils/backfill'
 // The subgraph handler must have this signature to be able to handle events,
 // however, we invoke a helper in order to inject dependencies for unit tests.
 export function handlePoolCreated(event: PoolCreated): void {
-<<<<<<< HEAD
   handlePoolCreatedHelper(event)
 }
 
@@ -24,9 +23,6 @@ export function handlePoolCreatedHelper(
   whitelistTokens: string[] = WHITELIST_TOKENS,
   staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS,
 ): void {
-  // temp fix
-  if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
-=======
   // fix for pool overflow - this pool has a token that overflows on one of its values, but theres no way in
   // assembly ts to error catch for this.
   // Transaction - https://optimistic.etherscan.io/tx/0x16312a52237ce08e4bb7534648f4c8da6cd4c192f0b955cf6770b2d347f19d2b
@@ -36,7 +32,6 @@ export function handlePoolCreatedHelper(
     event.params.pool === Address.fromHexString('0x5500721e5a063f0396c5e025a640e8491eb89aac') ||
     event.params.pool === Address.fromHexString('0x1ffd370f9d01f75de2cc701956886acec9749e80')
   ) {
->>>>>>> 3b4a84e (update network to optimism)
     return
   }
 
@@ -62,6 +57,7 @@ export function handlePoolCreatedHelper(
     bundle.ethPriceUSD = ZERO_BD
     bundle.save()
 
+    // on factory creation, create the inital pools from pre-regenesis
     populateEmptyPools(event)
   }
 
