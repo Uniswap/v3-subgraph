@@ -8,16 +8,13 @@ export const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
 export const USDC_WETH_05_POOL = '0x4c36388be6f416a29c8d8eee81c771ce6be14b18'
 export const STABLECOIN_IS_TOKEN0 = false
 
+const USDC_ADDRESS = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
-export const WHITELIST_TOKENS: string[] = [
-  WETH_ADDRESS, // WETH
-  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
-]
+export const WHITELIST_TOKENS: string[] = [WETH_ADDRESS, USDC_ADDRESS]
 
-export const STABLE_COINS: string[] = [
-  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
-]
+export const STABLE_COINS: string[] = [USDC_ADDRESS]
 
 export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('1')
 
@@ -25,7 +22,10 @@ const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   const num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   const denom = BigDecimal.fromString(Q192.toString())
-  const price1 = num.div(denom).times(exponentToBigDecimal(token0.decimals)).div(exponentToBigDecimal(token1.decimals))
+  const price1 = num
+    .div(denom)
+    .times(exponentToBigDecimal(token0.decimals))
+    .div(exponentToBigDecimal(token1.decimals))
 
   const price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
