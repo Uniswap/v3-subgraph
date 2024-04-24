@@ -18,7 +18,7 @@ export const WHITELIST_TOKENS: string[] = [WETH_ADDRESS, USDC_ADDRESS, DAI_ADDRE
 
 export const STABLE_COINS: string[] = [USDC_ADDRESS, DAI_ADDRESS, USDT_ADDRESS]
 
-export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
+export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('20')
 
 const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
