@@ -4,25 +4,21 @@ import { exponentToBigDecimal, safeDiv } from '../utils/index'
 import { Bundle, Pool, Token } from './../types/schema'
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 
-// todo: use a wmatic pool? check which has more liq first
-export const WETH_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
-export const USDC_WETH_03_POOL = '0x0e44ceb592acfc5d3f09d996302eb4c499ff8c10'
-export const STABLECOIN_IS_TOKEN0 = true
+export const WMATIC_ADDRESS = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+export const USDC_WMATIC_05_POOL = '0xa374094527e1673a86de625aa59517c5de346d32'
+export const STABLECOIN_IS_TOKEN0 = false
+
+const WETH_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
 
 const USDC_ADDRESS = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
 const DAI_ADDRESS = '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with
-export const WHITELIST_TOKENS: string[] = [
-  WETH_ADDRESS,
-  USDC_ADDRESS,
-  DAI_ADDRESS,
-  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
-]
+export const WHITELIST_TOKENS: string[] = [WMATIC_ADDRESS, WETH_ADDRESS, USDC_ADDRESS, DAI_ADDRESS]
 
 export const STABLE_COINS: string[] = [USDC_ADDRESS, DAI_ADDRESS]
-export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('5')
+export const MINIMUM_ETH_LOCKED = BigDecimal.fromString('20000')
 
 const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
@@ -38,7 +34,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 }
 
 export function getEthPriceInUSD(
-  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
+  stablecoinWrappedNativePoolAddress: string = USDC_WMATIC_05_POOL,
   stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0, // true is stablecoin is token0, false if stablecoin is token1
 ): BigDecimal {
   const stablecoinWrappedNativePool = Pool.load(stablecoinWrappedNativePoolAddress)
@@ -55,7 +51,7 @@ export function getEthPriceInUSD(
  **/
 export function findEthPerToken(
   token: Token,
-  wrappedNativeAddress: string = WETH_ADDRESS,
+  wrappedNativeAddress: string = WMATIC_ADDRESS,
   stablecoinAddresses: string[] = STABLE_COINS,
   minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
 ): BigDecimal {

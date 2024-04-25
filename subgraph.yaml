@@ -39,11 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-<<<<<<< HEAD
-    network: avalanche
-=======
     network: matic
->>>>>>> ed4af7f (update network to polygon)
     source:
       abi: Pool
     mapping:

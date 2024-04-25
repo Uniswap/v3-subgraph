@@ -31,7 +31,7 @@ type Factory @entity {
 # stores for USD calculations
 type Bundle @entity {
   id: ID!
-  # todo: update this to nativePriceUSD because avax is native asset
+  # todo: update this to nativePriceUSD because matic is native asset
   # price of ETH in usd
   ethPriceUSD: BigDecimal!
 }
@@ -66,7 +66,7 @@ type Token @entity {
   # TVL derived in USD untracked
   totalValueLockedUSDUntracked: BigDecimal!
   # derived price in ETH
-  # todo: update this to derivedNative because avax is native asset
+  # todo: update this to derivedNative because matic is native asset
   derivedETH: BigDecimal!
   # pools token is in that are white listed for USD pricing
   whitelistPools: [Pool!]!
