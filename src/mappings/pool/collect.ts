@@ -35,7 +35,7 @@ export function handleCollect(event: CollectEvent): void {
     collectedAmountToken0,
     token0 as Token,
     collectedAmountToken1,
-    token1 as Token
+    token1 as Token,
   )
 
   // Reset tvl aggregates until new amounts calculated
