@@ -14,10 +14,14 @@ import {
 import { createTick } from '../../utils/tick'
 
 export function handleMint(event: MintEvent): void {
+  handleMintHelper(event)
+}
+
+export function handleMintHelper(event: MintEvent, factoryAddress: string = FACTORY_ADDRESS): void {
   const bundle = Bundle.load('1')!
   const poolAddress = event.address.toHexString()
   const pool = Pool.load(poolAddress)!
-  const factory = Factory.load(FACTORY_ADDRESS)!
+  const factory = Factory.load(factoryAddress)!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)

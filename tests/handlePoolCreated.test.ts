@@ -31,7 +31,7 @@ describe('handlePoolCreated', () => {
       WETH_MAINNET_FIXTURE,
       USDC_WETH_03_MAINNET_POOL,
       POOL_FEE_TIER_03,
-      POOL_TICK_SPACING_03
+      POOL_TICK_SPACING_03,
     )
 
     assertObjectMatches('Factory', FACTORY_ADDRESS, [

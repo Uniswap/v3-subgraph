@@ -8,7 +8,7 @@ import { getStaticDefinition, STATIC_TOKEN_DEFINITIONS, StaticTokenDefinition } 
 
 export function fetchTokenSymbol(
   tokenAddress: Address,
-  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS,
 ): string {
   const contract = ERC20.bind(tokenAddress)
   const contractSymbolBytes = ERC20SymbolBytes.bind(tokenAddress)
@@ -39,7 +39,7 @@ export function fetchTokenSymbol(
 
 export function fetchTokenName(
   tokenAddress: Address,
-  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS,
 ): string {
   const contract = ERC20.bind(tokenAddress)
   const contractNameBytes = ERC20NameBytes.bind(tokenAddress)
@@ -80,7 +80,7 @@ export function fetchTokenTotalSupply(tokenAddress: Address): BigInt {
 
 export function fetchTokenDecimals(
   tokenAddress: Address,
-  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS,
 ): BigInt | null {
   const contract = ERC20.bind(tokenAddress)
   // try types uint8 for decimals

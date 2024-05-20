@@ -30,7 +30,7 @@ export const WHITELIST_TOKENS: string[] = [
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca', // FEI
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
   '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
-  '0xfe2e637202056d30016725477c5da089ab0a043a', // sETH2
+  '0xfe2e637202056d30016725477c5da089ab0a043a' // sETH2
 ]
 
 const STABLE_COINS: string[] = [
@@ -39,7 +39,7 @@ const STABLE_COINS: string[] = [
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
   '0x0000000000085d4780b73119b644ae5ecd22b376',
   '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
-  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95',
+  '0x4dd28568d05f09b02220b09c2cb307bfd837cb95'
 ]
 
 const MINIMUM_ETH_LOCKED = BigDecimal.fromString('60')
@@ -48,7 +48,10 @@ const Q192 = BigInt.fromI32(2).pow(192 as u8)
 export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, token1: Token): BigDecimal[] {
   const num = sqrtPriceX96.times(sqrtPriceX96).toBigDecimal()
   const denom = BigDecimal.fromString(Q192.toString())
-  const price1 = num.div(denom).times(exponentToBigDecimal(token0.decimals)).div(exponentToBigDecimal(token1.decimals))
+  const price1 = num
+    .div(denom)
+    .times(exponentToBigDecimal(token0.decimals))
+    .div(exponentToBigDecimal(token1.decimals))
 
   const price0 = safeDiv(BigDecimal.fromString('1'), price1)
   return [price0, price1]
@@ -132,24 +135,25 @@ export function getTrackedAmountUSD(
   tokenAmount0: BigDecimal,
   token0: Token,
   tokenAmount1: BigDecimal,
-  token1: Token
+  token1: Token,
+  whitelistTokens: string[] = WHITELIST_TOKENS
 ): BigDecimal {
   const bundle = Bundle.load('1')!
   const price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
   const price1USD = token1.derivedETH.times(bundle.ethPriceUSD)
 
   // both are whitelist tokens, return sum of both amounts
-  if (WHITELIST_TOKENS.includes(token0.id) && WHITELIST_TOKENS.includes(token1.id)) {
+  if (whitelistTokens.includes(token0.id) && whitelistTokens.includes(token1.id)) {
     return tokenAmount0.times(price0USD).plus(tokenAmount1.times(price1USD))
   }
 
   // take double value of the whitelisted token amount
-  if (WHITELIST_TOKENS.includes(token0.id) && !WHITELIST_TOKENS.includes(token1.id)) {
+  if (whitelistTokens.includes(token0.id) && !whitelistTokens.includes(token1.id)) {
     return tokenAmount0.times(price0USD).times(BigDecimal.fromString('2'))
   }
 
   // take double value of the whitelisted token amount
-  if (!WHITELIST_TOKENS.includes(token0.id) && WHITELIST_TOKENS.includes(token1.id)) {
+  if (!whitelistTokens.includes(token0.id) && whitelistTokens.includes(token1.id)) {
     return tokenAmount1.times(price1USD).times(BigDecimal.fromString('2'))
   }
 

@@ -9,18 +9,26 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData,
+  updateUniswapDayData
 } from '../../utils/intervalUpdates'
-import { getTrackedAmountUSD } from '../../utils/pricing'
+import { getTrackedAmountUSD, WHITELIST_TOKENS } from '../../utils/pricing'
 
 export function handleCollect(event: CollectEvent): void {
+  handleCollectHelper(event)
+}
+
+export function handleCollectHelper(
+  event: CollectEvent,
+  factoryAddress: string = FACTORY_ADDRESS,
+  whitelistTokens: string[] = WHITELIST_TOKENS
+): void {
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address.toHexString())
   if (pool == null) {
     return
   }
   const transaction = loadTransaction(event)
-  const factory = Factory.load(FACTORY_ADDRESS)!
+  const factory = Factory.load(factoryAddress)!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
@@ -35,7 +43,8 @@ export function handleCollect(event: CollectEvent): void {
     collectedAmountToken0,
     token0 as Token,
     collectedAmountToken1,
-    token1 as Token
+    token1 as Token,
+    whitelistTokens
   )
 
   // Reset tvl aggregates until new amounts calculated

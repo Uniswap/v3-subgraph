@@ -12,12 +12,16 @@ import {
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
 
-// Note: this handler need not adjust TVL because that is accounted for in the handleCollect handler
 export function handleBurn(event: BurnEvent): void {
+  handleBurnHelper(event)
+}
+
+// Note: this handler need not adjust TVL because that is accounted for in the handleCollect handler
+export function handleBurnHelper(event: BurnEvent, factoryAddress: string = FACTORY_ADDRESS): void {
   const bundle = Bundle.load('1')!
   const poolAddress = event.address.toHexString()
   const pool = Pool.load(poolAddress)!
-  const factory = Factory.load(FACTORY_ADDRESS)!
+  const factory = Factory.load(factoryAddress)!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
