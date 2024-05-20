@@ -4,9 +4,12 @@ import { ERC20 } from '../types/Factory/ERC20'
 import { ERC20NameBytes } from '../types/Factory/ERC20NameBytes'
 import { ERC20SymbolBytes } from '../types/Factory/ERC20SymbolBytes'
 import { isNullEthValue } from '.'
-import { StaticTokenDefinition } from './staticTokenDefinition'
+import { getStaticDefinition, STATIC_TOKEN_DEFINITIONS, StaticTokenDefinition } from './staticTokenDefinition'
 
-export function fetchTokenSymbol(tokenAddress: Address): string {
+export function fetchTokenSymbol(
+  tokenAddress: Address,
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+): string {
   const contract = ERC20.bind(tokenAddress)
   const contractSymbolBytes = ERC20SymbolBytes.bind(tokenAddress)
 
@@ -21,7 +24,7 @@ export function fetchTokenSymbol(tokenAddress: Address): string {
         symbolValue = symbolResultBytes.value.toString()
       } else {
         // try with the static definition
-        const staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+        const staticTokenDefinition = getStaticDefinition(tokenAddress, staticTokenDefinitions)
         if (staticTokenDefinition != null) {
           symbolValue = staticTokenDefinition.symbol
         }
@@ -34,7 +37,10 @@ export function fetchTokenSymbol(tokenAddress: Address): string {
   return symbolValue
 }
 
-export function fetchTokenName(tokenAddress: Address): string {
+export function fetchTokenName(
+  tokenAddress: Address,
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+): string {
   const contract = ERC20.bind(tokenAddress)
   const contractNameBytes = ERC20NameBytes.bind(tokenAddress)
 
@@ -49,7 +55,7 @@ export function fetchTokenName(tokenAddress: Address): string {
         nameValue = nameResultBytes.value.toString()
       } else {
         // try with the static definition
-        const staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+        const staticTokenDefinition = getStaticDefinition(tokenAddress, staticTokenDefinitions)
         if (staticTokenDefinition != null) {
           nameValue = staticTokenDefinition.name
         }
@@ -72,7 +78,10 @@ export function fetchTokenTotalSupply(tokenAddress: Address): BigInt {
   return totalSupplyValue
 }
 
-export function fetchTokenDecimals(tokenAddress: Address): BigInt | null {
+export function fetchTokenDecimals(
+  tokenAddress: Address,
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+): BigInt | null {
   const contract = ERC20.bind(tokenAddress)
   // try types uint8 for decimals
   const decimalResult = contract.try_decimals()
@@ -83,7 +92,7 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt | null {
     }
   } else {
     // try with the static definition
-    const staticTokenDefinition = StaticTokenDefinition.fromAddress(tokenAddress)
+    const staticTokenDefinition = getStaticDefinition(tokenAddress, staticTokenDefinitions)
     if (staticTokenDefinition) {
       return staticTokenDefinition.decimals
     }

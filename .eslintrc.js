@@ -29,5 +29,18 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  overrides: [
+    {
+      files: ['tests/**/*.ts'],
+      settings: {
+        jest: {
+          version: 26
+        },
+        // jest is added as a plugin in our org's eslint config, but we use
+        // matchstick, and this would crash when linting matchstick files.
+        'disable/plugins': ['jest']
+      }
+    }
+  ]
 }

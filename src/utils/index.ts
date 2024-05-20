@@ -77,8 +77,10 @@ export function equalToZero(value: BigDecimal): boolean {
   return false
 }
 
+export const NULL_ETH_HEX_STRING = '0x0000000000000000000000000000000000000000000000000000000000000001'
+
 export function isNullEthValue(value: string): boolean {
-  return value == '0x0000000000000000000000000000000000000000000000000000000000000001'
+  return value == NULL_ETH_HEX_STRING
 }
 
 export function bigDecimalExp18(): BigDecimal {
