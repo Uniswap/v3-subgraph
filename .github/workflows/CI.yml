@@ -53,7 +53,7 @@ jobs:
           git commit -a -m "fix(lint): auto-fix [ci]"
           git push
 
-  build:
+  build-and-test:
     needs: lint
     name: build
     runs-on: ubuntu-latest
@@ -84,3 +84,9 @@ jobs:
 
       - name: Build project
         run: yarn build
+
+      - name: Build Docker
+        run: yarn docker:build
+
+      - name: Test
+        run: yarn test

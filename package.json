@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
     "build": "run-s codegen && graph build",
-    "build:docker": "docker build -t matchstick .",
+    "docker:build": "docker build -t matchstick .",
     "buildonly": "graph build",
     "deploy:alchemy": "graph deploy --node https://subgraphs.alchemy.com/api/subgraphs/deploy --ipfs https://ipfs.satsuma.xyz",
     "codegen": "graph codegen --output-dir src/types/",
