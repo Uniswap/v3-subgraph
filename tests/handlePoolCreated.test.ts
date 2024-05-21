@@ -14,7 +14,7 @@ import {
   POOL_TICK_SPACING_03,
   USDC_MAINNET_FIXTURE,
   USDC_WETH_03_MAINNET_POOL,
-  WETH_MAINNET_FIXTURE,
+  WETH_MAINNET_FIXTURE
 } from './constants'
 
 describe('handlePoolCreated', () => {
@@ -44,7 +44,7 @@ describe('handlePoolCreated', () => {
       ['totalValueLockedETH', '0'],
       ['totalValueLockedUSD', '0'],
       ['totalValueLockedETHUntracked', '0'],
-      ['totalValueLockedUSDUntracked', '0'],
+      ['totalValueLockedUSDUntracked', '0']
     ])
 
     assertObjectMatches('Bundle', '1', [['ethPriceUSD', '0']])
@@ -64,7 +64,7 @@ describe('handlePoolCreated', () => {
       ['totalValueLockedUSDUntracked', '0'],
       ['txCount', '0'],
       ['poolCount', '0'],
-      ['whitelistPools', `[${USDC_WETH_03_MAINNET_POOL}]`],
+      ['whitelistPools', `[${USDC_WETH_03_MAINNET_POOL}]`]
     ])
 
     assertObjectMatches('Token', WETH_MAINNET_FIXTURE.address, [
@@ -82,7 +82,7 @@ describe('handlePoolCreated', () => {
       ['totalValueLockedUSDUntracked', '0'],
       ['txCount', '0'],
       ['poolCount', '0'],
-      ['whitelistPools', `[${USDC_WETH_03_MAINNET_POOL}]`],
+      ['whitelistPools', `[${USDC_WETH_03_MAINNET_POOL}]`]
     ])
 
     assertObjectMatches('Pool', USDC_WETH_03_MAINNET_POOL, [
@@ -109,7 +109,7 @@ describe('handlePoolCreated', () => {
       ['untrackedVolumeUSD', '0'],
       ['collectedFeesToken0', '0'],
       ['collectedFeesToken1', '0'],
-      ['collectedFeesUSD', '0'],
+      ['collectedFeesUSD', '0']
     ])
   })
 
@@ -125,7 +125,7 @@ describe('handlePoolCreated', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'symbol', 'symbol():(string)').reverts()
       createMockedFunction(usdcAddress, 'symbol', 'symbol():(bytes32)').returns([
-        ethereum.Value.fromBytes(Bytes.fromUTF8('USDC')),
+        ethereum.Value.fromBytes(Bytes.fromUTF8('USDC'))
       ])
       const symbol = fetchTokenSymbol(usdcAddress)
       assert.stringEquals(symbol, 'USDC')
@@ -135,15 +135,15 @@ describe('handlePoolCreated', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'symbol', 'symbol():(string)').reverts()
       createMockedFunction(usdcAddress, 'symbol', 'symbol():(bytes32)').returns([
-        ethereum.Value.fromBytes(Bytes.fromHexString(NULL_ETH_HEX_STRING)),
+        ethereum.Value.fromBytes(Bytes.fromHexString(NULL_ETH_HEX_STRING))
       ])
       const staticDefinitions: Array<StaticTokenDefinition> = [
         {
           address: Address.fromString(USDC_MAINNET_FIXTURE.address),
           symbol: 'USDC',
           name: 'USD Coin',
-          decimals: BigInt.fromI32(6),
-        },
+          decimals: BigInt.fromI32(6)
+        }
       ]
       const symbol = fetchTokenSymbol(usdcAddress, staticDefinitions)
       assert.stringEquals(symbol, 'USDC')
@@ -170,7 +170,7 @@ describe('handlePoolCreated', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'name', 'name():(string)').reverts()
       createMockedFunction(usdcAddress, 'name', 'name():(bytes32)').returns([
-        ethereum.Value.fromBytes(Bytes.fromUTF8('USD Coin')),
+        ethereum.Value.fromBytes(Bytes.fromUTF8('USD Coin'))
       ])
       const name = fetchTokenName(usdcAddress)
       assert.stringEquals(name, 'USD Coin')
@@ -180,15 +180,15 @@ describe('handlePoolCreated', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'name', 'name():(string)').reverts()
       createMockedFunction(usdcAddress, 'name', 'name():(bytes32)').returns([
-        ethereum.Value.fromBytes(Bytes.fromHexString(NULL_ETH_HEX_STRING)),
+        ethereum.Value.fromBytes(Bytes.fromHexString(NULL_ETH_HEX_STRING))
       ])
       const staticDefinitions: Array<StaticTokenDefinition> = [
         {
           address: Address.fromString(USDC_MAINNET_FIXTURE.address),
           symbol: 'USDC',
           name: 'USD Coin',
-          decimals: BigInt.fromI32(6),
-        },
+          decimals: BigInt.fromI32(6)
+        }
       ]
       const name = fetchTokenName(usdcAddress, staticDefinitions)
       assert.stringEquals(name, 'USD Coin')
@@ -207,7 +207,7 @@ describe('handlePoolCreated', () => {
     test('success - fetch token total supply', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'totalSupply', 'totalSupply():(uint256)').returns([
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromString('300')),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromString('300'))
       ])
       const totalSupply = fetchTokenTotalSupply(usdcAddress)
       assert.bigIntEquals(totalSupply, BigInt.fromString('300'))
@@ -225,7 +225,7 @@ describe('handlePoolCreated', () => {
     test('success - fetch token decimals', () => {
       const usdcAddress = Address.fromString(USDC_MAINNET_FIXTURE.address)
       createMockedFunction(usdcAddress, 'decimals', 'decimals():(uint32)').returns([
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(6)),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(6))
       ])
       const decimals = fetchTokenDecimals(usdcAddress)
       assert.assertTrue(decimals == BigInt.fromI32(6))
@@ -239,8 +239,8 @@ describe('handlePoolCreated', () => {
           address: Address.fromString(USDC_MAINNET_FIXTURE.address),
           symbol: 'USDC',
           name: 'USD Coin',
-          decimals: BigInt.fromI32(6),
-        },
+          decimals: BigInt.fromI32(6)
+        }
       ]
       const decimals = fetchTokenDecimals(usdcAddress, staticDefinitions)
       assert.assertTrue(decimals == BigInt.fromI32(6))

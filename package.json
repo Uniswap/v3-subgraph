@@ -6,11 +6,12 @@
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
     "build": "run-s codegen && graph build",
-    "docker:build": "docker build -t matchstick .",
+    "build:docker": "docker build -t matchstick .",
     "buildonly": "graph build",
     "deploy:alchemy": "graph deploy --node https://subgraphs.alchemy.com/api/subgraphs/deploy --ipfs https://ipfs.satsuma.xyz",
     "codegen": "graph codegen --output-dir src/types/",
     "test": "graph test -d",
+    "test:no-tty": "docker run -i --rm --mount type=bind,source=$INIT_CWD,target=/matchstick matchstick",
     "create-local": "graph create ianlapham/uniswap-v3 --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy ianlapham/uniswap-v3 --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy": "graph deploy ianlapham/uniswap-v3-subgraph --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",

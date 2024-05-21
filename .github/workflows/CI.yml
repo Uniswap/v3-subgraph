@@ -55,7 +55,7 @@ jobs:
 
   build-and-test:
     needs: lint
-    name: build
+    name: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -86,7 +86,8 @@ jobs:
         run: yarn build
 
       - name: Build Docker
-        run: yarn docker:build
+        run: yarn build:docker
 
       - name: Test
-        run: yarn test
+        # We need to run test in this mode because github CI is non-interactive
+        run: yarn test:no-tty

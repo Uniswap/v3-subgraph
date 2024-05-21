@@ -18,7 +18,7 @@ export function handlePoolCreated(event: PoolCreated): void {
 export function handlePoolCreatedHelper(
   event: PoolCreated,
   factoryAddress: string = FACTORY_ADDRESS,
-  whitelistTokens: string[] = WHITELIST_TOKENS,
+  whitelistTokens: string[] = WHITELIST_TOKENS
 ): void {
   // temp fix
   if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
