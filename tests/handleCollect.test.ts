@@ -8,7 +8,7 @@ import { convertTokenToDecimal } from '../src/utils'
 import { FACTORY_ADDRESS, ZERO_BD } from '../src/utils/constants'
 import {
   assertObjectMatches,
-  createTestPool,
+  invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
   POOL_FEE_TIER_03,
   POOL_TICK_SPACING_03,
@@ -59,7 +59,7 @@ const COLLECT_EVENT = new Collect(
 
 describe('handleMint', () => {
   beforeAll(() => {
-    createTestPool(
+    invokePoolCreatedWithMockedEthCalls(
       MOCK_EVENT,
       FACTORY_ADDRESS,
       USDC_MAINNET_FIXTURE,

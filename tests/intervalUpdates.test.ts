@@ -12,6 +12,8 @@ import {
 } from '../src/utils/intervalUpdates'
 import {
   assertObjectMatches,
+  createAndStoreTestPool,
+  createAndStoreTestToken,
   MOCK_EVENT,
   MOCK_EVENT as poolEvent,
   POOL_FEE_TIER_03,
@@ -78,36 +80,12 @@ describe('uniswap interval data', () => {
 describe('pool interval data', () => {
   beforeEach(() => {
     clearStore()
-
-    const pool = new Pool(USDC_WETH_03_MAINNET_POOL)
-    pool.createdAtTimestamp = ZERO_BI
-    pool.createdAtBlockNumber = ZERO_BI
-    pool.token0 = USDC_MAINNET_FIXTURE.address
-    pool.token1 = WETH_MAINNET_FIXTURE.address
-    pool.feeTier = BigInt.fromI32(POOL_FEE_TIER_03)
-    pool.liquidity = ZERO_BI
-    pool.sqrtPrice = ZERO_BI
-    pool.token0Price = ZERO_BD
-    pool.token1Price = ZERO_BD
-    pool.tick = ZERO_BI
-    pool.observationIndex = ZERO_BI
-    pool.volumeToken0 = ZERO_BD
-    pool.volumeToken1 = ZERO_BD
-    pool.volumeUSD = ZERO_BD
-    pool.untrackedVolumeUSD = ZERO_BD
-    pool.feesUSD = ZERO_BD
-    pool.txCount = ZERO_BI
-    pool.collectedFeesToken0 = ZERO_BD
-    pool.collectedFeesToken1 = ZERO_BD
-    pool.collectedFeesUSD = ZERO_BD
-    pool.totalValueLockedToken0 = ZERO_BD
-    pool.totalValueLockedToken1 = ZERO_BD
-    pool.totalValueLockedUSD = ZERO_BD
-    pool.totalValueLockedETH = ZERO_BD
-    pool.totalValueLockedUSDUntracked = ZERO_BD
-    pool.liquidityProviderCount = ZERO_BI
-
-    pool.save()
+    createAndStoreTestPool(
+      USDC_WETH_03_MAINNET_POOL,
+      USDC_MAINNET_FIXTURE.address,
+      WETH_MAINNET_FIXTURE.address,
+      POOL_FEE_TIER_03,
+    )
   })
 
   test('success - create and update poolDayData', () => {
@@ -299,24 +277,7 @@ describe('token interval data', () => {
   beforeEach(() => {
     clearStore()
 
-    const token = new Token(WETH_MAINNET_FIXTURE.address)
-    token.symbol = WETH_MAINNET_FIXTURE.symbol
-    token.name = WETH_MAINNET_FIXTURE.name
-    token.decimals = BigInt.fromString(WETH_MAINNET_FIXTURE.decimals)
-    token.totalSupply = BigInt.fromString(WETH_MAINNET_FIXTURE.totalSupply)
-    token.volume = ZERO_BD
-    token.volumeUSD = ZERO_BD
-    token.untrackedVolumeUSD = ZERO_BD
-    token.feesUSD = ZERO_BD
-    token.txCount = ZERO_BI
-    token.poolCount = ZERO_BI
-    token.totalValueLocked = ZERO_BD
-    token.totalValueLockedUSD = ZERO_BD
-    token.totalValueLockedUSDUntracked = ZERO_BD
-    token.derivedETH = ZERO_BD
-    token.whitelistPools = []
-
-    token.save()
+    createAndStoreTestToken(WETH_MAINNET_FIXTURE)
 
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = ZERO_BD

@@ -8,7 +8,7 @@ import { StaticTokenDefinition } from '../src/utils/staticTokenDefinition'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../src/utils/token'
 import {
   assertObjectMatches,
-  createTestPool,
+  invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
   POOL_FEE_TIER_03,
   POOL_TICK_SPACING_03,
@@ -24,7 +24,7 @@ describe('handlePoolCreated', () => {
     assert.notInStore('Token', USDC_MAINNET_FIXTURE.address)
     assert.notInStore('Token', USDC_MAINNET_FIXTURE.address)
 
-    createTestPool(
+    invokePoolCreatedWithMockedEthCalls(
       MOCK_EVENT,
       FACTORY_ADDRESS,
       USDC_MAINNET_FIXTURE,
