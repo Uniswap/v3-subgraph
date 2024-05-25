@@ -8,6 +8,7 @@ import {
   getEthPriceInUSD,
   MINIMUM_ETH_LOCKED,
   STABLE_COINS,
+  STABLECOIN_IS_TOKEN0,
   USDC_WETH_03_POOL,
   WETH_ADDRESS,
 } from '../../utils/pricing'
@@ -19,7 +20,7 @@ export function handleInitialize(event: Initialize): void {
 export function handleInitializeHelper(
   event: Initialize,
   stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
-  stablecoinIsToken0: boolean = true,
+  stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
   wrappedNativeAddress: string = WETH_ADDRESS,
   stablecoinAddresses: string[] = STABLE_COINS,
   minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
