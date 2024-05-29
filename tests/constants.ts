@@ -1,4 +1,4 @@
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { assert, createMockedFunction, newMockEvent } from 'matchstick-as'
 
 import { handlePoolCreatedHelper } from '../src/mappings/factory'
@@ -33,6 +33,10 @@ export const WETH_MAINNET_FIXTURE: TokenFixture = {
   totalSupply: '100',
   decimals: '18',
 }
+
+export const TEST_ETH_PRICE_USD = BigDecimal.fromString('2000')
+export const TEST_USDC_DERIVED_ETH = BigDecimal.fromString('1').div(BigDecimal.fromString('2000'))
+export const TEST_WETH_DERIVED_ETH = BigDecimal.fromString('1')
 
 export const MOCK_EVENT = newMockEvent()
 
