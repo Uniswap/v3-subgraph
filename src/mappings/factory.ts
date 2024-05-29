@@ -4,20 +4,33 @@ import { PoolCreated } from '../types/Factory/Factory'
 import { Factory } from '../types/schema'
 import { Bundle, Pool, Token } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
+import { STATIC_TOKEN_DEFINITIONS, StaticTokenDefinition } from '../utils/staticTokenDefinition'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../utils/token'
 import { ADDRESS_ZERO, FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
 import { WHITELIST_TOKENS } from './../utils/pricing'
 
+// The subgraph handler must have this signature to be able to handle events,
+// however, we invoke a helper in order to inject dependencies for unit tests.
 export function handlePoolCreated(event: PoolCreated): void {
+  handlePoolCreatedHelper(event)
+}
+
+// Exported for unit tests
+export function handlePoolCreatedHelper(
+  event: PoolCreated,
+  factoryAddress: string = FACTORY_ADDRESS,
+  whitelistTokens: string[] = WHITELIST_TOKENS,
+  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS
+): void {
   // temp fix
   if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
     return
   }
 
   // load factory
-  let factory = Factory.load(FACTORY_ADDRESS)
+  let factory = Factory.load(factoryAddress)
   if (factory === null) {
-    factory = new Factory(FACTORY_ADDRESS)
+    factory = new Factory(factoryAddress)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
@@ -46,10 +59,10 @@ export function handlePoolCreated(event: PoolCreated): void {
   // fetch info if null
   if (token0 === null) {
     token0 = new Token(event.params.token0.toHexString())
-    token0.symbol = fetchTokenSymbol(event.params.token0)
-    token0.name = fetchTokenName(event.params.token0)
+    token0.symbol = fetchTokenSymbol(event.params.token0, staticTokenDefinitions)
+    token0.name = fetchTokenName(event.params.token0, staticTokenDefinitions)
     token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
-    const decimals = fetchTokenDecimals(event.params.token0)
+    const decimals = fetchTokenDecimals(event.params.token0, staticTokenDefinitions)
 
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
@@ -97,12 +110,12 @@ export function handlePoolCreated(event: PoolCreated): void {
   }
 
   // update white listed pools
-  if (WHITELIST_TOKENS.includes(token0.id)) {
+  if (whitelistTokens.includes(token0.id)) {
     const newPools = token1.whitelistPools
     newPools.push(pool.id)
     token1.whitelistPools = newPools
   }
-  if (WHITELIST_TOKENS.includes(token1.id)) {
+  if (whitelistTokens.includes(token1.id)) {
     const newPools = token0.whitelistPools
     newPools.push(pool.id)
     token0.whitelistPools = newPools

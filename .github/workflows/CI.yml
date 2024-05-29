@@ -53,9 +53,9 @@ jobs:
           git commit -a -m "fix(lint): auto-fix [ci]"
           git push
 
-  build:
+  build-and-test:
     needs: lint
-    name: build
+    name: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -84,3 +84,10 @@ jobs:
 
       - name: Build project
         run: yarn build
+
+      - name: Build Docker
+        run: yarn build:docker
+
+      - name: Test
+        # We need to run test in this mode because github CI is non-interactive
+        run: yarn test:no-tty
