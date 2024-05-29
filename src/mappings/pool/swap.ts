@@ -48,7 +48,7 @@ export function handleSwap(event: SwapEvent): void {
 
     // get amount that should be tracked only - div 2 because cant count both input and output as volume
     const amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
-      BigDecimal.fromString('2')
+      BigDecimal.fromString('2'),
     )
     const amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
     const amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
