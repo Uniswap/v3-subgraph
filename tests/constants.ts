@@ -43,7 +43,7 @@ export const createTestPool = (
   token1: TokenFixture,
   poolAddressHexString: string,
   feeTier: number,
-  tickSpacing: number,
+  tickSpacing: number
 ): void => {
   const mockEvent = newMockEvent()
   const token0Address = Address.fromString(token0.address)
@@ -64,7 +64,7 @@ export const createTestPool = (
     mockEvent.block,
     mockEvent.transaction,
     parameters,
-    mockEvent.receipt,
+    mockEvent.receipt
   )
   // create mock contract calls for token0
   createMockedFunction(token0Address, 'symbol', 'symbol():(string)').returns([ethereum.Value.fromString(token0.symbol)])
