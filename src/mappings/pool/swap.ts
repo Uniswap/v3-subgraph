@@ -11,9 +11,32 @@ import {
   updateTokenHourData,
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
-import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../../utils/pricing'
+import {
+  findEthPerToken,
+  getEthPriceInUSD,
+  getTrackedAmountUSD,
+  MINIMUM_ETH_LOCKED,
+  sqrtPriceX96ToTokenPrices,
+  STABLE_COINS,
+  STABLECOIN_IS_TOKEN0,
+  USDC_WETH_03_POOL,
+  WETH_ADDRESS,
+  WHITELIST_TOKENS,
+} from '../../utils/pricing'
 
 export function handleSwap(event: SwapEvent): void {
+  handleSwapHelper(event)
+}
+
+export function handleSwapHelper(
+  event: SwapEvent,
+  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
+  stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
+  wrappedNativeAddress: string = WETH_ADDRESS,
+  stablecoinAddresses: string[] = STABLE_COINS,
+  minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
+  whitelistTokens: string[] = WHITELIST_TOKENS,
+): void {
   const bundle = Bundle.load('1')!
   const factory = Factory.load(FACTORY_ADDRESS)!
   const pool = Pool.load(event.address.toHexString())!
@@ -47,9 +70,13 @@ export function handleSwap(event: SwapEvent): void {
     const amount1USD = amount1ETH.times(bundle.ethPriceUSD)
 
     // get amount that should be tracked only - div 2 because cant count both input and output as volume
-    const amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
-      BigDecimal.fromString('2'),
-    )
+    const amountTotalUSDTracked = getTrackedAmountUSD(
+      amount0Abs,
+      token0 as Token,
+      amount1Abs,
+      token1 as Token,
+      whitelistTokens,
+    ).div(BigDecimal.fromString('2'))
     const amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
     const amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
@@ -106,10 +133,10 @@ export function handleSwap(event: SwapEvent): void {
     pool.save()
 
     // update USD pricing
-    bundle.ethPriceUSD = getEthPriceInUSD()
+    bundle.ethPriceUSD = getEthPriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
     bundle.save()
-    token0.derivedETH = findEthPerToken(token0 as Token)
-    token1.derivedETH = findEthPerToken(token1 as Token)
+    token0.derivedETH = findEthPerToken(token0 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
+    token1.derivedETH = findEthPerToken(token1 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
 
     /**
      * Things afffected by new USD rates
