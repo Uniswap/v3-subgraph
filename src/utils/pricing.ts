@@ -30,7 +30,7 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 
 export function getEthPriceInUSD(
   stablecoinWrappedNativePoolAddress: string = USDC_WETH_05_POOL,
-  stablecoinIsToken0: boolean = false, // true is stablecoin is token0, false if stablecoin is token1
+  stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0, // true is stablecoin is token0, false if stablecoin is token1
 ): BigDecimal {
   const stablecoinWrappedNativePool = Pool.load(stablecoinWrappedNativePoolAddress)
   if (stablecoinWrappedNativePool !== null) {

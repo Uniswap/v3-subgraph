@@ -10,7 +10,7 @@ export class StaticTokenDefinition {
 
 export const getStaticDefinition = (
   tokenAddress: Address,
-  staticDefinitions: Array<StaticTokenDefinition>
+  staticDefinitions: Array<StaticTokenDefinition>,
 ): StaticTokenDefinition | null => {
   const tokenAddressHex = tokenAddress.toHexString()
 
