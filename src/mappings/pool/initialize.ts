@@ -1,30 +1,22 @@
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Pool, Token } from '../../types/schema'
 import { Initialize } from '../../types/templates/Pool/Pool'
+import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
 import { updatePoolDayData, updatePoolHourData } from '../../utils/intervalUpdates'
-import {
-  findEthPerToken,
-  getEthPriceInUSD,
-  MINIMUM_ETH_LOCKED,
-  STABLE_COINS,
-  STABLECOIN_IS_TOKEN0,
-  USDC_WETH_03_POOL,
-  WETH_ADDRESS,
-} from '../../utils/pricing'
+import { findNativePerToken, getNativePriceInUSD } from '../../utils/pricing'
 
 export function handleInitialize(event: Initialize): void {
   handleInitializeHelper(event)
 }
 
-export function handleInitializeHelper(
-  event: Initialize,
-  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
-  stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
-  wrappedNativeAddress: string = WETH_ADDRESS,
-  stablecoinAddresses: string[] = STABLE_COINS,
-  minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
-): void {
+export function handleInitializeHelper(event: Initialize, subgraphConfig: SubgraphConfig = getSubgraphConfig()): void {
+  const stablecoinWrappedNativePoolAddress = subgraphConfig.stablecoinWrappedNativePoolAddress
+  const stablecoinIsToken0 = subgraphConfig.stablecoinIsToken0
+  const wrappedNativeAddress = subgraphConfig.wrappedNativeAddress
+  const stablecoinAddresses = subgraphConfig.stablecoinAddresses
+  const minimumNativeLocked = subgraphConfig.minimumNativeLocked
+
   // update pool sqrt price and tick
   const pool = Pool.load(event.address.toHexString())!
   pool.sqrtPrice = event.params.sqrtPriceX96
@@ -37,7 +29,7 @@ export function handleInitializeHelper(
 
   // update ETH price now that prices could have changed
   const bundle = Bundle.load('1')!
-  bundle.ethPriceUSD = getEthPriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
+  bundle.ethPriceUSD = getNativePriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
   bundle.save()
 
   updatePoolDayData(event)
@@ -45,8 +37,18 @@ export function handleInitializeHelper(
 
   // update token prices
   if (token0 && token1) {
-    token0.derivedETH = findEthPerToken(token0 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
-    token1.derivedETH = findEthPerToken(token1 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
+    token0.derivedETH = findNativePerToken(
+      token0 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
+    token1.derivedETH = findNativePerToken(
+      token1 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
     token0.save()
     token1.save()
   }

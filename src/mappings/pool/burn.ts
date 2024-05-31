@@ -3,7 +3,8 @@ import { BigInt } from '@graphprotocol/graph-ts'
 import { Bundle, Burn, Factory, Pool, Tick, Token } from '../../types/schema'
 import { Burn as BurnEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../../utils'
-import { FACTORY_ADDRESS, ONE_BI } from '../../utils/constants'
+import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
+import { ONE_BI } from '../../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
@@ -17,7 +18,9 @@ export function handleBurn(event: BurnEvent): void {
 }
 
 // Note: this handler need not adjust TVL because that is accounted for in the handleCollect handler
-export function handleBurnHelper(event: BurnEvent, factoryAddress: string = FACTORY_ADDRESS): void {
+export function handleBurnHelper(event: BurnEvent, subgraphConfig: SubgraphConfig = getSubgraphConfig()): void {
+  const factoryAddress = subgraphConfig.factoryAddress
+
   const bundle = Bundle.load('1')!
   const poolAddress = event.address.toHexString()
   const pool = Pool.load(poolAddress)!
@@ -91,7 +94,7 @@ export function handleBurnHelper(event: BurnEvent, factoryAddress: string = FACT
       lowerTick.save()
       upperTick.save()
     }
-    updateUniswapDayData(event)
+    updateUniswapDayData(event, factoryAddress)
     updatePoolDayData(event)
     updatePoolHourData(event)
     updateTokenDayData(token0 as Token, event)

@@ -4,15 +4,58 @@ import { assert, createMockedFunction, newMockEvent } from 'matchstick-as'
 import { handlePoolCreatedHelper } from '../src/mappings/factory'
 import { PoolCreated } from '../src/types/Factory/Factory'
 import { Pool, Token } from '../src/types/schema'
+import { SubgraphConfig } from '../src/utils/chains'
 import { ZERO_BD, ZERO_BI } from '../src/utils/constants'
 
+const FACTORY_ADDRESS = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const USDC_MAINNET_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 const WETH_MAINNET_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const WBTC_MAINNET_ADDRESS = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
 export const USDC_WETH_03_MAINNET_POOL = '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8'
 export const WBTC_WETH_03_MAINNET_POOL = '0xcbcdf9626bc03e24f779434178a73a0b4bad62ed'
 export const POOL_FEE_TIER_03 = 3000
-export const POOL_TICK_SPACING_03 = 60
+
+export const TEST_CONFIG: SubgraphConfig = {
+  factoryAddress: FACTORY_ADDRESS,
+  stablecoinWrappedNativePoolAddress: USDC_WETH_03_MAINNET_POOL,
+  stablecoinIsToken0: true,
+  wrappedNativeAddress: WETH_MAINNET_ADDRESS,
+  minimumNativeLocked: ZERO_BD,
+  poolsToSkip: [],
+  stablecoinAddresses: [USDC_MAINNET_ADDRESS],
+  whitelistTokens: [WETH_MAINNET_ADDRESS, USDC_MAINNET_ADDRESS],
+  tokenOverrides: [],
+  poolsToSkip: [],
+  poolMappings: [],
+}
+
+export const TEST_CONFIG_WITH_NO_WHITELIST: SubgraphConfig = {
+  factoryAddress: FACTORY_ADDRESS,
+  stablecoinWrappedNativePoolAddress: USDC_WETH_03_MAINNET_POOL,
+  stablecoinIsToken0: true,
+  wrappedNativeAddress: WETH_MAINNET_ADDRESS,
+  minimumNativeLocked: ZERO_BD,
+  poolsToSkip: [],
+  stablecoinAddresses: [USDC_MAINNET_ADDRESS],
+  whitelistTokens: [],
+  tokenOverrides: [],
+  poolsToSkip: [],
+  poolMappings: [],
+}
+
+export const TEST_CONFIG_WITH_POOL_SKIPPED: SubgraphConfig = {
+  factoryAddress: FACTORY_ADDRESS,
+  stablecoinWrappedNativePoolAddress: USDC_WETH_03_MAINNET_POOL,
+  stablecoinIsToken0: true,
+  wrappedNativeAddress: WETH_MAINNET_ADDRESS,
+  minimumNativeLocked: ZERO_BD,
+  poolsToSkip: [],
+  stablecoinAddresses: [USDC_MAINNET_ADDRESS],
+  whitelistTokens: [WETH_MAINNET_ADDRESS, USDC_MAINNET_ADDRESS],
+  tokenOverrides: [],
+  poolsToSkip: [USDC_WETH_03_MAINNET_POOL],
+  poolMappings: [],
+}
 
 export class TokenFixture {
   address: string
@@ -20,6 +63,7 @@ export class TokenFixture {
   name: string
   totalSupply: string
   decimals: string
+  balanceOf: string
 }
 
 export const USDC_MAINNET_FIXTURE: TokenFixture = {
@@ -28,6 +72,7 @@ export const USDC_MAINNET_FIXTURE: TokenFixture = {
   name: 'USD Coin',
   totalSupply: '300',
   decimals: '6',
+  balanceOf: '1000',
 }
 
 export const WETH_MAINNET_FIXTURE: TokenFixture = {
@@ -36,6 +81,7 @@ export const WETH_MAINNET_FIXTURE: TokenFixture = {
   name: 'Wrapped Ether',
   totalSupply: '100',
   decimals: '18',
+  balanceOf: '500',
 }
 
 export const WBTC_MAINNET_FIXTURE: TokenFixture = {
@@ -44,6 +90,56 @@ export const WBTC_MAINNET_FIXTURE: TokenFixture = {
   name: 'Wrapped Bitcoin',
   totalSupply: '200',
   decimals: '8',
+  balanceOf: '750',
+}
+
+export const getTokenFixture = (tokenAddress: string): TokenFixture => {
+  if (tokenAddress == USDC_MAINNET_FIXTURE.address) {
+    return USDC_MAINNET_FIXTURE
+  } else if (tokenAddress == WETH_MAINNET_FIXTURE.address) {
+    return WETH_MAINNET_FIXTURE
+  } else if (tokenAddress == WBTC_MAINNET_FIXTURE.address) {
+    return WBTC_MAINNET_FIXTURE
+  } else {
+    throw new Error('Token address not found in fixtures')
+  }
+}
+
+export class PoolFixture {
+  address: string
+  token0: TokenFixture
+  token1: TokenFixture
+  feeTier: string
+  tickSpacing: string
+  liquidity: string
+}
+
+export const USDC_WETH_03_MAINNET_POOL_FIXTURE: PoolFixture = {
+  address: USDC_WETH_03_MAINNET_POOL,
+  token0: USDC_MAINNET_FIXTURE,
+  token1: WETH_MAINNET_FIXTURE,
+  feeTier: '3000',
+  tickSpacing: '60',
+  liquidity: '100',
+}
+
+export const WBTC_WETH_03_MAINNET_POOL_FIXTURE: PoolFixture = {
+  address: WBTC_WETH_03_MAINNET_POOL,
+  token0: WBTC_MAINNET_FIXTURE,
+  token1: WETH_MAINNET_FIXTURE,
+  feeTier: '3000',
+  tickSpacing: '60',
+  liquidity: '200',
+}
+
+export const getPoolFixture = (poolAddress: string): PoolFixture => {
+  if (poolAddress == USDC_WETH_03_MAINNET_POOL) {
+    return USDC_WETH_03_MAINNET_POOL_FIXTURE
+  } else if (poolAddress == WBTC_WETH_03_MAINNET_POOL) {
+    return WBTC_WETH_03_MAINNET_POOL_FIXTURE
+  } else {
+    throw new Error('Pool address not found in fixtures')
+  }
 }
 
 export const TEST_ETH_PRICE_USD = BigDecimal.fromString('2000')
@@ -54,22 +150,23 @@ export const MOCK_EVENT = newMockEvent()
 
 export const invokePoolCreatedWithMockedEthCalls = (
   mockEvent: ethereum.Event,
-  factoryAddress: string,
-  token0: TokenFixture,
-  token1: TokenFixture,
-  poolAddressHexString: string,
-  feeTier: number,
-  tickSpacing: number,
+  subgraphConfig: SubgraphConfig,
 ): void => {
+  const pool = getPoolFixture(subgraphConfig.stablecoinWrappedNativePoolAddress)
+  const feeTier = pool.feeTier
+  const tickSpacing = pool.tickSpacing
+  const token0 = getTokenFixture(pool.token0.address)
+  const token1 = getTokenFixture(pool.token1.address)
+
   const mockEvent = newMockEvent()
   const token0Address = Address.fromString(token0.address)
   const token1Address = Address.fromString(token1.address)
-  const poolAddress = Address.fromString(poolAddressHexString)
+  const poolAddress = Address.fromString(subgraphConfig.stablecoinWrappedNativePoolAddress)
   const parameters = [
     new ethereum.EventParam('token0', ethereum.Value.fromAddress(token0Address)),
     new ethereum.EventParam('token1', ethereum.Value.fromAddress(token1Address)),
-    new ethereum.EventParam('fee', ethereum.Value.fromI32(feeTier as i32)),
-    new ethereum.EventParam('tickSpacing', ethereum.Value.fromI32(tickSpacing as i32)),
+    new ethereum.EventParam('fee', ethereum.Value.fromI32(parseInt(feeTier) as i32)),
+    new ethereum.EventParam('tickSpacing', ethereum.Value.fromI32(parseInt(tickSpacing) as i32)),
     new ethereum.EventParam('pool', ethereum.Value.fromAddress(poolAddress)),
   ]
   const poolCreatedEvent = new PoolCreated(
@@ -100,18 +197,18 @@ export const invokePoolCreatedWithMockedEthCalls = (
   createMockedFunction(token1Address, 'decimals', 'decimals():(uint32)').returns([
     ethereum.Value.fromUnsignedBigInt(BigInt.fromString(token1.decimals)),
   ])
-  handlePoolCreatedHelper(poolCreatedEvent, factoryAddress, [token0.address, token1.address])
+  handlePoolCreatedHelper(poolCreatedEvent, subgraphConfig)
 }
 
 // More lightweight than the method above which invokes handlePoolCreated. This
 // method only creates the pool entity while the above method also creates the
 // relevant token and factory entities.
-export const createAndStoreTestPool = (
-  poolAddress: string,
-  token0Address: string,
-  token1Address: string,
-  feeTier: i32,
-): Pool => {
+export const createAndStoreTestPool = (poolFixture: PoolFixture): Pool => {
+  const poolAddress = poolFixture.address
+  const token0Address = poolFixture.token0.address
+  const token1Address = poolFixture.token1.address
+  const feeTier = parseInt(poolFixture.feeTier) as i32
+
   const pool = new Pool(poolAddress)
   pool.createdAtTimestamp = ZERO_BI
   pool.createdAtBlockNumber = ZERO_BI

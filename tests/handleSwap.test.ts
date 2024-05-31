@@ -5,14 +5,19 @@ import { handleSwapHelper } from '../src/mappings/pool/swap'
 import { Bundle, Token } from '../src/types/schema'
 import { Swap } from '../src/types/templates/Pool/Pool'
 import { convertTokenToDecimal, safeDiv } from '../src/utils'
-import { FACTORY_ADDRESS, ZERO_BD } from '../src/utils/constants'
-import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../src/utils/pricing'
+import { ZERO_BD } from '../src/utils/constants'
+import {
+  findNativePerToken,
+  getNativePriceInUSD,
+  getTrackedAmountUSD,
+  sqrtPriceX96ToTokenPrices,
+} from '../src/utils/pricing'
 import {
   assertObjectMatches,
   invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
   POOL_FEE_TIER_03,
-  POOL_TICK_SPACING_03,
+  TEST_CONFIG,
   TEST_ETH_PRICE_USD,
   TEST_USDC_DERIVED_ETH,
   TEST_WETH_DERIVED_ETH,
@@ -63,15 +68,7 @@ const SWAP_EVENT = new Swap(
 
 describe('handleSwap', () => {
   beforeAll(() => {
-    invokePoolCreatedWithMockedEthCalls(
-      MOCK_EVENT,
-      FACTORY_ADDRESS,
-      USDC_MAINNET_FIXTURE,
-      WETH_MAINNET_FIXTURE,
-      USDC_WETH_03_MAINNET_POOL,
-      POOL_FEE_TIER_03,
-      POOL_TICK_SPACING_03,
-    )
+    invokePoolCreatedWithMockedEthCalls(MOCK_EVENT, TEST_CONFIG)
 
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = TEST_ETH_PRICE_USD
@@ -87,13 +84,6 @@ describe('handleSwap', () => {
   })
 
   test('success', () => {
-    const stablecoinWrappedNativePoolAddress = USDC_WETH_03_MAINNET_POOL
-    const stablecoinIsToken0 = true
-    const wrappedNativeAddress = WETH_MAINNET_FIXTURE.address
-    const stablecoinAddresses = [USDC_MAINNET_FIXTURE.address]
-    const minimumEthLocked = ZERO_BD
-    const whitelistTokens = [USDC_MAINNET_FIXTURE.address, WETH_MAINNET_FIXTURE.address]
-
     const token0 = Token.load(USDC_MAINNET_FIXTURE.address)!
     const token1 = Token.load(WETH_MAINNET_FIXTURE.address)!
 
@@ -104,9 +94,13 @@ describe('handleSwap', () => {
     const amount1Abs = amount1.lt(ZERO_BD) ? amount1.times(BigDecimal.fromString('-1')) : amount1
 
     // calculate this before calling handleSwapHelper because it updates the derivedETH of the tokens which will affect calculations
-    const amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0, amount1Abs, token1, whitelistTokens).div(
-      BigDecimal.fromString('2'),
-    )
+    const amountTotalUSDTracked = getTrackedAmountUSD(
+      amount0Abs,
+      token0,
+      amount1Abs,
+      token1,
+      TEST_CONFIG.whitelistTokens,
+    ).div(BigDecimal.fromString('2'))
 
     const amount0ETH = amount0Abs.times(TEST_USDC_DERIVED_ETH)
     const amount1ETH = amount1Abs.times(TEST_WETH_DERIVED_ETH)
@@ -121,24 +115,26 @@ describe('handleSwap', () => {
     const feesETH = amountTotalETHTRacked.times(feeTierBD).div(BigDecimal.fromString('1000000'))
     const feesUSD = amountTotalUSDTracked.times(feeTierBD).div(BigDecimal.fromString('1000000'))
 
-    handleSwapHelper(
-      SWAP_EVENT,
-      stablecoinWrappedNativePoolAddress,
-      stablecoinIsToken0,
-      wrappedNativeAddress,
-      stablecoinAddresses,
-      minimumEthLocked,
-      whitelistTokens,
-    )
+    handleSwapHelper(SWAP_EVENT, TEST_CONFIG)
 
-    const newEthPrice = getEthPriceInUSD(USDC_WETH_03_MAINNET_POOL, true)
+    const newEthPrice = getNativePriceInUSD(USDC_WETH_03_MAINNET_POOL, true)
     const newPoolPrices = sqrtPriceX96ToTokenPrices(SWAP_FIXTURE.sqrtPriceX96, token0, token1)
-    const newToken0DerivedETH = findEthPerToken(token0, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
-    const newToken1DerivedETH = findEthPerToken(token1, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
+    const newToken0DerivedETH = findNativePerToken(
+      token0,
+      TEST_CONFIG.wrappedNativeAddress,
+      TEST_CONFIG.stablecoinAddresses,
+      TEST_CONFIG.minimumNativeLocked,
+    )
+    const newToken1DerivedETH = findNativePerToken(
+      token1,
+      TEST_CONFIG.wrappedNativeAddress,
+      TEST_CONFIG.stablecoinAddresses,
+      TEST_CONFIG.minimumNativeLocked,
+    )
 
     const totalValueLockedETH = amount0.times(newToken0DerivedETH).plus(amount1.times(newToken1DerivedETH))
 
-    assertObjectMatches('Factory', FACTORY_ADDRESS, [
+    assertObjectMatches('Factory', TEST_CONFIG.factoryAddress, [
       ['txCount', '1'],
       ['totalVolumeETH', amountTotalETHTRacked.toString()],
       ['totalVolumeUSD', amountTotalUSDTracked.toString()],

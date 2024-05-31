@@ -64,7 +64,9 @@ type Token @entity {
   totalValueLockedUSD: BigDecimal!
   # TVL derived in USD untracked
   totalValueLockedUSDUntracked: BigDecimal!
-  # derived price in ETH
+  # Note: for chains where ETH is not the native token, this will be the derived
+  # price of that chain's native token, effectively, this should be renamed
+  # derivedNative
   derivedETH: BigDecimal!
   # pools token is in that are white listed for USD pricing
   whitelistPools: [Pool!]!

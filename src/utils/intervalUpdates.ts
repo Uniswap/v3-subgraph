@@ -12,13 +12,12 @@ import {
   UniswapDayData,
 } from './../types/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from './constants'
-import { FACTORY_ADDRESS } from './constants'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateUniswapDayData(event: ethereum.Event, factoryAddress: string = FACTORY_ADDRESS): UniswapDayData {
+export function updateUniswapDayData(event: ethereum.Event, factoryAddress: string): UniswapDayData {
   const uniswap = Factory.load(factoryAddress)!
   const timestamp = event.block.timestamp.toI32()
   const dayID = timestamp / 86400 // rounded

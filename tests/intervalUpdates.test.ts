@@ -2,7 +2,7 @@ import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { beforeEach, clearStore, describe, test } from 'matchstick-as'
 
 import { Bundle, Factory, Pool, Token } from '../src/types/schema'
-import { ADDRESS_ZERO, FACTORY_ADDRESS, ZERO_BD, ZERO_BI } from '../src/utils/constants'
+import { ADDRESS_ZERO, ZERO_BD, ZERO_BI } from '../src/utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
@@ -16,10 +16,10 @@ import {
   createAndStoreTestToken,
   MOCK_EVENT,
   MOCK_EVENT as poolEvent,
-  POOL_FEE_TIER_03,
+  TEST_CONFIG,
   TEST_ETH_PRICE_USD,
-  USDC_MAINNET_FIXTURE,
   USDC_WETH_03_MAINNET_POOL,
+  USDC_WETH_03_MAINNET_POOL_FIXTURE,
   WETH_MAINNET_FIXTURE,
 } from './constants'
 
@@ -27,7 +27,7 @@ describe('uniswap interval data', () => {
   beforeEach(() => {
     clearStore()
 
-    const factory = new Factory(FACTORY_ADDRESS)
+    const factory = new Factory(TEST_CONFIG.factoryAddress)
     factory.poolCount = ZERO_BI
     factory.totalVolumeUSD = ZERO_BD
     factory.totalVolumeETH = ZERO_BD
@@ -46,14 +46,14 @@ describe('uniswap interval data', () => {
 
   test('success - create and update uniswapDayData', () => {
     // these are the only two fields that get persisted to uniswapDayData, set them to non-zero values
-    const factory = Factory.load(FACTORY_ADDRESS)!
+    const factory = Factory.load(TEST_CONFIG.factoryAddress)!
     const uniswapTxCount = BigInt.fromString('10')
     const uniswapTotalValueLockedUSD = BigDecimal.fromString('100')
     factory.txCount = uniswapTxCount
     factory.totalValueLockedUSD = uniswapTotalValueLockedUSD
     factory.save()
 
-    updateUniswapDayData(poolEvent)
+    updateUniswapDayData(poolEvent, TEST_CONFIG.factoryAddress)
     const dayId = poolEvent.block.timestamp.toI32() / 86400
     const dayStartTimestamp = dayId * 86400
 
@@ -71,7 +71,7 @@ describe('uniswap interval data', () => {
     factory.txCount = updatedTxCount
     factory.save()
 
-    updateUniswapDayData(poolEvent)
+    updateUniswapDayData(poolEvent, TEST_CONFIG.factoryAddress)
 
     assertObjectMatches('UniswapDayData', dayId.toString(), [['txCount', updatedTxCount.toString()]])
   })
@@ -80,12 +80,7 @@ describe('uniswap interval data', () => {
 describe('pool interval data', () => {
   beforeEach(() => {
     clearStore()
-    createAndStoreTestPool(
-      USDC_WETH_03_MAINNET_POOL,
-      USDC_MAINNET_FIXTURE.address,
-      WETH_MAINNET_FIXTURE.address,
-      POOL_FEE_TIER_03,
-    )
+    createAndStoreTestPool(USDC_WETH_03_MAINNET_POOL_FIXTURE)
   })
 
   test('success - create and update poolDayData', () => {

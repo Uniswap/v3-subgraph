@@ -12,3 +12,8 @@ Pending Changes at same URL
 2. Install postgres: `brew install postgresql`
 3. `yarn run build:docker`
 4. `yarn run test`
+
+### Adding New Chains
+
+1. Create a new subgraph config in `src/utils/chains.ts`. This will require adding a new `ChainId`. Set the `SELECTED_CHAIN` in `getSubgraphConfig()` to be this new `ChainId`.
+2. Add a new entry in `networks.json` for the new chain. The network name should be derived from the CLI Name in The Graph's [supported networks documenation](https://thegraph.com/docs/en/developing/supported-networks/). The factory address can be derived from Uniswap's [deployments documentation](https://docs.uniswap.org/contracts/v3/reference/deployments/ethereum-deployments).

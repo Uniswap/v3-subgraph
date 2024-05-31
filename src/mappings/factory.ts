@@ -1,13 +1,13 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { BigInt, log } from '@graphprotocol/graph-ts'
 
+import { populateEmptyPools } from '../backfill'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Factory } from '../types/schema'
 import { Bundle, Pool, Token } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
-import { STATIC_TOKEN_DEFINITIONS, StaticTokenDefinition } from '../utils/staticTokenDefinition'
+import { getSubgraphConfig, SubgraphConfig } from '../utils/chains'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../utils/token'
-import { ADDRESS_ZERO, FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
-import { WHITELIST_TOKENS } from './../utils/pricing'
+import { ADDRESS_ZERO, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
 
 // The subgraph handler must have this signature to be able to handle events,
 // however, we invoke a helper in order to inject dependencies for unit tests.
@@ -18,12 +18,16 @@ export function handlePoolCreated(event: PoolCreated): void {
 // Exported for unit tests
 export function handlePoolCreatedHelper(
   event: PoolCreated,
-  factoryAddress: string = FACTORY_ADDRESS,
-  whitelistTokens: string[] = WHITELIST_TOKENS,
-  staticTokenDefinitions: StaticTokenDefinition[] = STATIC_TOKEN_DEFINITIONS,
+  subgraphConfig: SubgraphConfig = getSubgraphConfig(),
 ): void {
+  const factoryAddress = subgraphConfig.factoryAddress
+  const whitelistTokens = subgraphConfig.whitelistTokens
+  const tokenOverrides = subgraphConfig.tokenOverrides
+  const poolsToSkip = subgraphConfig.poolsToSkip
+  const poolMappings = subgraphConfig.poolMappings
+
   // temp fix
-  if (event.params.pool == Address.fromHexString('0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248')) {
+  if (poolsToSkip.includes(event.params.pool.toHexString())) {
     return
   }
 
@@ -48,6 +52,8 @@ export function handlePoolCreatedHelper(
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = ZERO_BD
     bundle.save()
+
+    populateEmptyPools(event, poolMappings, whitelistTokens, tokenOverrides)
   }
 
   factory.poolCount = factory.poolCount.plus(ONE_BI)
@@ -59,10 +65,10 @@ export function handlePoolCreatedHelper(
   // fetch info if null
   if (token0 === null) {
     token0 = new Token(event.params.token0.toHexString())
-    token0.symbol = fetchTokenSymbol(event.params.token0, staticTokenDefinitions)
-    token0.name = fetchTokenName(event.params.token0, staticTokenDefinitions)
+    token0.symbol = fetchTokenSymbol(event.params.token0, tokenOverrides)
+    token0.name = fetchTokenName(event.params.token0, tokenOverrides)
     token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
-    const decimals = fetchTokenDecimals(event.params.token0, staticTokenDefinitions)
+    const decimals = fetchTokenDecimals(event.params.token0, tokenOverrides)
 
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
@@ -86,10 +92,10 @@ export function handlePoolCreatedHelper(
 
   if (token1 === null) {
     token1 = new Token(event.params.token1.toHexString())
-    token1.symbol = fetchTokenSymbol(event.params.token1)
-    token1.name = fetchTokenName(event.params.token1)
+    token1.symbol = fetchTokenSymbol(event.params.token1, tokenOverrides)
+    token1.name = fetchTokenName(event.params.token1, tokenOverrides)
     token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
-    const decimals = fetchTokenDecimals(event.params.token1)
+    const decimals = fetchTokenDecimals(event.params.token1, tokenOverrides)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
       log.debug('mybug the decimal on token 0 was null', [])
