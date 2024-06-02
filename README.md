@@ -2,7 +2,7 @@
 
 ### Subgraph Endpoint
 
-Synced at: https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-v3-subgraph?selected=playground
+Synced at: https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3?selected=playground
 
 Pending Changes at same URL
 
