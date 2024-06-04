@@ -10,7 +10,6 @@
 
 import { Address } from '@graphprotocol/graph-ts'
 
-// eslint-disable-next-line prefer-const
 export const OPTIMISM_POOL_MAPPINGS: Array<Address[]> = [
   [
     Address.fromString('0x8c505fd76eed0945699265c7c7e5bbf756b7e5ad'),

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
 import { ERC20 } from '../types/Factory/ERC20'
@@ -19,7 +18,7 @@ function populateToken(tokenAddress: string, tokenOverrides: StaticTokenDefiniti
   token.symbol = fetchTokenSymbol(Address.fromString(tokenAddress), tokenOverrides)
   token.name = fetchTokenName(Address.fromString(tokenAddress), tokenOverrides)
   token.totalSupply = fetchTokenTotalSupply(Address.fromString(tokenAddress))
-  let decimals = fetchTokenDecimals(Address.fromString(tokenAddress), tokenOverrides)
+  const decimals = fetchTokenDecimals(Address.fromString(tokenAddress), tokenOverrides)
   if (decimals === null) {
     return
   }
@@ -39,8 +38,8 @@ function populateToken(tokenAddress: string, tokenOverrides: StaticTokenDefiniti
 }
 
 /**
- * Create entries in store for each pool and token
- * before regenesis.
+ * Create entries in store for hard-coded pools and tokens. This is only
+ * used for generating optimism pre-regenesis data.
  */
 export function populateEmptyPools(
   event: ethereum.Event,
@@ -48,15 +47,15 @@ export function populateEmptyPools(
   whitelistTokens: string[],
   tokenOverrides: StaticTokenDefinition[],
 ): void {
-  let length = poolMappings.length
+  const length = poolMappings.length
   for (let i = 0; i < length; ++i) {
-    let poolMapping = poolMappings[i]
-    let newAddress = poolMapping[1]
-    let token0Address = poolMapping[2]
-    let token1Address = poolMapping[3]
+    const poolMapping = poolMappings[i]
+    const newAddress = poolMapping[1]
+    const token0Address = poolMapping[2]
+    const token1Address = poolMapping[3]
 
-    let poolContract = PoolABI.bind(newAddress)
-    let pool = new Pool(newAddress.toHexString()) as Pool
+    const poolContract = PoolABI.bind(newAddress)
+    const pool = new Pool(newAddress.toHexString()) as Pool
     pool.createdAtBlockNumber = event.block.number
     pool.createdAtTimestamp = event.block.timestamp
     pool.token0 = token0Address.toHexString()
@@ -83,38 +82,38 @@ export function populateEmptyPools(
     pool.collectedFeesUSD = ZERO_BD
 
     // need fee tier
-    let feeTier = poolContract.fee()
+    const feeTier = poolContract.fee()
     pool.feeTier = BigInt.fromI32(feeTier)
 
     // create token entities if needed
     populateToken(token0Address.toHexString(), tokenOverrides)
     populateToken(token1Address.toHexString(), tokenOverrides)
-    let token0 = Token.load(token0Address.toHexString())
-    let token1 = Token.load(token1Address.toHexString())
+    const token0 = Token.load(token0Address.toHexString())
+    const token1 = Token.load(token1Address.toHexString())
 
     if (token0 && token1) {
       if (whitelistTokens.includes(pool.token0)) {
-        let newPools = token1.whitelistPools
+        const newPools = token1.whitelistPools
         newPools.push(pool.id)
         token1.whitelistPools = newPools
       }
 
       if (whitelistTokens.includes(token1.id)) {
-        let newPools = token0.whitelistPools
+        const newPools = token0.whitelistPools
         newPools.push(pool.id)
         token0.whitelistPools = newPools
       }
 
       // populate the TVL by call contract balanceOf
-      let token0Contract = ERC20.bind(Address.fromString(pool.token0))
-      let tvlToken0Raw = token0Contract.balanceOf(Address.fromString(pool.id))
-      let tvlToken0Adjusted = convertTokenToDecimal(tvlToken0Raw, token0.decimals)
+      const token0Contract = ERC20.bind(Address.fromString(pool.token0))
+      const tvlToken0Raw = token0Contract.balanceOf(Address.fromString(pool.id))
+      const tvlToken0Adjusted = convertTokenToDecimal(tvlToken0Raw, token0.decimals)
       pool.totalValueLockedToken0 = tvlToken0Adjusted
       token0.totalValueLocked = tvlToken0Adjusted
 
-      let token1Contract = ERC20.bind(Address.fromString(pool.token1))
-      let tvlToken1Raw = token1Contract.balanceOf(Address.fromString(pool.id))
-      let tvlToken1Adjusted = convertTokenToDecimal(tvlToken1Raw, token1.decimals)
+      const token1Contract = ERC20.bind(Address.fromString(pool.token1))
+      const tvlToken1Raw = token1Contract.balanceOf(Address.fromString(pool.id))
+      const tvlToken1Adjusted = convertTokenToDecimal(tvlToken1Raw, token1.decimals)
       pool.totalValueLockedToken1 = tvlToken1Adjusted
       token1.totalValueLocked = tvlToken1Adjusted
 
