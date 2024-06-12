@@ -4,5 +4,5 @@
 
 ```sh
 yarn build
-yarn deploy
+yarn deploy-local
 ```
