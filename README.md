@@ -2,7 +2,7 @@
 
 ### How to Deploy
 
-```
+```sh
 yarn build
 yarn deploy
 ```
