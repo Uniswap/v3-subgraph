@@ -5,13 +5,12 @@ import { handleMintHelper } from '../src/mappings/pool/mint'
 import { Bundle, Pool, Token } from '../src/types/schema'
 import { Mint } from '../src/types/templates/Pool/Pool'
 import { convertTokenToDecimal, fastExponentiation, safeDiv } from '../src/utils'
-import { FACTORY_ADDRESS, ONE_BD } from '../src/utils/constants'
+import { ONE_BD } from '../src/utils/constants'
 import {
   assertObjectMatches,
   invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
-  POOL_FEE_TIER_03,
-  POOL_TICK_SPACING_03,
+  TEST_CONFIG,
   TEST_ETH_PRICE_USD,
   TEST_USDC_DERIVED_ETH,
   TEST_WETH_DERIVED_ETH,
@@ -62,15 +61,7 @@ const MINT_EVENT = new Mint(
 
 describe('handleMint', () => {
   beforeAll(() => {
-    invokePoolCreatedWithMockedEthCalls(
-      MOCK_EVENT,
-      FACTORY_ADDRESS,
-      USDC_MAINNET_FIXTURE,
-      WETH_MAINNET_FIXTURE,
-      USDC_WETH_03_MAINNET_POOL,
-      POOL_FEE_TIER_03,
-      POOL_TICK_SPACING_03,
-    )
+    invokePoolCreatedWithMockedEthCalls(MOCK_EVENT, TEST_CONFIG)
 
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = TEST_ETH_PRICE_USD
@@ -91,7 +82,7 @@ describe('handleMint', () => {
     pool.tick = BigInt.fromI32(MINT_FIXTURE.tickLower + MINT_FIXTURE.tickUpper).div(BigInt.fromI32(2))
     pool.save()
 
-    handleMintHelper(MINT_EVENT, FACTORY_ADDRESS)
+    handleMintHelper(MINT_EVENT, TEST_CONFIG)
 
     const amountToken0 = convertTokenToDecimal(MINT_FIXTURE.amount0, BigInt.fromString(USDC_MAINNET_FIXTURE.decimals))
     const amountToken1 = convertTokenToDecimal(MINT_FIXTURE.amount1, BigInt.fromString(WETH_MAINNET_FIXTURE.decimals))
@@ -100,7 +91,7 @@ describe('handleMint', () => {
       .plus(amountToken1.times(TEST_WETH_DERIVED_ETH))
     const poolTotalValueLockedUSD = poolTotalValueLockedETH.times(TEST_ETH_PRICE_USD)
 
-    assertObjectMatches('Factory', FACTORY_ADDRESS, [
+    assertObjectMatches('Factory', TEST_CONFIG.factoryAddress, [
       ['txCount', '1'],
       ['totalValueLockedETH', poolTotalValueLockedETH.toString()],
       ['totalValueLockedUSD', poolTotalValueLockedUSD.toString()],
@@ -179,7 +170,7 @@ describe('handleMint', () => {
     const liquidityBeforeMint = pool.liquidity
     pool.save()
 
-    handleMintHelper(MINT_EVENT, FACTORY_ADDRESS)
+    handleMintHelper(MINT_EVENT, TEST_CONFIG)
 
     // liquidity should not be updated
     assertObjectMatches('Pool', USDC_WETH_03_MAINNET_POOL, [['liquidity', liquidityBeforeMint.toString()]])

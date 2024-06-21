@@ -3,7 +3,8 @@ import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { Bundle, Factory, Pool, Swap, Token } from '../../types/schema'
 import { Swap as SwapEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD } from '../../utils/constants'
+import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
+import { ONE_BI, ZERO_BD } from '../../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
@@ -12,33 +13,27 @@ import {
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
 import {
-  findEthPerToken,
-  getEthPriceInUSD,
+  findNativePerToken,
+  getNativePriceInUSD,
   getTrackedAmountUSD,
-  MINIMUM_ETH_LOCKED,
   sqrtPriceX96ToTokenPrices,
-  STABLE_COINS,
-  STABLECOIN_IS_TOKEN0,
-  USDC_WETH_03_POOL,
-  WETH_ADDRESS,
-  WHITELIST_TOKENS,
 } from '../../utils/pricing'
 
 export function handleSwap(event: SwapEvent): void {
   handleSwapHelper(event)
 }
 
-export function handleSwapHelper(
-  event: SwapEvent,
-  stablecoinWrappedNativePoolAddress: string = USDC_WETH_03_POOL,
-  stablecoinIsToken0: boolean = STABLECOIN_IS_TOKEN0,
-  wrappedNativeAddress: string = WETH_ADDRESS,
-  stablecoinAddresses: string[] = STABLE_COINS,
-  minimumEthLocked: BigDecimal = MINIMUM_ETH_LOCKED,
-  whitelistTokens: string[] = WHITELIST_TOKENS,
-): void {
+export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfig = getSubgraphConfig()): void {
+  const factoryAddress = subgraphConfig.factoryAddress
+  const stablecoinWrappedNativePoolAddress = subgraphConfig.stablecoinWrappedNativePoolAddress
+  const stablecoinIsToken0 = subgraphConfig.stablecoinIsToken0
+  const wrappedNativeAddress = subgraphConfig.wrappedNativeAddress
+  const stablecoinAddresses = subgraphConfig.stablecoinAddresses
+  const minimumNativeLocked = subgraphConfig.minimumNativeLocked
+  const whitelistTokens = subgraphConfig.whitelistTokens
+
   const bundle = Bundle.load('1')!
-  const factory = Factory.load(FACTORY_ADDRESS)!
+  const factory = Factory.load(factoryAddress)!
   const pool = Pool.load(event.address.toHexString())!
 
   // hot fix for bad pricing
@@ -133,10 +128,20 @@ export function handleSwapHelper(
     pool.save()
 
     // update USD pricing
-    bundle.ethPriceUSD = getEthPriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
+    bundle.ethPriceUSD = getNativePriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
     bundle.save()
-    token0.derivedETH = findEthPerToken(token0 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
-    token1.derivedETH = findEthPerToken(token1 as Token, wrappedNativeAddress, stablecoinAddresses, minimumEthLocked)
+    token0.derivedETH = findNativePerToken(
+      token0 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
+    token1.derivedETH = findNativePerToken(
+      token1 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
 
     /**
      * Things afffected by new USD rates
@@ -171,7 +176,7 @@ export function handleSwapHelper(
     swap.logIndex = event.logIndex
 
     // interval data
-    const uniswapDayData = updateUniswapDayData(event)
+    const uniswapDayData = updateUniswapDayData(event, factoryAddress)
     const poolDayData = updatePoolDayData(event)
     const poolHourData = updatePoolHourData(event)
     const token0DayData = updateTokenDayData(token0 as Token, event)

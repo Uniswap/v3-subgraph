@@ -5,13 +5,13 @@ import { handleCollectHelper } from '../src/mappings/pool/collect'
 import { Bundle, Token } from '../src/types/schema'
 import { Collect } from '../src/types/templates/Pool/Pool'
 import { convertTokenToDecimal } from '../src/utils'
-import { FACTORY_ADDRESS, ZERO_BD } from '../src/utils/constants'
+import { ZERO_BD } from '../src/utils/constants'
 import {
   assertObjectMatches,
   invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
-  POOL_FEE_TIER_03,
-  POOL_TICK_SPACING_03,
+  TEST_CONFIG,
+  TEST_CONFIG_WITH_NO_WHITELIST,
   TEST_ETH_PRICE_USD,
   TEST_USDC_DERIVED_ETH,
   TEST_WETH_DERIVED_ETH,
@@ -59,15 +59,7 @@ const COLLECT_EVENT = new Collect(
 
 describe('handleMint', () => {
   beforeAll(() => {
-    invokePoolCreatedWithMockedEthCalls(
-      MOCK_EVENT,
-      FACTORY_ADDRESS,
-      USDC_MAINNET_FIXTURE,
-      WETH_MAINNET_FIXTURE,
-      USDC_WETH_03_MAINNET_POOL,
-      POOL_FEE_TIER_03,
-      POOL_TICK_SPACING_03,
-    )
+    invokePoolCreatedWithMockedEthCalls(MOCK_EVENT, TEST_CONFIG)
 
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = TEST_ETH_PRICE_USD
@@ -86,7 +78,7 @@ describe('handleMint', () => {
     // pass in empty whitelist to simplify this test. Doing so ignores the
     // effect of getTrackedAmountUSD which we test separately.
     const trackedCollectedAmountUSD = ZERO_BD
-    handleCollectHelper(COLLECT_EVENT, FACTORY_ADDRESS, [])
+    handleCollectHelper(COLLECT_EVENT, TEST_CONFIG_WITH_NO_WHITELIST)
 
     const collectedAmountToken0 = convertTokenToDecimal(
       COLLECT_FIXTURE.amount0,
@@ -101,7 +93,7 @@ describe('handleMint', () => {
       .plus(collectedAmountToken1.times(TEST_WETH_DERIVED_ETH))
     const collectedAmountUSD = collectedAmountETH.times(TEST_ETH_PRICE_USD)
 
-    assertObjectMatches('Factory', FACTORY_ADDRESS, [
+    assertObjectMatches('Factory', TEST_CONFIG.factoryAddress, [
       ['txCount', '1'],
       ['totalValueLockedETH', collectedAmountETH.neg().toString()],
       ['totalValueLockedUSD', collectedAmountUSD.neg().toString()],

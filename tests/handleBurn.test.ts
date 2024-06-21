@@ -5,13 +5,12 @@ import { handleBurnHelper } from '../src/mappings/pool/burn'
 import { Bundle, Pool, Tick, Token } from '../src/types/schema'
 import { Burn } from '../src/types/templates/Pool/Pool'
 import { convertTokenToDecimal, fastExponentiation, safeDiv } from '../src/utils'
-import { FACTORY_ADDRESS, ONE_BD, ZERO_BI } from '../src/utils/constants'
+import { ONE_BD, ZERO_BI } from '../src/utils/constants'
 import {
   assertObjectMatches,
   invokePoolCreatedWithMockedEthCalls,
   MOCK_EVENT,
-  POOL_FEE_TIER_03,
-  POOL_TICK_SPACING_03,
+  TEST_CONFIG,
   TEST_ETH_PRICE_USD,
   TEST_USDC_DERIVED_ETH,
   TEST_WETH_DERIVED_ETH,
@@ -59,15 +58,7 @@ const BURN_EVENT = new Burn(
 
 describe('handleBurn', () => {
   beforeAll(() => {
-    invokePoolCreatedWithMockedEthCalls(
-      MOCK_EVENT,
-      FACTORY_ADDRESS,
-      USDC_MAINNET_FIXTURE,
-      WETH_MAINNET_FIXTURE,
-      USDC_WETH_03_MAINNET_POOL,
-      POOL_FEE_TIER_03,
-      POOL_TICK_SPACING_03,
-    )
+    invokePoolCreatedWithMockedEthCalls(MOCK_EVENT, TEST_CONFIG)
 
     const bundle = new Bundle('1')
     bundle.ethPriceUSD = TEST_ETH_PRICE_USD
@@ -113,7 +104,7 @@ describe('handleBurn', () => {
     pool.tick = BigInt.fromI32(BURN_FIXTURE.tickLower + BURN_FIXTURE.tickUpper).div(BigInt.fromI32(2))
     pool.save()
 
-    handleBurnHelper(BURN_EVENT, FACTORY_ADDRESS)
+    handleBurnHelper(BURN_EVENT, TEST_CONFIG)
 
     const amountToken0 = convertTokenToDecimal(BURN_FIXTURE.amount0, BigInt.fromString(USDC_MAINNET_FIXTURE.decimals))
     const amountToken1 = convertTokenToDecimal(BURN_FIXTURE.amount1, BigInt.fromString(WETH_MAINNET_FIXTURE.decimals))
@@ -122,7 +113,7 @@ describe('handleBurn', () => {
       .plus(amountToken1.times(TEST_WETH_DERIVED_ETH))
     const poolTotalValueLockedUSD = poolTotalValueLockedETH.times(TEST_ETH_PRICE_USD)
 
-    assertObjectMatches('Factory', FACTORY_ADDRESS, [
+    assertObjectMatches('Factory', TEST_CONFIG.factoryAddress, [
       ['txCount', '1'],
       ['totalValueLockedETH', '0'],
       ['totalValueLockedUSD', '0'],
@@ -186,7 +177,7 @@ describe('handleBurn', () => {
     const liquidityBeforeBurn = pool.liquidity
     pool.save()
 
-    handleBurnHelper(BURN_EVENT, FACTORY_ADDRESS)
+    handleBurnHelper(BURN_EVENT, TEST_CONFIG)
 
     // liquidity should not be updated
     assertObjectMatches('Pool', USDC_WETH_03_MAINNET_POOL, [['liquidity', liquidityBeforeBurn.toString()]])
