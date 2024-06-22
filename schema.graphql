@@ -383,7 +383,7 @@ type PoolDayData @entity {
   volumeUSD: BigDecimal!
   # fees in USD
   feesUSD: BigDecimal!
-  # numebr of transactions during period
+  # number of transactions during period
   txCount: BigInt!
   # opening price of token0
   open: BigDecimal!
