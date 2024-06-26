@@ -11,7 +11,7 @@ dataSources:
     name: Factory
     network: sepolia
     source:
-      address: '0x0227628f3F023bb0B980b67D528571c95c6DaC1c'
+      address: '0x9475cccd3a9A32192d8Df3d87D735b384A90e0c0'
       abi: Factory
       startBlock: 6090331
     mapping:
