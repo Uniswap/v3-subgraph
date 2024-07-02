@@ -13,6 +13,7 @@ export enum ChainId {
   MAINNET = 1,
   MATIC = 137,
   OPTIMISM = 10,
+  ZKSYNC_ERA = 324,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -25,6 +26,7 @@ const CELO_NETWORK_NAME = 'celo'
 const MAINNET_NETWORK_NAME = 'mainnet'
 const MATIC_NETWORK_NAME = 'matic'
 const OPTIMISM_NETWORK_NAME = 'optimism'
+const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -357,6 +359,29 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1ffd370f9d01f75de2cc701956886acec9749e80',
       ],
       poolMappings: OPTIMISM_POOL_MAPPINGS,
+    }
+  } else if (selectedNetwork == ZKSYNC_ERA_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x8fda5a7a8dca67bbcdd10f02fa0649a937215422',
+      stablecoinWrappedNativePoolAddress: '0x3e3dd517fec2e70eddba2a626422a4ba286e8c38', // USDC.e/WETH 0.05% pool
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4', // USDC.e
+        '0xa07028b453a1f6ac277e93f3a0ea73b4be5c7d63', // USDT
+        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4' // USDC
+      ],
+      whitelistTokens: [
+        '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91', // WETH
+        '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4', // USDC.e
+        '0xa07028b453a1f6ac277e93f3a0ea73b4be5c7d63', // USDT
+        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4', // USDC
+        '0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e', // ZK
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
     }
   } else {
     throw new Error('Unsupported Network')
