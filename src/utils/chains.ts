@@ -370,7 +370,7 @@ export function getSubgraphConfig(): SubgraphConfig {
       stablecoinAddresses: [
         '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4', // USDC.e
         '0x493257fd37edb34451f62edf8d2a0c418852ba4c', // USDT
-        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4' // USDC
+        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4', // USDC
       ],
       whitelistTokens: [
         '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91', // WETH
