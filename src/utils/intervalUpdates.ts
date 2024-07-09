@@ -1,11 +1,11 @@
-import { ethereum } from '@graphprotocol/graph-ts'
+import { Bytes, ethereum } from '@graphprotocol/graph-ts'
 
 import {
   Bundle,
-  Factory,
   Pool,
   PoolDayData,
   PoolHourData,
+  PoolManager,
   Token,
   TokenDayData,
   TokenHourData,
@@ -18,7 +18,7 @@ import { ONE_BI, ZERO_BD, ZERO_BI } from './constants'
  * @param event
  */
 export function updateUniswapDayData(event: ethereum.Event, factoryAddress: string): UniswapDayData {
-  const uniswap = Factory.load(factoryAddress)!
+  const uniswap = PoolManager.load(factoryAddress)!
   const timestamp = event.block.timestamp.toI32()
   const dayID = timestamp / 86400 // rounded
   const dayStartTimestamp = dayID * 86400
@@ -37,12 +37,12 @@ export function updateUniswapDayData(event: ethereum.Event, factoryAddress: stri
   return uniswapDayData as UniswapDayData
 }
 
-export function updatePoolDayData(event: ethereum.Event): PoolDayData {
+export function updatePoolDayData(poolId: string, event: ethereum.Event): PoolDayData {
   const timestamp = event.block.timestamp.toI32()
   const dayID = timestamp / 86400
   const dayStartTimestamp = dayID * 86400
-  const dayPoolID = event.address.toHexString().concat('-').concat(dayID.toString())
-  const pool = Pool.load(event.address.toHexString())!
+  const dayPoolID = poolId.toString().concat('-').concat(dayID.toString())
+  const pool = Pool.load(poolId.toString())!
   let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
     poolDayData = new PoolDayData(dayPoolID)
@@ -80,12 +80,12 @@ export function updatePoolDayData(event: ethereum.Event): PoolDayData {
   return poolDayData as PoolDayData
 }
 
-export function updatePoolHourData(event: ethereum.Event): PoolHourData {
+export function updatePoolHourData(poolId: string, event: ethereum.Event): PoolHourData {
   const timestamp = event.block.timestamp.toI32()
   const hourIndex = timestamp / 3600 // get unique hour within unix history
   const hourStartUnix = hourIndex * 3600 // want the rounded effect
-  const hourPoolID = event.address.toHexString().concat('-').concat(hourIndex.toString())
-  const pool = Pool.load(event.address.toHexString())!
+  const hourPoolID = poolId.toString().concat('-').concat(hourIndex.toString())
+  const pool = Pool.load(poolId.toString())!
   let poolHourData = PoolHourData.load(hourPoolID)
   if (poolHourData === null) {
     poolHourData = new PoolHourData(hourPoolID)

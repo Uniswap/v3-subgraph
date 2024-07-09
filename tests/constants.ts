@@ -1,7 +1,7 @@
 import { Address, BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { assert, createMockedFunction, newMockEvent } from 'matchstick-as'
 
-import { handlePoolCreatedHelper } from '../src/mappings/factory'
+import { handlePoolCreatedHelper } from '../src/mappings/poolManager'
 import { PoolCreated } from '../src/types/Factory/Factory'
 import { Pool, Token } from '../src/types/schema'
 import { SubgraphConfig } from '../src/utils/chains'

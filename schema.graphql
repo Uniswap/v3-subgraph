@@ -1,5 +1,5 @@
-type Factory @entity {
-  # factory address
+type PoolManager @entity {
+  # poolManager address
   id: ID!
   # amount of pools created
   poolCount: BigInt!
@@ -134,10 +134,7 @@ type Pool @entity {
   # daily snapshots of pool data
   poolDayData: [PoolDayData!]! @derivedFrom(field: "pool")
   # derived fields
-  mints: [Mint!]! @derivedFrom(field: "pool")
-  burns: [Burn!]! @derivedFrom(field: "pool")
   swaps: [Swap!]! @derivedFrom(field: "pool")
-  collects: [Collect!]! @derivedFrom(field: "pool")
   ticks: [Tick!]! @derivedFrom(field: "pool")
 }
 
@@ -175,79 +172,7 @@ type Transaction @entity {
   gasUsed: BigInt!
   gasPrice: BigInt!
   # derived values
-  mints: [Mint]! @derivedFrom(field: "transaction")
-  burns: [Burn]! @derivedFrom(field: "transaction")
   swaps: [Swap]! @derivedFrom(field: "transaction")
-  flashed: [Flash]! @derivedFrom(field: "transaction")
-  collects: [Collect]! @derivedFrom(field: "transaction")
-}
-
-type Mint @entity {
-  # transaction hash + "#" + index in mints Transaction array
-  id: ID!
-  # which txn the mint was included in
-  transaction: Transaction!
-  # time of txn
-  timestamp: BigInt!
-  # pool position is within
-  pool: Pool!
-  # allow indexing by tokens
-  token0: Token!
-  # allow indexing by tokens
-  token1: Token!
-  # owner of position where liquidity minted to
-  owner: Bytes!
-  # the address that minted the liquidity
-  sender: Bytes
-  # txn origin
-  origin: Bytes! # the EOA that initiated the txn
-  # amount of liquidity minted
-  amount: BigInt!
-  # amount of token 0 minted
-  amount0: BigDecimal!
-  # amount of token 1 minted
-  amount1: BigDecimal!
-  # derived amount based on available prices of tokens
-  amountUSD: BigDecimal
-  # lower tick of the position
-  tickLower: BigInt!
-  # upper tick of the position
-  tickUpper: BigInt!
-  # order within the txn
-  logIndex: BigInt
-}
-
-type Burn @entity {
-  # transaction hash + "#" + index in mints Transaction array
-  id: ID!
-  # txn burn was included in
-  transaction: Transaction!
-  # pool position is within
-  pool: Pool!
-  # allow indexing by tokens
-  token0: Token!
-  # allow indexing by tokens
-  token1: Token!
-  # need this to pull recent txns for specific token or pool
-  timestamp: BigInt!
-  # owner of position where liquidity was burned
-  owner: Bytes
-  # txn origin
-  origin: Bytes! # the EOA that initiated the txn
-  # amouny of liquidity burned
-  amount: BigInt!
-  # amount of token 0 burned
-  amount0: BigDecimal!
-  # amount of token 1 burned
-  amount1: BigDecimal!
-  # derived amount based on available prices of tokens
-  amountUSD: BigDecimal
-  # lower tick of position
-  tickLower: BigInt!
-  # upper tick of position
-  tickUpper: BigInt!
-  # position within the transactions
-  logIndex: BigInt
 }
 
 type Swap @entity {
@@ -279,58 +204,6 @@ type Swap @entity {
   sqrtPriceX96: BigInt!
   # the tick after the swap
   tick: BigInt!
-  # index within the txn
-  logIndex: BigInt
-}
-
-type Collect @entity {
-  # transaction hash + "#" + index in collect Transaction array
-  id: ID!
-  # pointer to txn
-  transaction: Transaction!
-  # timestamp of event
-  timestamp: BigInt!
-  # pool collect occured within
-  pool: Pool!
-  # owner of position collect was performed on
-  owner: Bytes
-  # amount of token0 collected
-  amount0: BigDecimal!
-  # amount of token1 collected
-  amount1: BigDecimal!
-  # derived amount based on available prices of tokens
-  amountUSD: BigDecimal
-  # lower tick of position
-  tickLower: BigInt!
-  # uppper tick of position
-  tickUpper: BigInt!
-  # index within the txn
-  logIndex: BigInt
-}
-
-type Flash @entity {
-  # transaction hash + "-" + index in collect Transaction array
-  id: ID!
-  # pointer to txn
-  transaction: Transaction!
-  # timestamp of event
-  timestamp: BigInt!
-  # pool collect occured within
-  pool: Pool!
-  # sender of the flash
-  sender: Bytes!
-  # recipient of the flash
-  recipient: Bytes!
-  # amount of token0 flashed
-  amount0: BigDecimal!
-  # amount of token1 flashed
-  amount1: BigDecimal!
-  # derived amount based on available prices of tokens
-  amountUSD: BigDecimal!
-  # amount token0 paid for flash
-  amount0Paid: BigDecimal!
-  # amount token1 paid for flash
-  amount1Paid: BigDecimal!
   # index within the txn
   logIndex: BigInt
 }

@@ -1,23 +1,23 @@
 import { BigInt, log } from '@graphprotocol/graph-ts'
 
-import { populateEmptyPools } from '../backfill'
-import { PoolCreated } from '../types/Factory/Factory'
-import { Factory } from '../types/schema'
+import {  PoolManager } from '../types/schema'
 import { Bundle, Pool, Token } from '../types/schema'
-import { Pool as PoolTemplate } from '../types/templates'
 import { getSubgraphConfig, SubgraphConfig } from '../utils/chains'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../utils/token'
-import { ADDRESS_ZERO, ONE_BI, ZERO_BD, ZERO_BI } from './../utils/constants'
+import { ADDRESS_ZERO, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { Initialize } from '../types/PoolManager/PoolManager'
+import { findNativePerToken, getNativePriceInUSD } from '../utils/pricing'
+import { updatePoolDayData, updatePoolHourData } from '../utils/intervalUpdates'
 
 // The subgraph handler must have this signature to be able to handle events,
 // however, we invoke a helper in order to inject dependencies for unit tests.
-export function handlePoolCreated(event: PoolCreated): void {
-  handlePoolCreatedHelper(event)
+export function handleInitialize(event: Initialize): void {
+  handleInitializeHelper(event)
 }
 
 // Exported for unit tests
-export function handlePoolCreatedHelper(
-  event: PoolCreated,
+export function handleInitializeHelper(
+  event: Initialize,
   subgraphConfig: SubgraphConfig = getSubgraphConfig(),
 ): void {
   const factoryAddress = subgraphConfig.factoryAddress
@@ -27,14 +27,14 @@ export function handlePoolCreatedHelper(
   const poolMappings = subgraphConfig.poolMappings
 
   // temp fix
-  if (poolsToSkip.includes(event.params.pool.toHexString())) {
+  if (poolsToSkip.includes(event.params.id.toHexString())) {
     return
   }
 
   // load factory
-  let factory = Factory.load(factoryAddress)
+  let factory = PoolManager.load(factoryAddress)
   if (factory === null) {
-    factory = new Factory(factoryAddress)
+    factory = new PoolManager(factoryAddress)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
@@ -53,22 +53,22 @@ export function handlePoolCreatedHelper(
     bundle.ethPriceUSD = ZERO_BD
     bundle.save()
 
-    populateEmptyPools(event, poolMappings, whitelistTokens, tokenOverrides)
+    // populateEmptyPools(event, poolMappings, whitelistTokens, tokenOverrides)
   }
 
   factory.poolCount = factory.poolCount.plus(ONE_BI)
 
-  const pool = new Pool(event.params.pool.toHexString()) as Pool
-  let token0 = Token.load(event.params.token0.toHexString())
-  let token1 = Token.load(event.params.token1.toHexString())
+  const pool = new Pool(event.params.id.toHexString()) as Pool
+  let token0 = Token.load(event.params.currency0.toHexString())
+  let token1 = Token.load(event.params.currency1.toHexString())
 
   // fetch info if null
   if (token0 === null) {
-    token0 = new Token(event.params.token0.toHexString())
-    token0.symbol = fetchTokenSymbol(event.params.token0, tokenOverrides)
-    token0.name = fetchTokenName(event.params.token0, tokenOverrides)
-    token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
-    const decimals = fetchTokenDecimals(event.params.token0, tokenOverrides)
+    token0 = new Token(event.params.currency0.toHexString())
+    token0.symbol = fetchTokenSymbol(event.params.currency0, tokenOverrides)
+    token0.name = fetchTokenName(event.params.currency0, tokenOverrides)
+    token0.totalSupply = fetchTokenTotalSupply(event.params.currency0)
+    const decimals = fetchTokenDecimals(event.params.currency0, tokenOverrides)
 
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
@@ -91,11 +91,11 @@ export function handlePoolCreatedHelper(
   }
 
   if (token1 === null) {
-    token1 = new Token(event.params.token1.toHexString())
-    token1.symbol = fetchTokenSymbol(event.params.token1, tokenOverrides)
-    token1.name = fetchTokenName(event.params.token1, tokenOverrides)
-    token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
-    const decimals = fetchTokenDecimals(event.params.token1, tokenOverrides)
+    token1 = new Token(event.params.currency1.toHexString())
+    token1.symbol = fetchTokenSymbol(event.params.currency1, tokenOverrides)
+    token1.name = fetchTokenName(event.params.currency1, tokenOverrides)
+    token1.totalSupply = fetchTokenTotalSupply(event.params.currency1)
+    const decimals = fetchTokenDecimals(event.params.currency1, tokenOverrides)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
       log.debug('mybug the decimal on token 0 was null', [])
@@ -155,9 +155,51 @@ export function handlePoolCreatedHelper(
   pool.collectedFeesUSD = ZERO_BD
 
   pool.save()
-  // create the tracked contract based on the template
-  PoolTemplate.create(event.params.pool)
+
   token0.save()
   token1.save()
   factory.save()
+
+  // from v3 initialzie handler:
+  const stablecoinWrappedNativePoolAddress = subgraphConfig.stablecoinWrappedNativePoolAddress
+  const stablecoinIsToken0 = subgraphConfig.stablecoinIsToken0
+  const wrappedNativeAddress = subgraphConfig.wrappedNativeAddress
+  const stablecoinAddresses = subgraphConfig.stablecoinAddresses
+  const minimumNativeLocked = subgraphConfig.minimumNativeLocked
+
+  // update pool sqrt price and tick
+  // const pool = Pool.load(event.address.toHexString())!
+  // pool.sqrtPrice = event.params.sqrtPriceX96
+  // pool.tick = BigInt.fromI32(event.params.)
+  // pool.save()
+
+  // update token prices
+  // const token0 = Token.load(pool.token0)
+  // const token1 = Token.load(pool.token1)
+
+  // update ETH price now that prices could have changed
+  const bundle = Bundle.load('1')!
+  bundle.ethPriceUSD = getNativePriceInUSD(stablecoinWrappedNativePoolAddress, stablecoinIsToken0)
+  bundle.save()
+
+  updatePoolDayData(event.params.id.toHexString(), event)
+  updatePoolHourData(event.params.id.toHexString(), event)
+
+  // update token prices
+  if (token0 && token1) {
+    token0.derivedETH = findNativePerToken(
+      token0 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
+    token1.derivedETH = findNativePerToken(
+      token1 as Token,
+      wrappedNativeAddress,
+      stablecoinAddresses,
+      minimumNativeLocked,
+    )
+    token0.save()
+    token1.save()
+  }
 }
