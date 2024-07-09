@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: base
+    network: zksync-era
     source:
       abi: Factory
-      address: "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
-      startBlock: 2009445
+      address: "0x8FdA5a7a8dCA67BBcDd10F02Fa0649A937215422"
+      startBlock: 12637075
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: base
+    network: zksync-era
     source:
       abi: Pool
     mapping:
