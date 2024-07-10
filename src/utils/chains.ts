@@ -379,7 +379,14 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4', // USDC
         '0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e', // ZK
       ],
-      tokenOverrides: [],
+      tokenOverrides: [
+        {
+          address: Address.fromString('0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4'),
+          symbol: 'USDC.e',
+          name: 'Bridged USDC (zkSync)',
+          decimals: BigInt.fromI32(6),
+        },
+      ],
       poolsToSkip: [],
       poolMappings: [],
     }
