@@ -6,14 +6,17 @@ schema:
 features:
   - nonFatalErrors
   - grafting
+graft:
+  base: QmTNLetZRkFzbkBa3TKdLvDKhhFy5e496j71R3iJii3AsB
+  block: 19790000
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: base
     source:
-      address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
       abi: Factory
-      startBlock: 12369621
+      address: "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
+      startBlock: 2009445
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +42,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: base
     source:
       abi: Pool
     mapping:

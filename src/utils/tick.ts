@@ -38,6 +38,15 @@ export function feeTierToTickSpacing(feeTier: BigInt): BigInt {
   if (feeTier.equals(BigInt.fromI32(500))) {
     return BigInt.fromI32(10)
   }
+  if (feeTier.equals(BigInt.fromI32(400))) {
+    return BigInt.fromI32(8)
+  }
+  if (feeTier.equals(BigInt.fromI32(300))) {
+    return BigInt.fromI32(6)
+  }
+  if (feeTier.equals(BigInt.fromI32(200))) {
+    return BigInt.fromI32(4)
+  }
   if (feeTier.equals(BigInt.fromI32(100))) {
     return BigInt.fromI32(1)
   }
