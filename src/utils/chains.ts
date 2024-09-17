@@ -14,7 +14,7 @@ export enum ChainId {
   MATIC = 137,
   OPTIMISM = 10,
   ZKSYNC_ERA = 324,
-  ZORA = 7777777
+  ZORA = 7777777,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -371,33 +371,40 @@ export function getSubgraphConfig(): SubgraphConfig {
       minimumNativeLocked: BigDecimal.fromString('1'),
       stablecoinAddresses: [
         '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4', // USDC.e
-        '0xa07028b453a1f6ac277e93f3a0ea73b4be5c7d63', // USDT
-        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4' // USDC
+        '0x493257fd37edb34451f62edf8d2a0c418852ba4c', // USDT
+        '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4', // USDC
       ],
       whitelistTokens: [
         '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91', // WETH
         '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4', // USDC.e
-        '0xa07028b453a1f6ac277e93f3a0ea73b4be5c7d63', // USDT
+        '0x493257fd37edb34451f62edf8d2a0c418852ba4c', // USDT
         '0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4', // USDC
         '0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e', // ZK
       ],
-      tokenOverrides: [],
+      tokenOverrides: [
+        {
+          address: Address.fromString('0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4'),
+          symbol: 'USDC.e',
+          name: 'Bridged USDC (zkSync)',
+          decimals: BigInt.fromI32(6),
+        },
+      ],
       poolsToSkip: [],
       poolMappings: [],
     }
   } else if (selectedNetwork == ZORA_NETWORK_NAME) {
     return {
       factoryAddress: '0x7145f8aeef1f6510e92164038e1b6f8cb2c42cbb',
-      stablecoinWrappedNativePoolAddress: '0xbc59f8f3b275aa56a90d13bae7cce5e6e11a3b17', // WETH/USDC 3% pool
+      stablecoinWrappedNativePoolAddress: '0xbc59f8f3b275aa56a90d13bae7cce5e6e11a3b17', // WETH/USDzC 3% pool
       stablecoinIsToken0: false,
       wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
       minimumNativeLocked: BigDecimal.fromString('1'),
       stablecoinAddresses: [
-        '0xcccccccc7021b32ebb4e8c08314bd62f7c653ec4' // USDC
+        '0xcccccccc7021b32ebb4e8c08314bd62f7c653ec4', // USDzC
       ],
       whitelistTokens: [
         '0x4200000000000000000000000000000000000006', // WETH
-        '0xcccccccc7021b32ebb4e8c08314bd62f7c653ec4', // USDC
+        '0xcccccccc7021b32ebb4e8c08314bd62f7c653ec4', // USDzC
       ],
       tokenOverrides: [],
       poolsToSkip: [],
