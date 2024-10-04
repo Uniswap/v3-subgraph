@@ -14,7 +14,7 @@ export enum ChainId {
   MATIC = 137,
   OPTIMISM = 10,
   ZKSYNC_ERA = 324,
-  ZORA = 7777777,
+  ZORA_MAINNET = 7777777,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -28,7 +28,7 @@ const MAINNET_NETWORK_NAME = 'mainnet'
 const MATIC_NETWORK_NAME = 'matic'
 const OPTIMISM_NETWORK_NAME = 'optimism'
 const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
-const ZORA_NETWORK_NAME = 'zora'
+const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -392,7 +392,7 @@ export function getSubgraphConfig(): SubgraphConfig {
       poolsToSkip: [],
       poolMappings: [],
     }
-  } else if (selectedNetwork == ZORA_NETWORK_NAME) {
+  } else if (selectedNetwork == ZORA_MAINNET_NETWORK_NAME) {
     return {
       factoryAddress: '0x7145f8aeef1f6510e92164038e1b6f8cb2c42cbb',
       stablecoinWrappedNativePoolAddress: '0xbc59f8f3b275aa56a90d13bae7cce5e6e11a3b17', // WETH/USDzC 3% pool

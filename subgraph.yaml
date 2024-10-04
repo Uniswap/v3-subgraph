@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: zora-mainnet
     source:
-      address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+      address: "0x7145F8aeef1f6510E92164038E1B6F8cB2c42Cbb"
       abi: Factory
-      startBlock: 12369621
+      startBlock: 10320368
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: zora-mainnet
     source:
       abi: Pool
     mapping:
