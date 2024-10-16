@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: worldchain-mainnet
+    network: mainnet
     source:
-      address: "0x7a5028BDa40e7B173C278C5342087826455ea25a"
+      address: '0x1F98431c8aD98523631AE4a59f267346ea31F984'
       abi: Factory
-      startBlock: 1603366
+      startBlock: 12369621
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: worldchain-mainnet
+    network: mainnet
     source:
       abi: Pool
     mapping:
