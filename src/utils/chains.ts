@@ -15,6 +15,7 @@ export enum ChainId {
   OPTIMISM = 10,
   ZKSYNC_ERA = 324,
   ZORA_MAINNET = 7777777,
+  WORLDCHAIN_MAINNET = 480,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -29,6 +30,7 @@ const MATIC_NETWORK_NAME = 'matic'
 const OPTIMISM_NETWORK_NAME = 'optimism'
 const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
+const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -405,6 +407,27 @@ export function getSubgraphConfig(): SubgraphConfig {
       whitelistTokens: [
         '0x4200000000000000000000000000000000000006', // WETH
         '0xcccccccc7021b32ebb4e8c08314bd62f7c653ec4', // USDzC
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == WORLDCHAIN_MAINNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x7a5028bda40e7b173c278c5342087826455ea25a',
+      stablecoinWrappedNativePoolAddress: '0x5f835420502a7702de50cd0e78d8aa3608b2137e', // WETH/USDC.e 0.05% pool
+      stablecoinIsToken0: false,
+      wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x79a02482a880bce3f13e09da970dc34db4cd24d1', // USDC.e
+      ],
+      whitelistTokens: [
+        '0x4200000000000000000000000000000000000006', // WETH
+        '0x79a02482a880bce3f13e09da970dc34db4cd24d1', // USDC.e
+        '0x03c7054bcb39f7b2e5b2c7acb37583e32d70cfa3', // WBTC
+        '0x2cfc85d8e48f8eab294be644d9e25c3030863003', // WLD
+        '0x859dbe24b90c9f2f7742083d3cf59ca41f55be5d', // sDAI
       ],
       tokenOverrides: [],
       poolsToSkip: [],
