@@ -1,5 +1,12 @@
+node_modules
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 build/
-node_modules/
 src/types/
 .DS_STORE
 yarn-error.log
