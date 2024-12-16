@@ -10,6 +10,8 @@ export enum ChainId {
   BLAST_MAINNET = 81457,
   BSC = 56,
   CELO = 42220,
+  H1_DEVNET = 8110,
+  H1_TESTNET = 810,
   MAINNET = 1,
   MATIC = 137,
   OPTIMISM = 10,
@@ -33,6 +35,9 @@ const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
+const H1_DEVNET_NETWORK_NAME = 'h1-devnet'
+const H1_TESTNET_NETWORK_NAME = 'h1-testnet'
+
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -451,6 +456,50 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238', // USDC
         '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0', // USDT
         '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI,
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  // } else if (selectedNetwork == H1_DEVNET_NETWORK_NAME) {
+  //   return {
+  //     factoryAddress: '',
+  //     stablecoinWrappedNativePoolAddress: '', // hUSDT/WH1
+  //     stablecoinIsToken0: true,
+  //     wrappedNativeAddress: '0x3A4376273545B3f4261Bf42f221567A393C9871D', // WH1
+  //     minimumNativeLocked: BigDecimal.fromString('1'),
+  //     stablecoinAddresses: [
+  //       '0xf4e5d5f36d58Df84a916F816D65314476c98E81d', // hUSDT
+  //       '0x3A4376273545B3f4261Bf42f221567A393C9871D', // hUSDC
+  //     ],
+  //     whitelistTokens: [
+  //       '0xf4e5d5f36d58Df84a916F816D65314476c98E81d', // hUSDT
+  //       '0x73dBaF6987B8B37cF201d20Db86AD48B89641017', // hUSDC
+  //       '0xc78d99244Cf9885187BcE49a651D6aB5caD0C042', // hETH
+  //       '0x21d44FeDE125C24a95699470Dd7EF8ab246016C4', // hBTC
+  //     ],
+  //     tokenOverrides: [],
+  //     poolsToSkip: [],
+  //     poolMappings: [],
+  //   }
+  } else if (selectedNetwork == H1_TESTNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0xF6201a2Db8Eaf81A576330b1BFc07cEEfe83E4a3',
+      stablecoinWrappedNativePoolAddress: '0x3E3E9b11f0Cb5ff847eb1e836b45ff6a845975FA', // hUSDT/WH1
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0x584C31C392c695dcD6ef2d4884937539119cfCFc', // WH1
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x3F4b531b19f176Ef05258c33974aCF1Bc2C708E4', // hUSDT
+        '0x73dBaF6987B8B37cF201d20Db86AD48B89641017', // hUSDC
+      ],
+      whitelistTokens: [
+        '0x3F4b531b19f176Ef05258c33974aCF1Bc2C708E4', // hUSDT
+        '0x73dBaF6987B8B37cF201d20Db86AD48B89641017', // hUSDC
+        '0xd6e17Ea2F27E1ad83fD41AC5D1A3cb96CA5FC0Ac', // hETH
+        '0x2Fb665F01464552F3CDA9359Cfb0ebA0628690b1', // hBTC
+        '0xe3DEE16F1C4CDf9edFF38F66755eA6CC9f4047F3', // hLINK
+        '0xEd27f75440C075A594e4E03673f8698fDD7d744D', // hAVAX
       ],
       tokenOverrides: [],
       poolsToSkip: [],
