@@ -3,7 +3,7 @@ import { assert, beforeEach, clearStore, createMockedFunction, test } from 'matc
 import { describe, test } from 'matchstick-as/assembly/index'
 
 import { populateEmptyPools } from '../src/backfill'
-import { convertTokenToDecimal, NULL_ETH_HEX_STRING } from '../src/utils'
+import { NULL_ETH_HEX_STRING } from '../src/utils'
 import { StaticTokenDefinition } from '../src/utils/staticTokenDefinition'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../src/utils/token'
 import {
@@ -37,82 +37,14 @@ describe('handlePoolCreated', () => {
 
     invokePoolCreatedWithMockedEthCalls(MOCK_EVENT, TEST_CONFIG)
 
-    assertObjectMatches('Factory', TEST_CONFIG.factoryAddress, [
-      ['poolCount', '1'],
-      ['totalVolumeETH', '0'],
-      ['totalVolumeUSD', '0'],
-      ['untrackedVolumeUSD', '0'],
-      ['totalFeesUSD', '0'],
-      ['totalFeesETH', '0'],
-      ['totalValueLockedETH', '0'],
-      ['totalValueLockedUSD', '0'],
-      ['totalValueLockedETHUntracked', '0'],
-      ['totalValueLockedUSDUntracked', '0'],
-    ])
+    assertObjectMatches('Token', token0Fixture.address, [['symbol', token0Fixture.symbol]])
 
-    assertObjectMatches('Bundle', '1', [['ethPriceUSD', '0']])
-
-    assertObjectMatches('Token', token0Fixture.address, [
-      ['symbol', token0Fixture.symbol],
-      ['name', token0Fixture.name],
-      ['totalSupply', token0Fixture.totalSupply],
-      ['decimals', token0Fixture.decimals],
-      ['derivedETH', '0'],
-      ['volume', '0'],
-      ['volumeUSD', '0'],
-      ['feesUSD', '0'],
-      ['untrackedVolumeUSD', '0'],
-      ['totalValueLocked', '0'],
-      ['totalValueLockedUSD', '0'],
-      ['totalValueLockedUSDUntracked', '0'],
-      ['txCount', '0'],
-      ['poolCount', '0'],
-      ['whitelistPools', `[${poolAddress}]`],
-    ])
-
-    assertObjectMatches('Token', token1Fixture.address, [
-      ['symbol', token1Fixture.symbol],
-      ['name', token1Fixture.name],
-      ['totalSupply', token1Fixture.totalSupply],
-      ['decimals', token1Fixture.decimals],
-      ['derivedETH', '0'],
-      ['volume', '0'],
-      ['volumeUSD', '0'],
-      ['feesUSD', '0'],
-      ['untrackedVolumeUSD', '0'],
-      ['totalValueLocked', '0'],
-      ['totalValueLockedUSD', '0'],
-      ['totalValueLockedUSDUntracked', '0'],
-      ['txCount', '0'],
-      ['poolCount', '0'],
-      ['whitelistPools', `[${poolAddress}]`],
-    ])
+    assertObjectMatches('Token', token1Fixture.address, [['symbol', token1Fixture.symbol]])
 
     assertObjectMatches('Pool', poolAddress, [
       ['token0', token0Fixture.address],
       ['token1', token1Fixture.address],
       ['feeTier', poolFixture.feeTier.toString()],
-      ['createdAtTimestamp', MOCK_EVENT.block.timestamp.toString()],
-      ['createdAtBlockNumber', MOCK_EVENT.block.number.toString()],
-      ['liquidityProviderCount', '0'],
-      ['txCount', '0'],
-      ['sqrtPrice', '0'],
-      ['token0Price', '0'],
-      ['token1Price', '0'],
-      ['observationIndex', '0'],
-      ['totalValueLockedToken0', '0'],
-      ['totalValueLockedToken1', '0'],
-      ['totalValueLockedUSD', '0'],
-      ['totalValueLockedETH', '0'],
-      ['totalValueLockedUSDUntracked', '0'],
-      ['volumeToken0', '0'],
-      ['volumeToken1', '0'],
-      ['volumeUSD', '0'],
-      ['feesUSD', '0'],
-      ['untrackedVolumeUSD', '0'],
-      ['collectedFeesToken0', '0'],
-      ['collectedFeesToken1', '0'],
-      ['collectedFeesUSD', '0'],
     ])
   })
 
@@ -178,7 +110,6 @@ describe('handlePoolCreated', () => {
         .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(token1Fixture.balanceOf))])
 
       populateEmptyPools(
-        MOCK_EVENT,
         [
           [
             Address.fromString(USDC_WETH_03_MAINNET_POOL_FIXTURE.address), // first address is unused, hence reusing this pool address
@@ -188,78 +119,16 @@ describe('handlePoolCreated', () => {
           ],
         ],
         [],
-        [],
       )
 
-      const tvlToken0 = convertTokenToDecimal(
-        BigInt.fromString(token0Fixture.balanceOf),
-        BigInt.fromString(token0Fixture.decimals),
-      )
-      assertObjectMatches('Token', token0Fixture.address, [
-        ['symbol', token0Fixture.symbol],
-        ['name', token0Fixture.name],
-        ['totalSupply', token0Fixture.totalSupply],
-        ['decimals', token0Fixture.decimals],
-        ['derivedETH', '0'],
-        ['volume', '0'],
-        ['volumeUSD', '0'],
-        ['feesUSD', '0'],
-        ['untrackedVolumeUSD', '0'],
-        ['totalValueLocked', tvlToken0.toString()],
-        ['totalValueLockedUSD', '0'],
-        ['totalValueLockedUSDUntracked', '0'],
-        ['txCount', '0'],
-        ['poolCount', '0'],
-        ['whitelistPools', `[]`],
-      ])
+      assertObjectMatches('Token', token0Fixture.address, [['symbol', token0Fixture.symbol]])
 
-      const tvlToken1 = convertTokenToDecimal(
-        BigInt.fromString(token1Fixture.balanceOf),
-        BigInt.fromString(token1Fixture.decimals),
-      )
-      assertObjectMatches('Token', token1Fixture.address, [
-        ['symbol', token1Fixture.symbol],
-        ['name', token1Fixture.name],
-        ['totalSupply', token1Fixture.totalSupply],
-        ['decimals', token1Fixture.decimals],
-        ['derivedETH', '0'],
-        ['volume', '0'],
-        ['volumeUSD', '0'],
-        ['feesUSD', '0'],
-        ['untrackedVolumeUSD', '0'],
-        ['totalValueLocked', tvlToken1.toString()],
-        ['totalValueLockedUSD', '0'],
-        ['totalValueLockedUSDUntracked', '0'],
-        ['txCount', '0'],
-        ['poolCount', '0'],
-        ['whitelistPools', `[]`],
-      ])
+      assertObjectMatches('Token', token1Fixture.address, [['symbol', token1Fixture.symbol]])
 
       assertObjectMatches('Pool', USDC_WETH_03_MAINNET_POOL_FIXTURE.address, [
         ['token0', token0Fixture.address],
         ['token1', token1Fixture.address],
         ['feeTier', USDC_WETH_03_MAINNET_POOL_FIXTURE.feeTier],
-        ['createdAtTimestamp', MOCK_EVENT.block.timestamp.toString()],
-        ['createdAtBlockNumber', MOCK_EVENT.block.number.toString()],
-        ['liquidityProviderCount', '0'],
-        ['txCount', '0'],
-        ['sqrtPrice', '0'],
-        ['token0Price', '0'],
-        ['token1Price', '0'],
-        ['observationIndex', '0'],
-        ['totalValueLockedToken0', tvlToken0.toString()],
-        ['totalValueLockedToken1', tvlToken1.toString()],
-        ['totalValueLockedUSD', '0'],
-        ['totalValueLockedETH', '0'],
-        ['totalValueLockedUSDUntracked', '0'],
-        ['volumeToken0', '0'],
-        ['volumeToken1', '0'],
-        ['volumeUSD', '0'],
-        ['feesUSD', '0'],
-        ['untrackedVolumeUSD', '0'],
-        ['collectedFeesToken0', '0'],
-        ['collectedFeesToken1', '0'],
-        ['collectedFeesUSD', '0'],
       ])
     })
   })

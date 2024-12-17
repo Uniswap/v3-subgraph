@@ -210,32 +210,11 @@ export const createAndStoreTestPool = (poolFixture: PoolFixture): Pool => {
   const feeTier = parseInt(poolFixture.feeTier) as i32
 
   const pool = new Pool(poolAddress)
-  pool.createdAtTimestamp = ZERO_BI
-  pool.createdAtBlockNumber = ZERO_BI
   pool.token0 = token0Address
   pool.token1 = token1Address
   pool.feeTier = BigInt.fromI32(feeTier)
   pool.liquidity = ZERO_BI
-  pool.sqrtPrice = ZERO_BI
-  pool.token0Price = ZERO_BD
-  pool.token1Price = ZERO_BD
   pool.tick = ZERO_BI
-  pool.observationIndex = ZERO_BI
-  pool.volumeToken0 = ZERO_BD
-  pool.volumeToken1 = ZERO_BD
-  pool.volumeUSD = ZERO_BD
-  pool.untrackedVolumeUSD = ZERO_BD
-  pool.feesUSD = ZERO_BD
-  pool.txCount = ZERO_BI
-  pool.collectedFeesToken0 = ZERO_BD
-  pool.collectedFeesToken1 = ZERO_BD
-  pool.collectedFeesUSD = ZERO_BD
-  pool.totalValueLockedToken0 = ZERO_BD
-  pool.totalValueLockedToken1 = ZERO_BD
-  pool.totalValueLockedUSD = ZERO_BD
-  pool.totalValueLockedETH = ZERO_BD
-  pool.totalValueLockedUSDUntracked = ZERO_BD
-  pool.liquidityProviderCount = ZERO_BI
 
   pool.save()
   return pool
@@ -244,20 +223,6 @@ export const createAndStoreTestPool = (poolFixture: PoolFixture): Pool => {
 export const createAndStoreTestToken = (tokenFixture: TokenFixture): Token => {
   const token = new Token(tokenFixture.address)
   token.symbol = tokenFixture.symbol
-  token.name = tokenFixture.name
-  token.decimals = BigInt.fromString(tokenFixture.decimals)
-  token.totalSupply = BigInt.fromString(tokenFixture.totalSupply)
-  token.volume = ZERO_BD
-  token.volumeUSD = ZERO_BD
-  token.untrackedVolumeUSD = ZERO_BD
-  token.feesUSD = ZERO_BD
-  token.txCount = ZERO_BI
-  token.poolCount = ZERO_BI
-  token.totalValueLocked = ZERO_BD
-  token.totalValueLockedUSD = ZERO_BD
-  token.totalValueLockedUSDUntracked = ZERO_BD
-  token.derivedETH = ZERO_BD
-  token.whitelistPools = []
 
   token.save()
   return token
