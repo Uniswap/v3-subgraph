@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: sepolia
+    network: manta-pacific-mainnet
     source:
-      address: "0x0227628f3F023bb0B980b67D528571c95c6DaC1c"
+      address: "0x5bd1F6735B80e58aAC88B8A94836854d3068a13a"
       abi: Factory
-      startBlock: 3518270
+      startBlock: 41426
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: sepolia
+    network: manta-pacific-mainnet
     source:
       abi: Pool
     mapping:

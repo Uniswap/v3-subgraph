@@ -41,6 +41,12 @@
       "startBlock": 12369621
     }
   },
+  "manta-pacific-mainnet": {
+    "Factory": {
+      "address": "0x5bd1F6735B80e58aAC88B8A94836854d3068a13a",
+      "startBlock": 41427
+    }
+  },
   "matic": {
     "Factory": {
       "address": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
