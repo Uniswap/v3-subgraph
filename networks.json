@@ -59,6 +59,12 @@
       "startBlock": 0
     }
   },
+  "scroll-mainnet": {
+    "Factory": {
+      "address": "0x70C62C8b8e801124A4Aa81ce07b637A3e83cb919",
+      "startBlock": 1367
+    }
+  },
   "zksync-era": {
     "Factory": {
       "address": "0x8FdA5a7a8dCA67BBcDd10F02Fa0649A937215422",
