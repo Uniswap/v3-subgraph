@@ -14,7 +14,7 @@ export enum ChainId {
   MANTA_PACIFIC_MAINNET = 169,
   MATIC = 137,
   OPTIMISM = 10,
-  SCROLL_MAINNET = 534352,
+  SCROLL = 534352,
   ZKSYNC_ERA = 324,
   ZORA_MAINNET = 7777777,
   WORLDCHAIN_MAINNET = 480,
@@ -32,7 +32,7 @@ const MAINNET_NETWORK_NAME = 'mainnet'
 const MANTA_PACIFIC_MAINNET_NETWORK_NAME = 'manta-pacific-mainnet'
 const MATIC_NETWORK_NAME = 'matic'
 const OPTIMISM_NETWORK_NAME = 'optimism'
-const SCROLL_MAINNET_NETWORK_NAME = 'scroll-mainnet'
+const SCROLL_NETWORK_NAME = 'scroll'
 const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
@@ -392,7 +392,7 @@ export function getSubgraphConfig(): SubgraphConfig {
       ],
       poolMappings: OPTIMISM_POOL_MAPPINGS,
     }
-  } else if (selectedNetwork == SCROLL_MAINNET_NETWORK_NAME) {
+  } else if (selectedNetwork == SCROLL_NETWORK_NAME) {
     return {
       factoryAddress: '0x70C62C8b8e801124A4Aa81ce07b637A3e83cb919',
       stablecoinWrappedNativePoolAddress: '0x813Df550a32d4A9d42010D057386429ad2328ED9', // USDC-WETH 0.05% pool

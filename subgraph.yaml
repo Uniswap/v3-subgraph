@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: manta-pacific-mainnet
+    network: scroll
     source:
-      address: "0x5bd1F6735B80e58aAC88B8A94836854d3068a13a"
+      address: "0x70C62C8b8e801124A4Aa81ce07b637A3e83cb919"
       abi: Factory
-      startBlock: 41426
+      startBlock: 1367
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: manta-pacific-mainnet
+    network: scroll
     source:
       abi: Pool
     mapping:

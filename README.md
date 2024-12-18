@@ -61,11 +61,11 @@ yarn run deploy-remote
 
 A CloudFront proxy has been set up for the mainnet subgraph at https://d2vin613o4opvi.cloudfront.net/. To query the subgraph for a list of pools, try `https://d2vin613o4opvi.cloudfront.net/subgraphs/name/aperture/uniswap-v3/graphql?query=query+getPools+%7B%0A++pools+%7B%0A++++id%0A++++feeTier%0A++++token0+%7B%0A++++++id%0A++++++name%0A++++%7D%0A++++token1+%7B%0A++++++id%0A++++++name%0A++++%7D%0A++%7D%0A%7D`.
 
-### Deploy UniswapV3 Subgraph to the Graph Node for pruned Manta-Pacific-Mainnet
-0. If yarn fails, then clone https://github.com/Uniswap/v3-subgraph and apply changes from manta-pacific-mainnet branch (https://github.com/Aperture-Finance/uniswap-v3-subgraph/tree/manta-pacific-mainnet).
+### Deploy UniswapV3 Subgraph to the Graph Node for pruned Scroll-Mainnet
+0. If yarn fails, then clone https://github.com/Uniswap/v3-subgraph and apply changes from manta-pacific-mainnet branch (https://github.com/Aperture-Finance/uniswap-v3-subgraph/tree/manta-pacific-mainnet), and change data from manta-pacific-mainnet to scroll-mainnet.
 1. Install Goldsky's CLI and log in: https://docs.goldsky.com/subgraphs/deploying-subgraphs#install-goldskys-cli-and-log-in
 2. yarn && yarn codegen && yarn build
-3. goldsky subgraph deploy --path . pruned-manta-pacific-mainnet/0.0.1
+3. goldsky subgraph deploy --path . pruned-scroll-mainnet/0.0.1
 
 ### Running Unit Tests
 
