@@ -53,6 +53,18 @@
       "startBlock": 0
     }
   },
+  "unichain-mainnet": {
+    "Factory": {
+      "address": "0x1f98400000000000000000000000000000000003",
+      "startBlock": 0
+    }
+  },
+  "unichain-sepolia": {
+    "Factory": {
+      "address": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+      "startBlock": 0
+    }
+  },
   "zksync-era": {
     "Factory": {
       "address": "0x8FdA5a7a8dCA67BBcDd10F02Fa0649A937215422",
