@@ -17,6 +17,7 @@ export enum ChainId {
   ZORA_MAINNET = 7777777,
   WORLDCHAIN_MAINNET = 480,
   SEPOLIA = 11155111,
+  MONAD_TESTNET = 10143,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -33,6 +34,7 @@ const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
+const MONAD_TESTNET_NETWORK_NAME = 'monad-testnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -451,6 +453,22 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238', // USDC
         '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0', // USDT
         '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI,
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == MONAD_TESTNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x961235a9020b05c44df1026d956d1f4d78014276',
+      stablecoinWrappedNativePoolAddress: '0x36e0216926341871824ad5fd9cfc3ea404a94708',
+      stablecoinIsToken0: false,
+      wrappedNativeAddress: '0x760afe86e5de5fa0ee542fc7b7b713e1c5425701', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: ['0xfbc2d240a5ed44231aca3a9e9066bc4b33f01149'], // USDT
+      whitelistTokens: [
+        '0xfbc2d240a5ed44231aca3a9e9066bc4b33f01149', // USDT
+        '0x760afe86e5de5fa0ee542fc7b7b713e1c5425701', // WETH
       ],
       tokenOverrides: [],
       poolsToSkip: [],
