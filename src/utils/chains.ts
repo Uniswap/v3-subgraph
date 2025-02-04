@@ -463,16 +463,18 @@ export function getSubgraphConfig(): SubgraphConfig {
   } else if (selectedNetwork == UNICHAIN_NETWORK_NAME) {
     return {
       factoryAddress: '0x1f98400000000000000000000000000000000003',
-      stablecoinWrappedNativePoolAddress: '', // USDC/WETH
+      stablecoinWrappedNativePoolAddress: '0xe4e90705598e9fa297eab1774573651759667258', // DAI/WETH
       stablecoinIsToken0: true,
       wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
       minimumNativeLocked: BigDecimal.fromString('1'),
       stablecoinAddresses: [
-        '', // USDC
+        '0x078d782b760474a361dda0af3839290b0ef57ad6', // USDC
+        '0x20cab320a855b39f724131c69424240519573f81', // DAI
       ],
       whitelistTokens: [
         '0x4200000000000000000000000000000000000006', // WETH
-        '', // USDC
+        '0x078d782b760474a361dda0af3839290b0ef57ad6', // USDC
+        '0x20cab320a855b39f724131c69424240519573f81', // DAI
       ],
       tokenOverrides: [],
       poolsToSkip: [],
@@ -480,17 +482,17 @@ export function getSubgraphConfig(): SubgraphConfig {
     }
   } else if (selectedNetwork == UNICHAIN_SEPOLIA_NETWORK_NAME) {
     return {
-      factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-      stablecoinWrappedNativePoolAddress: '0xE87b0A6C6611119deCF5C4e9203E1c46F561BdAE', // USDC/WETH
+      factoryAddress: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
+      stablecoinWrappedNativePoolAddress: '0xe87b0a6c6611119decf5c4e9203e1c46f561bdae', // USDC/WETH
       stablecoinIsToken0: true,
       wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
       minimumNativeLocked: BigDecimal.fromString('1'),
       stablecoinAddresses: [
-        '0x31d0220469e10c4E71834a79b1f276d740d3768F', // USDC
+        '0x31d0220469e10c4e71834a79b1f276d740d3768f', // USDC
       ],
       whitelistTokens: [
         '0x4200000000000000000000000000000000000006', // WETH
-        '0x31d0220469e10c4E71834a79b1f276d740d3768F', // USDC
+        '0x31d0220469e10c4e71834a79b1f276d740d3768f', // USDC
       ],
       tokenOverrides: [],
       poolsToSkip: [],
