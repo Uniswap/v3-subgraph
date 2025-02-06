@@ -463,7 +463,7 @@ export function getSubgraphConfig(): SubgraphConfig {
   } else if (selectedNetwork == UNICHAIN_NETWORK_NAME) {
     return {
       factoryAddress: '0x1f98400000000000000000000000000000000003',
-      stablecoinWrappedNativePoolAddress: '0xe4e90705598e9fa297eab1774573651759667258', // DAI/WETH
+      stablecoinWrappedNativePoolAddress: '0x8927058918e3cff6f55efe45a58db1be1f069e49', // USDC/WETH
       stablecoinIsToken0: true,
       wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
       minimumNativeLocked: BigDecimal.fromString('1'),
