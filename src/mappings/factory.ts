@@ -135,6 +135,8 @@ export function handlePoolCreatedHelper(
   pool.liquidityProviderCount = ZERO_BI
   pool.txCount = ZERO_BI
   pool.liquidity = ZERO_BI
+  pool.feeGrowthGlobal0X128 = ZERO_BI
+  pool.feeGrowthGlobal1X128 = ZERO_BI
   pool.sqrtPrice = ZERO_BI
   pool.token0Price = ZERO_BD
   pool.token1Price = ZERO_BD

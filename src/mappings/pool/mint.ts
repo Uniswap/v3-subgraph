@@ -1,5 +1,6 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigInt, ethereum } from '@graphprotocol/graph-ts'
 
+import { Pool as PoolABI } from '../../types/Factory/Pool'
 import { Bundle, Factory, Mint, Pool, Tick, Token } from '../../types/schema'
 import { Mint as MintEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../../utils'
@@ -9,6 +10,7 @@ import {
   updatePoolDayData,
   updatePoolHourData,
   updateTokenDayData,
+  updateTickDayData,
   updateTokenHourData,
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
@@ -138,5 +140,21 @@ export function handleMintHelper(event: MintEvent, subgraphConfig: SubgraphConfi
     pool.save()
     factory.save()
     mint.save()
+
+    // Update inner tick vars and save the ticks
+    updateTickFeeVarsAndSave(lowerTick, event)
+    updateTickFeeVarsAndSave(upperTick, event)
   }
+}
+
+function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
+  const poolAddress = event.address
+  // not all ticks are initialized so obtaining null is expected behavior
+  const poolContract = PoolABI.bind(poolAddress)
+  const tickResult = poolContract.ticks(tick.tickIdx.toI32())
+  tick.feeGrowthOutside0X128 = tickResult.value2
+  tick.feeGrowthOutside1X128 = tickResult.value3
+  tick.save()
+
+  updateTickDayData(tick, event)
 }
