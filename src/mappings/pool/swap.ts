@@ -1,10 +1,10 @@
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
-import { Bundle, Factory, Pool, Swap, Token } from '../../types/schema'
-import { Swap as SwapEvent } from '../../types/templates/Pool/Pool'
+import { Bundle, Factory, Pool, Swap, Tick, Token } from '../../types/schema'
+import { Swap as SwapEvent, Pool as PoolContract } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../../utils'
 import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
-import { ONE_BI, ZERO_BD } from '../../utils/constants'
+import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
@@ -18,6 +18,7 @@ import {
   getTrackedAmountUSD,
   sqrtPriceX96ToTokenPrices,
 } from '../../utils/pricing'
+import { feeTierToTickSpacing } from '../../utils/tick'
 
 export function handleSwap(event: SwapEvent): void {
   handleSwapHelper(event)
@@ -45,6 +46,7 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
   const token1 = Token.load(pool.token1)
 
   if (token0 && token1) {
+    const oldTick = pool.tick
     // amounts - 0/1 are token deltas: can be positive or negative
     const amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
     const amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
@@ -175,6 +177,13 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
     swap.sqrtPriceX96 = event.params.sqrtPriceX96
     swap.logIndex = event.logIndex
 
+    // update fee growth
+    const poolContract = PoolContract.bind(event.address)
+    const feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
+    const feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+    pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
+    pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
+
     // interval data
     const uniswapDayData = updateUniswapDayData(event, factoryAddress)
     const poolDayData = updatePoolDayData(event)
@@ -232,5 +241,41 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
     pool.save()
     token0.save()
     token1.save()
+
+    // Update inner vars of current or crossed ticks
+    const newTick = pool.tick
+    if (oldTick && newTick) {
+      const tickSpacing = feeTierToTickSpacing(pool.feeTier)
+      const modulo = newTick.mod(tickSpacing)
+      if (modulo.equals(ZERO_BI)) {
+        // Current tick is initialized and needs to be updated
+        loadTickUpdateFeeVarsAndSave(newTick.toI32(), event)
+      }
+
+      const numIters = oldTick.minus(newTick).abs().div(tickSpacing)
+
+      if (numIters.gt(BigInt.fromI32(100))) {
+        // In case more than 100 ticks need to be updated ignore the update in
+        // order to avoid timeouts. From testing this behavior occurs only upon
+        // pool initialization. This should not be a big issue as the ticks get
+        // updated later. For early users this error also disappears when calling
+        // collect
+      } else if (newTick.gt(oldTick)) {
+        const firstInitialized = oldTick.plus(tickSpacing.minus(modulo))
+        for (let i = firstInitialized; i.le(newTick); i = i.plus(tickSpacing)) {
+          loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+        }
+      } else if (newTick.lt(oldTick)) {
+        const firstInitialized = oldTick.minus(modulo)
+        for (let i = firstInitialized; i.ge(newTick); i = i.minus(tickSpacing)) {
+          loadTickUpdateFeeVarsAndSave(i.toI32(), event)
+        }
+      }
+    }
   }
+}
+
+function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
+  const poolAddress = event.address
+  const tick = Tick.load(poolAddress.toHexString().concat('#').concat(tickId.toString()))
 }
