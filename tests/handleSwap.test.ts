@@ -252,5 +252,15 @@ describe('handleSwap', () => {
       ['untrackedVolumeUSD', amountTotalUSDTracked.toString()],
       ['feesUSD', feesUSD.toString()],
     ])
+
+    assertObjectMatches('UserTradeStats', SWAP_FIXTURE.sender.toHexString(), [
+      ['volumeUSD', amountTotalUSDTracked.toString()],
+      ['volumeETH', amountTotalETHTRacked.toString()],
+      ['feesUSD', feesUSD.toString()],
+      ['feesETH', feesETH.toString()],
+      ['txCount', '1'],
+      ['firstTradeTimestamp', MOCK_EVENT.block.timestamp.toString()],
+      ['lastTradeTimestamp', MOCK_EVENT.block.timestamp.toString()],
+    ])
   })
 })

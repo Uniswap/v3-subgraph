@@ -28,6 +28,26 @@ type Factory @entity {
   owner: ID!
 }
 
+# New entity to track per-address trading statistics
+type UserTradeStats @entity {
+  # user address
+  id: ID!
+  # total volume in USD
+  volumeUSD: BigDecimal!
+  # total volume in ETH
+  volumeETH: BigDecimal!
+  # total fees paid in USD
+  feesUSD: BigDecimal!
+  # total fees paid in ETH
+  feesETH: BigDecimal!
+  # total number of trades
+  txCount: BigInt!
+  # timestamp of first trade
+  firstTradeTimestamp: BigInt!
+  # timestamp of last trade
+  lastTradeTimestamp: BigInt!
+}
+
 # stores for USD calculations
 type Bundle @entity {
   id: ID!

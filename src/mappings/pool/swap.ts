@@ -1,16 +1,17 @@
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
-import { Bundle, Factory, Pool, Swap, Token } from '../../types/schema'
+import { Bundle, Factory, Pool, Swap, Token, UserTradeStats } from '../../types/schema'
 import { Swap as SwapEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../../utils'
 import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
-import { ONE_BI, ZERO_BD } from '../../utils/constants'
+import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 import {
   updatePoolDayData,
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
   updateUniswapDayData,
+  updateUserTradeStats,
 } from '../../utils/intervalUpdates'
 import {
   findNativePerToken,
@@ -183,6 +184,7 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
     const token1DayData = updateTokenDayData(token1 as Token, event)
     const token0HourData = updateTokenHourData(token0 as Token, event)
     const token1HourData = updateTokenHourData(token1 as Token, event)
+    const user = updateUserTradeStats(event.params.sender.toHexString(), event)
 
     // update volume metrics
     uniswapDayData.volumeETH = uniswapDayData.volumeETH.plus(amountTotalETHTracked)
@@ -219,6 +221,15 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
     token1HourData.untrackedVolumeUSD = token1HourData.untrackedVolumeUSD.plus(amountTotalUSDTracked)
     token1HourData.feesUSD = token1HourData.feesUSD.plus(feesUSD)
 
+    user.volumeUSD = user.volumeUSD.plus(amountTotalUSDTracked)
+    user.volumeETH = user.volumeETH.plus(amountTotalETHTracked)
+    user.feesUSD = user.feesUSD.plus(feesUSD)
+    user.feesETH = user.feesETH.plus(feesETH)
+    user.txCount = user.txCount.plus(ONE_BI)
+    user.lastTradeTimestamp = event.block.timestamp
+
+    // Save all entities
+    user.save()
     swap.save()
     token0DayData.save()
     token1DayData.save()

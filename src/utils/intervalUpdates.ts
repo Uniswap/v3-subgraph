@@ -1,4 +1,4 @@
-import { ethereum } from '@graphprotocol/graph-ts'
+import { Address, ethereum } from '@graphprotocol/graph-ts'
 
 import {
   Bundle,
@@ -10,6 +10,7 @@ import {
   TokenDayData,
   TokenHourData,
   UniswapDayData,
+  UserTradeStats,
 } from './../types/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from './constants'
 
@@ -202,4 +203,20 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   tokenHourData.save()
 
   return tokenHourData as TokenHourData
+}
+
+export function updateUserTradeStats(userAddress: string, event: ethereum.Event): UserTradeStats {
+  let user = UserTradeStats.load(userAddress)
+  if (user === null) {
+    user = new UserTradeStats(userAddress)
+    user.volumeUSD = ZERO_BD
+    user.volumeETH = ZERO_BD
+    user.feesUSD = ZERO_BD
+    user.feesETH = ZERO_BD
+    user.txCount = ZERO_BI
+    user.firstTradeTimestamp = event.block.timestamp
+    user.lastTradeTimestamp = event.block.timestamp
+  }
+  user.save()
+  return user as UserTradeStats
 }
