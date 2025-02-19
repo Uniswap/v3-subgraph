@@ -76,5 +76,11 @@
       "address": "0x0227628f3F023bb0B980b67D528571c95c6DaC1c",
       "startBlock": 3518270
     }
+  },
+  "monad-testnet": {
+    "Factory": {
+      "address": "0x961235a9020B05C44DF1026D956D1F4D78014276",
+      "startBlock": 361590
+    }
   }
 }

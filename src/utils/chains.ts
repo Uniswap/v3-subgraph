@@ -33,6 +33,7 @@ const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
+const MONAD_TESTNET_NETWORK_NAME = 'monad-testnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -453,6 +454,50 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI,
       ],
       tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == MONAD_TESTNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x961235a9020b05c44df1026d956d1f4d78014276',
+      stablecoinWrappedNativePoolAddress: '0x36e0216926341871824ad5fd9cfc3ea404a94708',
+      stablecoinIsToken0: false,
+      wrappedNativeAddress: '0x760afe86e5de5fa0ee542fc7b7b713e1c5425701', // WMON
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0xfbc2d240a5ed44231aca3a9e9066bc4b33f01149', // USDT
+        '0xf817257fed379853cde0fa4f97ab987181b1e5ea', // USDC
+      ],
+      whitelistTokens: [
+        '0x760afe86e5de5fa0ee542fc7b7b713e1c5425701', // WMON
+        '0xfbc2d240a5ed44231aca3a9e9066bc4b33f01149', // USDT
+      ],
+      tokenOverrides: [
+        {
+          address: Address.fromString('0x760afe86e5de5fa0ee542fc7b7b713e1c5425701'),
+          symbol: 'WMON',
+          name: 'Wrapped Monad',
+          decimals: BigInt.fromI32(18),
+        },
+        {
+          address: Address.fromString('0xfbc2d240a5ed44231aca3a9e9066bc4b33f01149'),
+          symbol: 'USDT',
+          name: 'Tether USD',
+          decimals: BigInt.fromI32(6),
+        },
+        {
+          address: Address.fromString('0xf817257fed379853cde0fa4f97ab987181b1e5ea'),
+          symbol: 'USDC',
+          name: 'USD Coin',
+          decimals: BigInt.fromI32(6),
+        },
+        {
+          address: Address.fromString('0x282b544955348d8c2be432a3f0d6df20b0e922e5'),
+          symbol: 'USDC',
+          name: 'USD Coin',
+          decimals: BigInt.fromI32(6),
+        },
+      ],
       poolsToSkip: [],
       poolMappings: [],
     }

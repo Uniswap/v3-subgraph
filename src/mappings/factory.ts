@@ -67,7 +67,7 @@ export function handlePoolCreatedHelper(
     token0 = new Token(event.params.token0.toHexString())
     token0.symbol = fetchTokenSymbol(event.params.token0, tokenOverrides)
     token0.name = fetchTokenName(event.params.token0, tokenOverrides)
-    token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
+    token0.totalSupply = BigInt.fromI32(0)
     const decimals = fetchTokenDecimals(event.params.token0, tokenOverrides)
 
     // bail if we couldn't figure out the decimals
@@ -94,7 +94,7 @@ export function handlePoolCreatedHelper(
     token1 = new Token(event.params.token1.toHexString())
     token1.symbol = fetchTokenSymbol(event.params.token1, tokenOverrides)
     token1.name = fetchTokenName(event.params.token1, tokenOverrides)
-    token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
+    token1.totalSupply = BigInt.fromI32(0)
     const decimals = fetchTokenDecimals(event.params.token1, tokenOverrides)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {

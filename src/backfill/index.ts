@@ -17,7 +17,7 @@ function populateToken(tokenAddress: string, tokenOverrides: StaticTokenDefiniti
   token = new Token(tokenAddress)
   token.symbol = fetchTokenSymbol(Address.fromString(tokenAddress), tokenOverrides)
   token.name = fetchTokenName(Address.fromString(tokenAddress), tokenOverrides)
-  token.totalSupply = fetchTokenTotalSupply(Address.fromString(tokenAddress))
+  token.totalSupply = BigInt.fromI32(0)
   const decimals = fetchTokenDecimals(Address.fromString(tokenAddress), tokenOverrides)
   if (decimals === null) {
     return
