@@ -46,12 +46,12 @@ export function handleMintHelper(event: MintEvent, subgraphConfig: SubgraphConfi
     // update token0 data
     token0.txCount = token0.txCount.plus(ONE_BI)
     token0.totalValueLocked = token0.totalValueLocked.plus(amount0)
-    token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH.times(bundle.ethPriceUSD))
+    //token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH.times(bundle.ethPriceUSD))
 
     // update token1 data
     token1.txCount = token1.txCount.plus(ONE_BI)
     token1.totalValueLocked = token1.totalValueLocked.plus(amount1)
-    token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
+    //token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
 
     // pool data
     pool.txCount = pool.txCount.plus(ONE_BI)

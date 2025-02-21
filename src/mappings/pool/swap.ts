@@ -154,8 +154,8 @@ export function handleSwapHelper(event: SwapEvent, subgraphConfig: SubgraphConfi
     factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
     factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
-    token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH).times(bundle.ethPriceUSD)
-    token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH).times(bundle.ethPriceUSD)
+    //token0.totalValueLockedUSD = token0.totalValueLocked.times(token0.derivedETH).times(bundle.ethPriceUSD)
+    //token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH).times(bundle.ethPriceUSD)
 
     // create Swap event
     const transaction = loadTransaction(event)

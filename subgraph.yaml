@@ -12,7 +12,7 @@ dataSources:
     network: monad-testnet
     source:
       abi: Factory
-      address: "0x961235a9020B05C44DF1026D956D1F4D78014276"
+      address: '0x961235a9020B05C44DF1026D956D1F4D78014276'
       startBlock: 361590
     mapping:
       kind: ethereum/events
@@ -70,3 +70,6 @@ templates:
         - event: Collect(indexed address,address,indexed int24,indexed
             int24,uint128,uint128)
           handler: handleCollect
+graft:
+  base: Qmf4BMgafm2z6VtzhsVaNCVmw66kdPzQxHRWNp1B2fGCET
+  block: 4150000
