@@ -37,6 +37,7 @@ const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
 const UNICHAIN_NETWORK_NAME = 'unichain-mainnet'
 const UNICHAIN_SEPOLIA_NETWORK_NAME = 'unichain-sepolia'
+const SONEIUM_NETWORK_NAME = 'soneium-mainnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -493,6 +494,24 @@ export function getSubgraphConfig(): SubgraphConfig {
       whitelistTokens: [
         '0x4200000000000000000000000000000000000006', // WETH
         '0x31d0220469e10c4e71834a79b1f276d740d3768f', // USDC
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == SONEIUM_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x42ae7ec7ff020412639d443e245d936429fbe717',
+      stablecoinWrappedNativePoolAddress: '0xcd4255ceae51803a9333aa1a559991e17b024efc', // USDC/WETH 0.05% pool
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0xba9986d2381edf1da03b0b9c1f8b00dc4aacc369', // USDC
+      ],
+      whitelistTokens: [
+        '0x4200000000000000000000000000000000000006', // WETH
+        '0xba9986d2381edf1da03b0b9c1f8b00dc4aacc369', // USDC
       ],
       tokenOverrides: [],
       poolsToSkip: [],
