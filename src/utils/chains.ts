@@ -17,6 +17,8 @@ export enum ChainId {
   ZORA_MAINNET = 7777777,
   WORLDCHAIN_MAINNET = 480,
   SEPOLIA = 11155111,
+  UNICHAIN = 130,
+  UNICHAIN_SEPOLIA = 1301,
 }
 
 // subgraph does not support string enums, hence these constants
@@ -33,6 +35,8 @@ const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
+const UNICHAIN_NETWORK_NAME = 'unichain-mainnet'
+const UNICHAIN_SEPOLIA_NETWORK_NAME = 'unichain-sepolia'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -451,6 +455,44 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238', // USDC
         '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0', // USDT
         '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', // UNI,
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == UNICHAIN_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x1f98400000000000000000000000000000000003',
+      stablecoinWrappedNativePoolAddress: '0x65081cb48d74a32e9ccfed75164b8c09972dbcf1', // USDC/WETH 0.05%
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x078d782b760474a361dda0af3839290b0ef57ad6', // USDC
+        '0x20cab320a855b39f724131c69424240519573f81', // DAI
+      ],
+      whitelistTokens: [
+        '0x4200000000000000000000000000000000000006', // WETH
+        '0x078d782b760474a361dda0af3839290b0ef57ad6', // USDC
+        '0x20cab320a855b39f724131c69424240519573f81', // DAI
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == UNICHAIN_SEPOLIA_NETWORK_NAME) {
+    return {
+      factoryAddress: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
+      stablecoinWrappedNativePoolAddress: '0xe87b0a6c6611119decf5c4e9203e1c46f561bdae', // USDC/WETH
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0x4200000000000000000000000000000000000006', // WETH
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x31d0220469e10c4e71834a79b1f276d740d3768f', // USDC
+      ],
+      whitelistTokens: [
+        '0x4200000000000000000000000000000000000006', // WETH
+        '0x31d0220469e10c4e71834a79b1f276d740d3768f', // USDC
       ],
       tokenOverrides: [],
       poolsToSkip: [],
