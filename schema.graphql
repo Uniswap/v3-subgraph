@@ -74,6 +74,82 @@ type Token @entity {
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
 
+# New Position entity to track liquidity positions
+type Position @entity {
+  # Format: <owner address>-<pool address>-<lower tick>-<upper tick>
+  id: ID!
+  # Owner of the position
+  owner: Bytes!
+  # Pool the position is in
+  pool: Pool!
+  # Token0 of the pool
+  token0: Token!
+  # Token1 of the pool
+  token1: Token!
+  # Lower tick of the position
+  tickLower: BigInt!
+  # Upper tick of the position
+  tickUpper: BigInt!
+  # Current liquidity of the position
+  liquidity: BigInt!
+  # Deposited amount of token0
+  depositedToken0: BigDecimal!
+  # Deposited amount of token1
+  depositedToken1: BigDecimal!
+  # Withdrawn amount of token0
+  withdrawnToken0: BigDecimal!
+  # Withdrawn amount of token1
+  withdrawnToken1: BigDecimal!
+  # Collected fees of token0
+  collectedFeesToken0: BigDecimal!
+  # Collected fees of token1
+  collectedFeesToken1: BigDecimal!
+  # Transaction in which the position was created
+  transaction: Transaction!
+  # Timestamp when the position was created
+  createdAtTimestamp: BigInt!
+  # Block when the position was created
+  createdAtBlockNumber: BigInt!
+  # Timestamp when the position was last updated
+  updatedAtTimestamp: BigInt!
+  # Block when the position was last updated
+  updatedAtBlockNumber: BigInt!
+  # Closed position
+  closed: Boolean!
+}
+
+# Position snapshot for historical data
+type PositionSnapshot @entity {
+  # Format: <position id>-<block number>
+  id: ID!
+  # Owner of the position
+  owner: Bytes!
+  # Pool the position is in
+  pool: Pool!
+  # Position this is a snapshot of
+  position: Position!
+  # Block number of the snapshot
+  blockNumber: BigInt!
+  # Timestamp of the snapshot
+  timestamp: BigInt!
+  # Current liquidity of the position
+  liquidity: BigInt!
+  # Deposited amount of token0
+  depositedToken0: BigDecimal!
+  # Deposited amount of token1
+  depositedToken1: BigDecimal!
+  # Withdrawn amount of token0
+  withdrawnToken0: BigDecimal!
+  # Withdrawn amount of token1
+  withdrawnToken1: BigDecimal!
+  # Collected fees of token0
+  collectedFeesToken0: BigDecimal!
+  # Collected fees of token1
+  collectedFeesToken1: BigDecimal!
+  # Transaction hash of the snapshot
+  transaction: Transaction!
+}
+
 type Pool @entity {
   # pool address
   id: ID!
@@ -139,6 +215,8 @@ type Pool @entity {
   swaps: [Swap!]! @derivedFrom(field: "pool")
   collects: [Collect!]! @derivedFrom(field: "pool")
   ticks: [Tick!]! @derivedFrom(field: "pool")
+  # positions in this pool
+  positions: [Position!]! @derivedFrom(field: "pool")
 }
 
 type Tick @entity {

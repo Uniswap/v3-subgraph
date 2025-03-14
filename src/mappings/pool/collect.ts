@@ -12,6 +12,8 @@ import {
   updateTokenHourData,
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
+import { getOrCreatePosition, updatePositionWithCollect } from '../../utils/position'
+import { createPositionSnapshot } from '../../utils/positionSnapshot'
 import { getTrackedAmountUSD } from '../../utils/pricing'
 
 export function handleCollect(event: CollectEvent): void {
@@ -23,11 +25,8 @@ export function handleCollectHelper(event: CollectEvent, subgraphConfig: Subgrap
   const whitelistTokens = subgraphConfig.whitelistTokens
 
   const bundle = Bundle.load('1')!
-  const pool = Pool.load(event.address.toHexString())
-  if (pool == null) {
-    return
-  }
-  const transaction = loadTransaction(event)
+  const poolAddress = event.address.toHexString()
+  const pool = Pool.load(poolAddress)!
   const factory = Factory.load(factoryAddress)!
 
   const token0 = Token.load(pool.token0)
@@ -35,6 +34,8 @@ export function handleCollectHelper(event: CollectEvent, subgraphConfig: Subgrap
   if (token0 == null || token1 == null) {
     return
   }
+
+  const transaction = loadTransaction(event)
 
   // Get formatted amounts collected.
   const collectedAmountToken0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
@@ -80,9 +81,26 @@ export function handleCollectHelper(event: CollectEvent, subgraphConfig: Subgrap
   factory.totalValueLockedETH = factory.totalValueLockedETH.plus(pool.totalValueLockedETH)
   factory.totalValueLockedUSD = factory.totalValueLockedETH.times(bundle.ethPriceUSD)
 
+  // Update position
+  if (event.params.owner) {
+    const position = getOrCreatePosition(
+      event.params.owner,
+      pool,
+      BigInt.fromI32(event.params.tickLower),
+      BigInt.fromI32(event.params.tickUpper),
+      event,
+    )
+    updatePositionWithCollect(position, collectedAmountToken0, collectedAmountToken1)
+    position.save()
+
+    // Create position snapshot
+    createPositionSnapshot(position, event)
+  }
+
+  // collect entity
   const collect = new Collect(transaction.id + '-' + event.logIndex.toString())
   collect.transaction = transaction.id
-  collect.timestamp = event.block.timestamp
+  collect.timestamp = transaction.timestamp
   collect.pool = pool.id
   collect.owner = event.params.owner
   collect.amount0 = collectedAmountToken0

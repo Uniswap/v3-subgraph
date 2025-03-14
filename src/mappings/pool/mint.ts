@@ -12,6 +12,8 @@ import {
   updateTokenHourData,
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
+import { getOrCreatePosition, updatePositionWithMint } from '../../utils/position'
+import { createPositionSnapshot } from '../../utils/positionSnapshot'
 import { createTick } from '../../utils/tick'
 
 export function handleMint(event: MintEvent): void {
@@ -99,8 +101,8 @@ export function handleMintHelper(event: MintEvent, subgraphConfig: SubgraphConfi
     const lowerTickIdx = event.params.tickLower
     const upperTickIdx = event.params.tickUpper
 
-    const lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
-    const upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickUpper).toString()
+    const lowerTickId = poolAddress + '#' + event.params.tickLower.toString()
+    const upperTickId = poolAddress + '#' + event.params.tickUpper.toString()
 
     let lowerTick = Tick.load(lowerTickId)
     let upperTick = Tick.load(upperTickId)
@@ -118,6 +120,20 @@ export function handleMintHelper(event: MintEvent, subgraphConfig: SubgraphConfi
     lowerTick.liquidityNet = lowerTick.liquidityNet.plus(amount)
     upperTick.liquidityGross = upperTick.liquidityGross.plus(amount)
     upperTick.liquidityNet = upperTick.liquidityNet.minus(amount)
+
+    // Update position
+    const position = getOrCreatePosition(
+      event.transaction.from,
+      pool,
+      BigInt.fromI32(event.params.tickLower),
+      BigInt.fromI32(event.params.tickUpper),
+      event,
+    )
+    updatePositionWithMint(position, event.params.amount, amount0, amount1)
+    position.save()
+
+    // Create position snapshot
+    createPositionSnapshot(position, event)
 
     lowerTick.save()
     upperTick.save()
