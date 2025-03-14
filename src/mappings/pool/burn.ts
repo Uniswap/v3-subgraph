@@ -12,6 +12,8 @@ import {
   updateTokenHourData,
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
+import { getOrCreatePosition, updatePositionWithBurn } from '../../utils/position'
+import { createPositionSnapshot } from '../../utils/positionSnapshot'
 
 export function handleBurn(event: BurnEvent): void {
   handleBurnHelper(event)
@@ -78,6 +80,20 @@ export function handleBurnHelper(event: BurnEvent, subgraphConfig: SubgraphConfi
     burn.tickLower = BigInt.fromI32(event.params.tickLower)
     burn.tickUpper = BigInt.fromI32(event.params.tickUpper)
     burn.logIndex = event.logIndex
+
+    // Update position
+    const position = getOrCreatePosition(
+      event.transaction.from,
+      pool,
+      BigInt.fromI32(event.params.tickLower),
+      BigInt.fromI32(event.params.tickUpper),
+      event,
+    )
+    updatePositionWithBurn(position, event.params.amount, amount0, amount1)
+    position.save()
+
+    // Create position snapshot
+    createPositionSnapshot(position, event)
 
     // tick entities
     const lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.tickLower).toString()
