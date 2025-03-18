@@ -1,8 +1,11 @@
-build/
 node_modules/
-src/types/
 .DS_STORE
 yarn-error.log
-tests/.bin/
-tests/.docker/
-tests/.latest.json
+build/
+generated/
+.vscode
+.env
+/.subgraph-env
+subgraph.yaml
+/src/common/chain.ts
+/*subgraph.yaml
