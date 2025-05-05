@@ -10,8 +10,9 @@ export enum ChainId {
   BLAST_MAINNET = 81457,
   BSC = 56,
   CELO = 42220,
-  H1_DEVNET = 8110,
-  H1_TESTNET = 810,
+  HAVEN1_DEVNET = 8110,
+  HAVEN1_TESTNET = 810,
+  HAVEN1_MAINNET = 8811,
   MAINNET = 1,
   MATIC = 137,
   OPTIMISM = 10,
@@ -35,9 +36,9 @@ const ZKSYNC_ERA_NETWORK_NAME = 'zksync-era'
 const ZORA_MAINNET_NETWORK_NAME = 'zora-mainnet'
 const WORLDCHAIN_MAINNET_NETWORK_NAME = 'worldchain-mainnet'
 const SEPOLIA_NETWORK_NAME = 'sepolia'
-const H1_DEVNET_NETWORK_NAME = 'h1-devnet'
-const H1_TESTNET_NETWORK_NAME = 'h1-testnet'
-
+const H1_DEVNET_NETWORK_NAME = 'haven1-devnet'
+const H1_TESTNET_NETWORK_NAME = 'haven1-testnet'
+const H1_MAINNET_NETWORK_NAME = 'haven1-mainnet'
 
 // Note: All token and pool addresses should be lowercased!
 export class SubgraphConfig {
@@ -461,32 +462,11 @@ export function getSubgraphConfig(): SubgraphConfig {
       poolsToSkip: [],
       poolMappings: [],
     }
-  // } else if (selectedNetwork == H1_DEVNET_NETWORK_NAME) {
-  //   return {
-  //     factoryAddress: '',
-  //     stablecoinWrappedNativePoolAddress: '', // hUSDT/WH1
-  //     stablecoinIsToken0: true,
-  //     wrappedNativeAddress: '0x3A4376273545B3f4261Bf42f221567A393C9871D', // WH1
-  //     minimumNativeLocked: BigDecimal.fromString('1'),
-  //     stablecoinAddresses: [
-  //       '0xf4e5d5f36d58Df84a916F816D65314476c98E81d', // hUSDT
-  //       '0x3A4376273545B3f4261Bf42f221567A393C9871D', // hUSDC
-  //     ],
-  //     whitelistTokens: [
-  //       '0xf4e5d5f36d58Df84a916F816D65314476c98E81d', // hUSDT
-  //       '0x73dBaF6987B8B37cF201d20Db86AD48B89641017', // hUSDC
-  //       '0xc78d99244Cf9885187BcE49a651D6aB5caD0C042', // hETH
-  //       '0x21d44FeDE125C24a95699470Dd7EF8ab246016C4', // hBTC
-  //     ],
-  //     tokenOverrides: [],
-  //     poolsToSkip: [],
-  //     poolMappings: [],
-  //   }
   } else if (selectedNetwork == H1_TESTNET_NETWORK_NAME) {
     return {
       factoryAddress: '0xF6201a2Db8Eaf81A576330b1BFc07cEEfe83E4a3',
       stablecoinWrappedNativePoolAddress: '0x3E3E9b11f0Cb5ff847eb1e836b45ff6a845975FA', // hUSDT/WH1
-      stablecoinIsToken0: true,
+      stablecoinIsToken0: false,
       wrappedNativeAddress: '0x584C31C392c695dcD6ef2d4884937539119cfCFc', // WH1
       minimumNativeLocked: BigDecimal.fromString('1'),
       stablecoinAddresses: [
@@ -500,6 +480,49 @@ export function getSubgraphConfig(): SubgraphConfig {
         '0x2Fb665F01464552F3CDA9359Cfb0ebA0628690b1', // hBTC
         '0xe3DEE16F1C4CDf9edFF38F66755eA6CC9f4047F3', // hLINK
         '0xEd27f75440C075A594e4E03673f8698fDD7d744D', // hAVAX
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == H1_DEVNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0xF6201a2Db8Eaf81A576330b1BFc07cEEfe83E4a3',
+      stablecoinWrappedNativePoolAddress: '0xef4a0d9828983fe75f9de6958695ca4ef3029bf3', // hUSDT/WH1
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0xb7b057C116bF1412696dcB232ABF5fB473EEC37B', // WH1
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x54F8F28ED3489416d3B05ccAf8d5DDaCddc495bb', // hUSDC
+      ],
+      whitelistTokens: [
+        '0x54F8F28ED3489416d3B05ccAf8d5DDaCddc495bb', // hUSDC
+        '0x27f664485b8488e57be3c2Bda11F5AA1F570d859', // hcbETH
+        '0x5212963899B7da27F1A3A9e34367AecACE0Bfd32', // cbBTC
+      ],
+      tokenOverrides: [],
+      poolsToSkip: [],
+      poolMappings: [],
+    }
+  } else if (selectedNetwork == H1_MAINNET_NETWORK_NAME) {
+    return {
+      factoryAddress: '0xEf3D1d7d3B10Ff716b1b22C9536bd22Dd0fE60ab',
+      stablecoinWrappedNativePoolAddress: '', // hUSDT/WH1
+      stablecoinIsToken0: true,
+      wrappedNativeAddress: '0xB041be50694f3018912c18c710e7BBB931002598', // WH1
+      minimumNativeLocked: BigDecimal.fromString('1'),
+      stablecoinAddresses: [
+        '0x73A6258c102c636A1b54F400637018cE0E984825', // hUSDT
+        '0x33B67ED2b733576572C19D744a365181d97f936c', // hUSDC
+      ],
+      whitelistTokens: [
+        '0x73A6258c102c636A1b54F400637018cE0E984825', // hUSDT
+        '0x33B67ED2b733576572C19D744a365181d97f936c', // hUSDC
+        '0xa4E7604d7A3f9f7A2eE79723cae4122a72Bc6984', // hETH
+        '0xC6414DC21b94f88e7aD43b92d98E27EcA6e97cbE', // esH1
+        '0x750008544Ce5a197eA88A6679962ADA79210c194', // hsETH
+        '0x0A7a6384E0640C3Efd5587635E201cb960819456', // hcbETH
+        '0x61cd868eE83319dbc16616D34084904a369D5338', // cbBTC
       ],
       tokenOverrides: [],
       poolsToSkip: [],
