@@ -1,14 +1,20 @@
 {
-  "h1-devnet": {
+  "haven1-devnet": {
     "Factory": {
       "address": "0xF6201a2Db8Eaf81A576330b1BFc07cEEfe83E4a3",
       "startBlock": 0
     }
   },
-  "h1-testnet": {
+  "haven1-testnet": {
     "Factory": {
       "address": "0xF6201a2Db8Eaf81A576330b1BFc07cEEfe83E4a3",
       "startBlock": 3315919
+    }
+  },
+  "haven1-mainnet": {
+    "Factory": {
+      "address": "0xEf3D1d7d3B10Ff716b1b22C9536bd22Dd0fE60ab",
+      "startBlock": 0
     }
   }
 }
