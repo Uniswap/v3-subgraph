@@ -9,11 +9,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: haven1-mainnet
+    network: haven1-devnet
     source:
       abi: Factory
-      address: "0xEf3D1d7d3B10Ff716b1b22C9536bd22Dd0fE60ab"
-      startBlock: 0
+      address: "0x2e1fe6421818b7f27cd78706a63c7555e2451f54"
+      startBlock: 5446493
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -39,7 +39,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: haven1-mainnet
+    network: haven1-devnet
     source:
       abi: Pool
     mapping:
