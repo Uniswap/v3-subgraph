@@ -7,7 +7,7 @@
     "lint": "eslint . --ext .ts --fix",
     "build": "run-s codegen && graph build",
     "codegen": "graph codegen --output-dir src/types/",
-    "deploy": "graph deploy uniswap-v3 --node https://api.haven1.0xgraph.xyz/deploy --ipfs https://api.haven1.0xgraph.xyz/ipfs --deploy-key 3HQ09F406QJM7LJW76YRJ5H0Y",
+    "deploy": "graph deploy uniswap-v3 --node https://api.haven1.0xgraph.xyz/deploy --ipfs https://api.haven1.0xgraph.xyz/ipfs --deploy-key $DEPLOY_KEY",
     "devnet:build": "graph build --network haven1-devnet",
     "testnet:build": "graph build --network haven1-testnet",
     "mainnet:build": "graph build --network haven1-mainnet",
