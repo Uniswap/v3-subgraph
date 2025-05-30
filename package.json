@@ -14,6 +14,7 @@
     "local:graph": "NETWORK='localhost:http://host.docker.internal:8545' docker-compose up",
     "local:graph:devnet": "NETWORK='haven1-devnet:https://rpc.staging.haven1.org' docker-compose up",
     "local:graph:testnet": "NETWORK='haven1-testnet:https://testnet-rpc1.haven1.org' docker-compose up",
+    "local:graph:mainnet": "NETWORK='haven1-mainnet:https://rpc.haven1.org' docker-compose up",
     "local:build": "yarn build --network localhost",
     "local:create": "graph create --node http://localhost:8020 uniswap-v3-local",
     "local:deploy": "graph deploy -l 0.0.1 --node http://localhost:8020 --ipfs http://localhost:5001 uniswap-v3",
