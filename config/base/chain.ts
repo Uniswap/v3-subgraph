@@ -20,6 +20,7 @@ export const ROLL_DELETE_MINUTE_LIMITER = BigInt.fromI32(1000)
 export const WHITELIST_TOKENS: string[] = [
   REFERENCE_TOKEN, // WETH
   '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', // USDC
+  '0x1111111111166b7FE7bd91427724B487980aFc69', // ZORA
 ]
 
 export const STABLE_COINS: string[] = [
