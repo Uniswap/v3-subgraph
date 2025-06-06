@@ -70,3 +70,6 @@ templates:
         - event: Collect(indexed address,address,indexed int24,indexed
             int24,uint128,uint128)
           handler: handleCollect
+graft:
+  base: QmPwUQWMrvizE4eRMe5s6qv162Di6eeF88vtCELQG3ZJ5B
+  block: 29099355
