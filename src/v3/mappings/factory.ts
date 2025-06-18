@@ -20,9 +20,9 @@ export function handlePoolCreated(event: PoolCreated): void {
   }
 
   // load factory
-  let factory = Factory.load(factoryAddress.toString())
+  let factory = Factory.load(factoryAddress.toHexString())
   if (factory === null) {
-    factory = new Factory(factoryAddress.toString())
+    factory = new Factory(factoryAddress.toHexString())
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD

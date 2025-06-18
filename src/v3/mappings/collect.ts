@@ -24,7 +24,7 @@ export function handleCollect(event: CollectEvent): void {
     return
   }
   const transaction = loadTransaction(event)
-  const factory = Factory.load(factoryAddress.toString())!
+  const factory = Factory.load(factoryAddress.toHexString())!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
@@ -87,7 +87,7 @@ export function handleCollect(event: CollectEvent): void {
   collect.tickUpper = BigInt.fromI32(event.params.tickUpper)
   collect.logIndex = event.logIndex
 
-  updateUniswapDayData(event, factoryAddress.toString())
+  updateUniswapDayData(event, factoryAddress.toHexString())
   updatePoolDayData(event)
   updatePoolHourData(event)
   updateTokenDayData(token0 as Token, event)
