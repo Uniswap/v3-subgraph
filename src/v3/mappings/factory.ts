@@ -1,8 +1,7 @@
 import { BigInt, log } from '@graphprotocol/graph-ts'
 
 import { PoolCreated } from '../../../generated/Factory/Factory'
-import { Factory } from '../../../generated/schema'
-import { Bundle, Pool, Token } from '../../../generated/schema'
+import { Bundle, Factory, Pool, Token } from '../../../generated/schema'
 import { Pool as PoolTemplate } from '../../../generated/templates'
 import { populateEmptyPools } from '../../common/backfill'
 import { FACTORY_ADDRESS, POOL_MAPINGS, SKIP_POOLS, WHITELIST_TOKENS } from '../../common/chain'
@@ -21,9 +20,9 @@ export function handlePoolCreated(event: PoolCreated): void {
   }
 
   // load factory
-  let factory = Factory.load(factoryAddress)
+  let factory = Factory.load(factoryAddress.toString())
   if (factory === null) {
-    factory = new Factory(factoryAddress)
+    factory = new Factory(factoryAddress.toString())
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
