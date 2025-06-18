@@ -28,12 +28,14 @@ export const WHITELIST_TOKENS: string[] = [
   '0x17700282592d6917f6a73d0bf8accf4d578c131e', // MOO
   '0x66803fb87abd4aac3cbb3fad7c3aa01f6f3fb207', // Portal Eth
   '0xbaab46e28388d2779e6e31fd00cf0e5ad95e327b', // WBTC
+  '0xd221812de1bd094f35587ee8e174b07b6167d9af', // WETH
 ]
 
 export const STABLE_COINS: string[] = [
   '0x765de816845861e75a25fca122bb6898b8b1282a', // CUSD
   '0xef4229c8c3250c675f21bcefa42f58efbff6002a', // Bridged USDC
   '0xceba9300f2b948710d2653dd7b07f33a8b32118c', // Native USDC
+  '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e', // USDT
 ]
 
 export const SKIP_POOLS: string[] = []
