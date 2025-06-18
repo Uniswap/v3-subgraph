@@ -52,3 +52,12 @@ jobs:
           if [ -z "$(git diff)" ]; then exit; fi
           git commit -a -m "fix(lint): auto-fix [ci]"
           git push
+
+  # TODO: remove this check, this job was previously removed here https://github.com/Uniswap/v3-subgraph/pull/259/files#diff-3ab46ee209a127470fce3c2cf106b1a1dbadbb929a4b5b13656a4bc4ce19c0b8
+  build-and-test:
+    name: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: No-op step
+        run: echo "pass"
