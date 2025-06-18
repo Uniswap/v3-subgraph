@@ -89,7 +89,7 @@ export function handleBurn(event: BurnEvent): void {
       lowerTick.save()
       upperTick.save()
     }
-    updateUniswapDayData(event, factoryAddress)
+    updateUniswapDayData(event, factoryAddress.toString())
     updatePoolDayData(event)
     updatePoolHourData(event)
     updateTokenDayData(token0 as Token, event)
