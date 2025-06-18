@@ -29,6 +29,7 @@ export const WHITELIST_TOKENS: string[] = [
   '0x66803fb87abd4aac3cbb3fad7c3aa01f6f3fb207', // Portal Eth
   '0xbaab46e28388d2779e6e31fd00cf0e5ad95e327b', // WBTC
   '0xd221812de1bd094f35587ee8e174b07b6167d9af', // WETH
+  '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e', // USDT
 ]
 
 export const STABLE_COINS: string[] = [
