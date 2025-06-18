@@ -20,7 +20,7 @@ export function handleMint(event: MintEvent): void {
 
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address)!
-  const factory = Factory.load(factoryAddress)!
+  const factory = Factory.load(factoryAddress.toHexString())!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
@@ -121,7 +121,7 @@ export function handleMint(event: MintEvent): void {
     // TODO: Update Tick's volume, fees, and liquidity provider count. Computing these on the tick
     // level requires reimplementing some of the swapping code from v3-core.
 
-    updateUniswapDayData(event, factoryAddress)
+    updateUniswapDayData(event, factoryAddress.toHexString())
     updatePoolDayData(event)
     updatePoolHourData(event)
     updateTokenDayData(token0 as Token, event)
