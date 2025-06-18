@@ -19,7 +19,7 @@ export function handleSwap(event: SwapEvent): void {
   const factoryAddress = FACTORY_ADDRESS
 
   const bundle = Bundle.load('1')!
-  const factory = Factory.load(factoryAddress)!
+  const factory = Factory.load(factoryAddress.toHexString())!
   const pool = Pool.load(event.address)!
 
   // hot fix for bad pricing
@@ -148,7 +148,7 @@ export function handleSwap(event: SwapEvent): void {
     swap.logIndex = event.logIndex
 
     // interval data
-    const uniswapDayData = updateUniswapDayData(event, factoryAddress)
+    const uniswapDayData = updateUniswapDayData(event, factoryAddress.toHexString())
     const poolDayData = updatePoolDayData(event)
     const poolHourData = updatePoolHourData(event)
     const token0DayData = updateTokenDayData(token0 as Token, event)

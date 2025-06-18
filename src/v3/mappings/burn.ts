@@ -19,7 +19,7 @@ export function handleBurn(event: BurnEvent): void {
 
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address)!
-  const factory = Factory.load(factoryAddress)!
+  const factory = Factory.load(factoryAddress.toHexString())!
 
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
@@ -89,7 +89,7 @@ export function handleBurn(event: BurnEvent): void {
       lowerTick.save()
       upperTick.save()
     }
-    updateUniswapDayData(event, factoryAddress)
+    updateUniswapDayData(event, factoryAddress.toHexString())
     updatePoolDayData(event)
     updatePoolHourData(event)
     updateTokenDayData(token0 as Token, event)
