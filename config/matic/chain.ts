@@ -22,13 +22,13 @@ export const WHITELIST_TOKENS: string[] = [
   '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', // WETH
   '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
   '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DA
-  '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359' // USDC
+  '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', // USDC
 ]
 
 export const STABLE_COINS: string[] = [
   '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
   '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
-  '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359' // USDC
+  '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', // USDC
 ]
 
 export const SKIP_POOLS: string[] = []
