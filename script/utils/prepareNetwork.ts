@@ -11,6 +11,7 @@ export enum NETWORK {
   BSC = 'bsc',
   CELO = 'celo',
   ETHEREUM = 'ethereum',
+  LENS = 'lens',
   MATIC = 'matic',
   OPTIMISM = 'optimism',
   SONEIUM = 'soneium-mainnet',
