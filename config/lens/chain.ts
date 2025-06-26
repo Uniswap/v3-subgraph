@@ -1,12 +1,12 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
-export const FACTORY_ADDRESS = '0xe0704DB90bcAA1eAFc00E958FF815Ab7aa11Ef47'
+export const FACTORY_ADDRESS = Address.fromString('0xe0704DB90bcAA1eAFc00E958FF815Ab7aa11Ef47')
 
 export const REFERENCE_TOKEN = '0x6bdc36e20d267ff0dd6097799f82e78907105e2f' // WGHO
 export const STABLE_TOKEN_POOL = '0x5eb6b146d7a5322b763c8f8b0eb2fdd5d15e49de' // WGHO/USDC 0.01%
 
 export const TVL_MULTIPLIER_THRESHOLD = '2'
-export const MATURE_MARKET = '1000000'
+export const MATURE_MARKET = '10000'
 export const MINIMUM_NATIVE_LOCKED = BigDecimal.fromString('1')
 
 export const ROLL_DELETE_HOUR = 768
