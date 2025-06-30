@@ -1,4 +1,4 @@
-import { BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
 import { PoolCreated } from '../../../generated/Factory/Factory'
 import { Bundle, Factory, Pool, Token } from '../../../generated/schema'
@@ -9,7 +9,7 @@ import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSu
 import { ADDRESS_ZERO, ONE_BI, ZERO_BD, ZERO_BI } from './../../common/constants'
 
 export function handlePoolCreated(event: PoolCreated): void {
-  const factoryAddress = FACTORY_ADDRESS
+  const factoryAddress = Address.fromString(FACTORY_ADDRESS)
   const whitelistTokens = WHITELIST_TOKENS
   const poolsToSkip = SKIP_POOLS
   const poolMappings = POOL_MAPINGS
