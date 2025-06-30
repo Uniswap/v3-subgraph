@@ -15,7 +15,6 @@ import {
 } from './intervalUpdates'
 import { loadTransaction } from './utils'
 
-
 export function handleSwap(event: SwapEvent): void {
   const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
