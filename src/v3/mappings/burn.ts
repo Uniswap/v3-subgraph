@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Burn, Factory, Pool, Tick, Token } from '../../../generated/schema'
 import { Burn as BurnEvent } from '../../../generated/templates/Pool/Pool'
@@ -15,7 +15,7 @@ import {
 import { loadTransaction } from './utils'
 
 export function handleBurn(event: BurnEvent): void {
-  const factoryAddress = FACTORY_ADDRESS
+  const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address)!
