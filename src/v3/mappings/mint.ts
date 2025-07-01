@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Factory, Mint, Pool, Tick, Token } from '../../../generated/schema'
 import { Mint as MintEvent } from '../../../generated/templates/Pool/Pool'
@@ -16,7 +16,7 @@ import { createTick } from './tick'
 import { loadTransaction } from './utils'
 
 export function handleMint(event: MintEvent): void {
-  const factoryAddress = FACTORY_ADDRESS
+  const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address)!

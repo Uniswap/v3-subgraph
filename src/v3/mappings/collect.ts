@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Collect, Factory, Pool, Token } from '../../../generated/schema'
 import { Collect as CollectEvent } from '../../../generated/templates/Pool/Pool'
@@ -16,7 +16,7 @@ import {
 import { loadTransaction } from './utils'
 
 export function handleCollect(event: CollectEvent): void {
-  const factoryAddress = FACTORY_ADDRESS
+  const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
   const bundle = Bundle.load('1')!
   const pool = Pool.load(event.address)!
