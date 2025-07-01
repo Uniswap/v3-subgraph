@@ -29,7 +29,7 @@ type Factory @entity(immutable: false) {
 }
 
 # stores for USD calculations
-type Bundle @entity(immutable: true) {
+type Bundle @entity(immutable: false) {
   id: ID!
   # price of ETH in usd
   ethPriceUSD: BigDecimal!
