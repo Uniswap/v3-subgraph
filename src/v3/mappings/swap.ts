@@ -1,4 +1,4 @@
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Factory, Pool, Swap, Token } from '../../../generated/schema'
 import { Swap as SwapEvent } from '../../../generated/templates/Pool/Pool'
@@ -16,7 +16,7 @@ import {
 import { loadTransaction } from './utils'
 
 export function handleSwap(event: SwapEvent): void {
-  const factoryAddress = FACTORY_ADDRESS
+  const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
   const bundle = Bundle.load('1')!
   const factory = Factory.load(factoryAddress.toHexString())!
