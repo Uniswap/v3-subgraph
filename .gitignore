@@ -9,3 +9,4 @@ generated/
 subgraph.yaml
 /src/common/chain.ts
 /*subgraph.yaml
+data/
