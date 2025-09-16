@@ -1,4 +1,4 @@
-type Factory @entity {
+type Factory @entity(immutable: false) {
   # factory address
   id: ID!
   # amount of pools created
@@ -29,13 +29,13 @@ type Factory @entity {
 }
 
 # stores for USD calculations
-type Bundle @entity {
+type Bundle @entity(immutable: false) {
   id: ID!
   # price of ETH in usd
   ethPriceUSD: BigDecimal!
 }
 
-type Token @entity {
+type Token @entity(immutable: false) {
   # token address
   id: Bytes!
   # token symbol
@@ -74,7 +74,7 @@ type Token @entity {
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
 
-type Pool @entity {
+type Pool @entity(immutable: false) {
   # pool address
   id: Bytes!
   # creation
@@ -141,7 +141,7 @@ type Pool @entity {
   ticks: [Tick!]! @derivedFrom(field: "pool")
 }
 
-type Tick @entity {
+type Tick @entity(immutable: false) {
   # format: <pool address>#<tick index>
   id: ID!
   # pool address
@@ -164,7 +164,82 @@ type Tick @entity {
   createdAtBlockNumber: BigInt!
 }
 
-type Transaction @entity {
+type Position @entity(immutable: false) {
+  # Positions created through NonfungiblePositionManager
+  # NFT token id
+  id: ID!
+  # owner of the NFT
+  owner: Bytes!
+  # pool position is within
+  pool: Pool!
+  # allow indexing by tokens
+  token0: Token!
+  # allow indexing by tokens
+  token1: Token!
+  # lower tick of the position
+  tickLower: Tick!
+  # upper tick of the position
+  tickUpper: Tick!
+  # total position liquidity
+  liquidity: BigInt!
+  # amount of token 0 ever deposited to position
+  depositedToken0: BigDecimal!
+  # amount of token 1 ever deposited to position
+  depositedToken1: BigDecimal!
+  # amount of token 0 ever withdrawn from position (without fees)
+  withdrawnToken0: BigDecimal!
+  # amount of token 1 ever withdrawn from position (without fees)
+  withdrawnToken1: BigDecimal!
+  # all time collected token0 (withdrawnToken0 + collectedFeesToken0)
+  collectedToken0: BigDecimal!
+  # all time collected token1 (withdrawnToken1 + collectedFeesToken1)
+  collectedToken1: BigDecimal!
+  # all time collected fees in token0
+  collectedFeesToken0: BigDecimal!
+  # all time collected fees in token1
+  collectedFeesToken1: BigDecimal!
+  # tx in which the position was initialized
+  transaction: Transaction!
+  # vars needed for fee computation
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
+}
+
+type PositionSnapshot @entity(immutable: false) {
+  # <NFT token id>#<block number>
+  id: ID!
+  # owner of the NFT
+  owner: Bytes!
+  # pool the position is within
+  pool: Pool!
+  # position of which the snap was taken of
+  position: Position!
+  # block in which the snap was created
+  blockNumber: BigInt!
+  # timestamp of block in which the snap was created
+  timestamp: BigInt!
+  # total position liquidity
+  liquidity: BigInt!
+  # amount of token 0 ever deposited to position
+  depositedToken0: BigDecimal!
+  # amount of token 1 ever deposited to position
+  depositedToken1: BigDecimal!
+  # amount of token 0 ever withdrawn from position (without fees)
+  withdrawnToken0: BigDecimal!
+  # amount of token 1 ever withdrawn from position (without fees)
+  withdrawnToken1: BigDecimal!
+  # all time collected fees in token0
+  collectedFeesToken0: BigDecimal!
+  # all time collected fees in token1
+  collectedFeesToken1: BigDecimal!
+  # tx in which the snapshot was initialized
+  transaction: Transaction!
+  # internal vars needed for fee computation
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
+}
+
+type Transaction @entity(immutable: false) {
   # txn hash
   id: ID!
   # block txn was included in
@@ -182,7 +257,7 @@ type Transaction @entity {
   collects: [Collect]! @derivedFrom(field: "transaction")
 }
 
-type Mint @entity {
+type Mint @entity(immutable: false) {
   # transaction hash + "#" + index in mints Transaction array
   id: ID!
   # which txn the mint was included in
@@ -217,7 +292,7 @@ type Mint @entity {
   logIndex: BigInt
 }
 
-type Burn @entity {
+type Burn @entity(immutable: false) {
   # transaction hash + "#" + index in mints Transaction array
   id: ID!
   # txn burn was included in
@@ -250,7 +325,7 @@ type Burn @entity {
   logIndex: BigInt
 }
 
-type Swap @entity {
+type Swap @entity(immutable: false) {
   # transaction hash + "#" + index in swaps Transaction array
   id: ID!
   # pointer to transaction
@@ -283,7 +358,7 @@ type Swap @entity {
   logIndex: BigInt
 }
 
-type Collect @entity {
+type Collect @entity(immutable: false) {
   # transaction hash + "#" + index in collect Transaction array
   id: ID!
   # pointer to txn
@@ -308,7 +383,7 @@ type Collect @entity {
   logIndex: BigInt
 }
 
-type Flash @entity {
+type Flash @entity(immutable: false) {
   # transaction hash + "-" + index in collect Transaction array
   id: ID!
   # pointer to txn
@@ -336,7 +411,7 @@ type Flash @entity {
 }
 
 # Data accumulated and condensed into day stats for all of Uniswap
-type UniswapDayData @entity {
+type UniswapDayData @entity(immutable: false) {
   # timestamp rounded to current day by dividing by 86400
   id: ID!
   # timestamp rounded to current day by dividing by 86400
@@ -356,7 +431,7 @@ type UniswapDayData @entity {
 }
 
 # Data accumulated and condensed into day stats for each pool
-type PoolDayData @entity {
+type PoolDayData @entity(immutable: false) {
   # timestamp rounded to current day by dividing by 86400
   id: ID!
   # timestamp rounded to current day by dividing by 86400
@@ -396,7 +471,7 @@ type PoolDayData @entity {
 }
 
 # hourly stats tracker for pool
-type PoolHourData @entity {
+type PoolHourData @entity(immutable: false) {
   # format: <pool address>-<timestamp>
   id: ID!
   # unix timestamp for start of hour
@@ -435,7 +510,7 @@ type PoolHourData @entity {
   close: BigDecimal!
 }
 
-type TokenDayData @entity {
+type TokenDayData @entity(immutable: false) {
   # token address concatendated with date
   id: ID!
   # timestamp rounded to current day by dividing by 86400
@@ -466,7 +541,7 @@ type TokenDayData @entity {
   close: BigDecimal!
 }
 
-type TokenHourData @entity {
+type TokenHourData @entity(immutable: false) {
   # token address concatendated with date
   id: ID!
   # unix timestamp for start of hour

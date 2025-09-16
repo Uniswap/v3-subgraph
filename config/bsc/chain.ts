@@ -1,6 +1,7 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 export const FACTORY_ADDRESS = Address.fromString('0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7')
+export const NONFUNGIBLE_POSITION_MANAGER_ADDRESS = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
 
 export const REFERENCE_TOKEN = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' // WBNB
 export const STABLE_TOKEN_POOL = '0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869' // WBNB/USDT 0.05%

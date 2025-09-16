@@ -1,6 +1,7 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 export const FACTORY_ADDRESS = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+export const NONFUNGIBLE_POSITION_MANAGER_ADDRESS = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
 
 export const REFERENCE_TOKEN = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
 export const STABLE_TOKEN_POOL = '0x17c14d2c404d167802b16c450d3c99f88f2c4f4d'
