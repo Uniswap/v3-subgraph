@@ -1,17 +1,13 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Burn, Factory, Pool, Tick, Token } from '../../types/schema'
 import { Burn as BurnEvent } from '../../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction } from '../../utils'
 import { getSubgraphConfig, SubgraphConfig } from '../../utils/chains'
-import { ONE_BI } from '../../utils/constants'
-import {
-  updatePoolDayData,
-  updatePoolHourData,
-  updateTokenDayData,
-  updateTokenHourData,
-  updateUniswapDayData,
-} from '../../utils/intervalUpdates'
+import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
+import { updatePoolDayData, updatePoolHourData, updateTokenDayData, updateTokenHourData, updateUniswapDayData } from '../../utils/intervalUpdates'
+import { snapshotUser } from '../../utils/userTvl'
+import { Position, User } from '../../types/schema'
 
 export function handleBurn(event: BurnEvent): void {
   handleBurnHelper(event)
@@ -107,5 +103,48 @@ export function handleBurnHelper(event: BurnEvent, subgraphConfig: SubgraphConfi
     pool.save()
     factory.save()
     burn.save()
+
+    // Track position liquidity and zero user TVL on full exit
+    const posId = event.params.owner
+      .toHexString()
+      .concat('-')
+      .concat(pool.id)
+      .concat('-')
+      .concat(BigInt.fromI32(event.params.tickLower).toString())
+      .concat('-')
+      .concat(BigInt.fromI32(event.params.tickUpper).toString())
+    let pos = Position.load(posId)
+    if (pos === null) {
+      pos = new Position(posId)
+      pos.owner = event.params.owner
+      pos.pool = pool.id
+      pos.tickLower = BigInt.fromI32(event.params.tickLower)
+      pos.tickUpper = BigInt.fromI32(event.params.tickUpper)
+      pos.liquidity = ZERO_BI
+      pos.netToken0 = amount0.minus(amount0) // ZERO_BD
+      pos.netToken1 = amount1.minus(amount1) // ZERO_BD
+    }
+    const before = pos.liquidity
+    pos.liquidity = pos.liquidity.minus(event.params.amount)
+    pos.netToken0 = pos.netToken0.minus(amount0)
+    pos.netToken1 = pos.netToken1.minus(amount1)
+    pos.save()
+    if (before.gt(ZERO_BI) && pos.liquidity.equals(ZERO_BI)) {
+      const user = User.load(event.params.owner.toHexString())
+      if (user !== null) {
+        user.openPositionCount = user.openPositionCount.minus(BigInt.fromI32(1))
+        user.save()
+      }
+    }
+
+    const userId = event.params.owner.toHexString()
+    const user = User.load(userId)
+    if (user !== null && user.openPositionCount.equals(BigInt.fromI32(0))) {
+      user.tvlUSD = ZERO_BD
+      user.lastUpdatedBlock = event.block.number
+      user.lastUpdatedTs = event.block.timestamp
+      user.save()
+      snapshotUser(event.params.owner, user.tvlUSD, event)
+    }
   }
 }

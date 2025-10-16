@@ -47,3 +47,36 @@ yarn run deploy:alchemy --
 ## Deployed Subgraphs
 
 - [Haven Testnet](https://graph-api.staging.haven1.org/subgraphs/name/uniswap-v3-testnet/graphql)
+
+## User TVL Snapshots
+
+Two new entities expose per-user TVL in USD at the closest event block for each hour/day:
+
+- `UserHour` (id: `<address>-<blockNumber>`): address, periodStartUnix, blockNumber, tvlBlockUSD, tvlCurrentUSD
+- `UserDay` (id: `<address>-<blockNumber>`): address, date, blockNumber, tvlBlockUSD, tvlCurrentUSD
+
+Examples
+
+```
+query MyQuery {
+  userHours {
+    address
+    id
+    tvlBlockUSD
+    tvlCurrentUSD
+  }
+}
+
+query MyQuery {
+  userDays {
+    address
+    id
+    tvlBlockUSD
+    tvlCurrentUSD
+  }
+}
+```
+
+Notes
+- TVL increases on Mint and decreases on Burn (position-based). Collects do not change TVL.
+- Snapshot IDs include the exact block used; filter by `periodStartUnix`/`date` to group by hour/day.

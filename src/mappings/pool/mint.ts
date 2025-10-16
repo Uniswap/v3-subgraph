@@ -13,6 +13,9 @@ import {
   updateUniswapDayData,
 } from '../../utils/intervalUpdates'
 import { createTick } from '../../utils/tick'
+import { upsertUserTvlDelta } from '../../utils/userTvl'
+import { Position, User } from '../../types/schema'
+import { ZERO_BI } from '../../utils/constants'
 
 export function handleMint(event: MintEvent): void {
   handleMintHelper(event)
@@ -138,5 +141,41 @@ export function handleMintHelper(event: MintEvent, subgraphConfig: SubgraphConfi
     pool.save()
     factory.save()
     mint.save()
+
+    // Update per-user TVL (baseline)
+    upsertUserTvlDelta(event.params.owner, amountUSD, event)
+
+    // Track position liquidity for full-exit detection
+    const posId = event.params.owner
+      .toHexString()
+      .concat('-')
+      .concat(pool.id)
+      .concat('-')
+      .concat(BigInt.fromI32(event.params.tickLower).toString())
+      .concat('-')
+      .concat(BigInt.fromI32(event.params.tickUpper).toString())
+    let pos = Position.load(posId)
+    if (pos === null) {
+      pos = new Position(posId)
+      pos.owner = event.params.owner
+      pos.pool = pool.id
+      pos.tickLower = BigInt.fromI32(event.params.tickLower)
+      pos.tickUpper = BigInt.fromI32(event.params.tickUpper)
+      pos.liquidity = ZERO_BI
+      pos.netToken0 = amount0.minus(amount0) // ZERO_BD without importing
+      pos.netToken1 = amount1.minus(amount1) // ZERO_BD without importing
+    }
+    const before = pos.liquidity
+    pos.liquidity = pos.liquidity.plus(event.params.amount)
+    pos.netToken0 = pos.netToken0.plus(amount0)
+    pos.netToken1 = pos.netToken1.plus(amount1)
+    pos.save()
+    if (before.equals(ZERO_BI) && pos.liquidity.gt(ZERO_BI)) {
+      const user = User.load(event.params.owner.toHexString())
+      if (user !== null) {
+        user.openPositionCount = user.openPositionCount.plus(BigInt.fromI32(1))
+        user.save()
+      }
+    }
   }
 }

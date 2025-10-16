@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 import { Bundle, Collect, Factory, Pool, Token } from '../../types/schema'
 import { Collect as CollectEvent } from '../../types/templates/Pool/Pool'
@@ -105,6 +105,8 @@ export function handleCollectHelper(event: CollectEvent, subgraphConfig: Subgrap
   factory.save()
   pool.save()
   collect.save()
+
+  // Phase 2: Collect does not change TVL of locked capital (fees realized); snapshot only if needed.
 
   return
 }
