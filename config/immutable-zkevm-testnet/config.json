@@ -1,0 +1,5 @@
+{
+  "network": "immutable-zkevm-testnet",
+  "factory": "0x918ca6e5Db17511136dfbb86a936e666bCFcfe81",
+  "startblock": "31576029"
+}
