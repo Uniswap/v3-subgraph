@@ -78,16 +78,14 @@ export function getSubgraphName(subgraphType: string): string {
 export function getAlchemyDeploymentParams(): {
   node: string
   ipfs: string
-  deployKey: string
 } {
   dotenv.config()
-  if (!process.env.ALCHEMY_DEPLOY_URL || !process.env.ALCHEMY_IPFS_URL || !process.env.ALCHEMY_DEPLOY_KEY) {
-    throw new Error('ALCHEMY_DEPLOY_URL, ALCHEMY_IPFS_URL, and ALCHEMY_DEPLOY_KEY must be set')
+  if (!process.env.ALCHEMY_DEPLOY_URL || !process.env.ALCHEMY_IPFS_URL) {
+    throw new Error('ALCHEMY_DEPLOY_URL and ALCHEMY_IPFS_URL must be set')
   }
   return {
     node: process.env.ALCHEMY_DEPLOY_URL,
-    ipfs: process.env.ALCHEMY_IPFS_URL,
-    deployKey: process.env.ALCHEMY_DEPLOY_KEY
+    ipfs: process.env.ALCHEMY_IPFS_URL
   }
 }
 

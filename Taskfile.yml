@@ -3,7 +3,7 @@
 version: '3'
 
 vars:
-  NETWORK: '{{.NETWORK | default "mainnet"}}'
+  NETWORK: '{{.NETWORK | default "immutable-zkevm-testnet"}}'
 
 tasks:
   default:
@@ -27,6 +27,10 @@ tasks:
     desc: Build v3 subgraph for a specific network
     cmds:
       - yarn build --network {{.NETWORK}} --subgraph-type v3
+  create:
+    desc: Create the subgraph on the graph-node
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3 --create
 
   deploy:
     desc: Deploy v3 subgraph for a specific network
@@ -37,7 +41,10 @@ tasks:
     desc: Build v3-tokens subgraph for a specific network
     cmds:
       - yarn build --network {{.NETWORK}} --subgraph-type v3-tokens
-
+  create:tokens:
+    desc: Create the subgraph on the graph-node
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3-tokens --create
   deploy:tokens:
     desc: Deploy v3-tokens subgraph for a specific network
     cmds:
