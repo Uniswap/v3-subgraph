@@ -31,6 +31,7 @@ tasks:
     desc: Create the subgraph on the graph-node
     cmds:
       - yarn build --network {{.NETWORK}} --subgraph-type v3 --create
+
   deploy:
     desc: Deploy v3 subgraph for a specific network
     cmds:
