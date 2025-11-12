@@ -1,6 +1,6 @@
 import yargs from 'yargs'
 
-import { build, deploy } from './utils/deploy-utils'
+import { build, create, deploy } from './utils/deploy-utils'
 import { validateNetwork, validateSubgraphType } from './utils/prepareNetwork'
 
 async function main(): Promise<void> {
@@ -9,24 +9,33 @@ async function main(): Promise<void> {
       alias: 'n',
       description: 'Network to build for',
       type: 'string',
-      demandOption: true,
+      demandOption: true
     })
     .option('subgraph-type', {
       alias: 's',
       description: 'Type of the subgraph',
       type: 'string',
-      demandOption: true,
+      demandOption: true
     })
     .option('deploy', {
       alias: 'd',
       description: 'Deploy the subgraph',
       type: 'boolean',
-      default: false,
+      default: false
+    })
+    .option('create', {
+      alias: 'c',
+      description: 'Create the subgraph to be deployed into',
+      type: 'boolean',
+      default: false
     })
     .help().argv
   validateNetwork(argv.network)
   validateSubgraphType(argv.subgraphType)
   await build(argv.network, argv.subgraphType)
+  if (argv.create) {
+    await create(argv.subgraphType)
+  }
   if (argv.deploy) {
     await deploy(argv.subgraphType)
   }

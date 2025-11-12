@@ -1,0 +1,51 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  NETWORK: '{{.NETWORK | default "immutable-zkevm-testnet"}}'
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+    silent: true
+  setup:
+    cmds:
+      - cp template.env .env
+      - cp template.subgraph-env .subgraph-env
+      - task: install
+      - echo "Fill out the .env files"
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - yarn install
+
+  build:
+    desc: Build v3 subgraph for a specific network
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3
+  create:
+    desc: Create the subgraph on the graph-node
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3 --create
+
+  deploy:
+    desc: Deploy v3 subgraph for a specific network
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3 --deploy
+
+  build:tokens:
+    desc: Build v3-tokens subgraph for a specific network
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3-tokens
+  create:tokens:
+    desc: Create the subgraph on the graph-node
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3-tokens --create
+  deploy:tokens:
+    desc: Deploy v3-tokens subgraph for a specific network
+    cmds:
+      - yarn build --network {{.NETWORK}} --subgraph-type v3-tokens --deploy

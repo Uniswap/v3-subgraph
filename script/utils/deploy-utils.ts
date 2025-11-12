@@ -17,7 +17,20 @@ export const build = async (network: string, subgraphType: string): Promise<void
   console.log(stdout)
   console.log(stderr)
 }
-
+export const create = async (subgraphType: string) => {
+  const subgraphName = getSubgraphName(subgraphType)
+  const { node } = getAlchemyDeploymentParams()
+  try {
+    console.log(`graph create --node ${node} ${subgraphName}`)
+    const { stdout } = await exec(`graph create --node ${node} ${subgraphName}`)
+    console.log(stdout)
+  } catch (e) {
+    console.log(e.stdout)
+    console.log(e.stderr)
+    console.log('Error: Failed to create subgraph. Please try again.')
+    process.exit(1)
+  }
+}
 export const deploy = async (subgraphType: string): Promise<void> => {
   try {
     await exec('git diff-index --quiet HEAD -- && git diff --quiet || (exit 1)')
@@ -29,14 +42,14 @@ export const deploy = async (subgraphType: string): Promise<void> => {
   const { stdout: gitHash } = await exec('git rev-parse --short HEAD')
   const gitHashString = gitHash.toString().trim()
   const subgraphName = getSubgraphName(subgraphType)
-  const { node, ipfs, deployKey } = getAlchemyDeploymentParams()
+  const { node, ipfs } = getAlchemyDeploymentParams()
 
   try {
     console.log(
-      `graph deploy --node ${node} --ipfs ${ipfs} --deploy-key ${deployKey} --version-label ${gitHashString} ${subgraphName} ${subgraphType}-subgraph.yaml`
+      `graph deploy --node ${node} --ipfs ${ipfs}  --version-label ${gitHashString} ${subgraphName} ${subgraphType}-subgraph.yaml`
     )
     const { stdout, stderr } = await exec(
-      `graph deploy --node ${node} --ipfs ${ipfs} --deploy-key ${deployKey} --version-label ${gitHashString} ${subgraphName} ${subgraphType}-subgraph.yaml`
+      `graph deploy --node ${node} --ipfs ${ipfs}  --version-label ${gitHashString} ${subgraphName} ${subgraphType}-subgraph.yaml`
     )
     if (stderr.includes('Subgraph version already exists')) {
       console.log('Subgraph version already exists. Please update the version label and try again.')
