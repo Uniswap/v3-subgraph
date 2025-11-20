@@ -23,6 +23,7 @@ export const WHITELIST_TOKENS: string[] = [
   '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // Bridged USDC
   '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DA
   '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', // USDC
+  '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
 ]
 
 export const STABLE_COINS: string[] = [
