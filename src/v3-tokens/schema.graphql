@@ -1,4 +1,4 @@
-type Factory @entity {
+type Factory @entity(immutable: false) {
   # factory address
   id: Bytes!
   # amount of pools created
@@ -29,13 +29,13 @@ type Factory @entity {
 }
 
 # stores for USD calculations
-type Bundle @entity {
+type Bundle @entity(immutable: false) {
   id: ID!
   # price of ETH in usd
   ethPriceUSD: BigDecimal!
 }
 
-type Token @entity {
+type Token @entity(immutable: false) {
   # token address
   id: Bytes!
   # token address (stored as a string which is case sensitive)
@@ -96,7 +96,7 @@ type _Schema_
     include: [{ entity: "Token", fields: [{ name: "name" }, { name: "symbol" }, { name: "tokenAddress" }] }]
   )
 
-type Pool @entity {
+type Pool @entity(immutable: false) {
   # pool address
   id: Bytes!
   # creation
@@ -159,7 +159,7 @@ type Pool @entity {
   liquidityProviderCount: BigInt! # used to detect new exchanges
 }
 
-type TokenDayData @entity {
+type TokenDayData @entity(immutable: false) {
   # token address concatendated with date
   id: ID!
   # timestamp rounded to current day by dividing by 86400
@@ -190,7 +190,7 @@ type TokenDayData @entity {
   close: BigDecimal!
 }
 
-type TokenHourData @entity {
+type TokenHourData @entity(immutable: false) {
   # token address concatendated with date
   id: ID!
   # unix timestamp for start of hour
@@ -223,7 +223,7 @@ type TokenHourData @entity {
   # archiveHelper: ArchiveHelper!
 }
 
-type TokenMinuteData @entity {
+type TokenMinuteData @entity(immutable: false) {
   # token address concatendated with date
   id: ID!
   # unix timestamp for start of minute
