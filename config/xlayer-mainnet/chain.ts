@@ -17,7 +17,7 @@ export const STABLE_TOKEN_POOL = WOKB_USDC
 
 export const TVL_MULTIPLIER_THRESHOLD = '2'
 export const MATURE_MARKET = '1000000'
-export const MINIMUM_NATIVE_LOCKED = BigDecimal.fromString('1')
+export const MINIMUM_NATIVE_LOCKED = BigDecimal.fromString('25')
 
 export const ROLL_DELETE_HOUR = 768
 export const ROLL_DELETE_MINUTE = 1680
