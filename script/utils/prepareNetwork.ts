@@ -17,6 +17,7 @@ export enum NETWORK {
   SONEIUM = 'soneium-mainnet',
   UNICHAIN = 'unichain-mainnet',
   WORLDCHAIN = 'worldchain-mainnet',
+  XLAYER = 'xlayer-mainnet',
   ZKSYNC_ERA = 'zksync-era',
   ZORA = 'zora-mainnet',
 }
