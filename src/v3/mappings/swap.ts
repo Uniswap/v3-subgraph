@@ -11,7 +11,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData
+  updateUniswapDayData,
 } from './intervalUpdates'
 import { loadTransaction } from './utils'
 
