@@ -11,7 +11,7 @@ import {
   updatePoolHourData,
   updateTokenDayData,
   updateTokenHourData,
-  updateUniswapDayData,
+  updateUniswapDayData
 } from './intervalUpdates'
 import { loadTransaction } from './utils'
 
@@ -24,6 +24,14 @@ export function handleSwap(event: SwapEvent): void {
 
   // hot fix for bad pricing
   if (pool.id.toHexString().toLowerCase() == '0x9663f2ca0454accad3e094448ea6f77443880454') {
+    return
+  }
+
+  // hot fix for inflated native price at specific block
+  if (
+    pool.id.toHexString().toLowerCase() == '0x30110228b59b21fafe8675ed930983e2f272b74c' &&
+    event.block.number.equals(BigInt.fromI32(37700047))
+  ) {
     return
   }
 
