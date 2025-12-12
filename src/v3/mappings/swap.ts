@@ -27,6 +27,14 @@ export function handleSwap(event: SwapEvent): void {
     return
   }
 
+  // hot fix for inflated native price at specific block
+  if (
+    pool.id.toHexString().toLowerCase() == '0x30110228b59b21fafe8675ed930983e2f272b74c' &&
+    event.block.number.equals(BigInt.fromI32(37700047))
+  ) {
+    return
+  }
+
   const token0 = Token.load(pool.token0)
   const token1 = Token.load(pool.token1)
 
