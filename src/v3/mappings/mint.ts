@@ -18,8 +18,13 @@ import { loadTransaction } from './utils'
 export function handleMint(event: MintEvent): void {
   const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
+  // Check if pool exists (may be filtered out by whitelist)
+  const pool = Pool.load(event.address)
+  if (pool === null) {
+    return
+  }
+
   const bundle = Bundle.load('1')!
-  const pool = Pool.load(event.address)!
   const factory = Factory.load(factoryAddress.toHexString())!
 
   const token0 = Token.load(pool.token0)

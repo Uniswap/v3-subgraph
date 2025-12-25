@@ -18,11 +18,13 @@ import { loadTransaction } from './utils'
 export function handleCollect(event: CollectEvent): void {
   const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
-  const bundle = Bundle.load('1')!
-  const pool = Pool.load(event.address)!
-  if (pool == null) {
+  // Check if pool exists (may be filtered out by whitelist)
+  const pool = Pool.load(event.address)
+  if (pool === null) {
     return
   }
+
+  const bundle = Bundle.load('1')!
   const transaction = loadTransaction(event)
   const factory = Factory.load(factoryAddress.toHexString())!
 

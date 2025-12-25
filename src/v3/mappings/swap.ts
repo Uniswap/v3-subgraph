@@ -18,9 +18,14 @@ import { loadTransaction } from './utils'
 export function handleSwap(event: SwapEvent): void {
   const factoryAddress = Address.fromString(FACTORY_ADDRESS)
 
+  // Check if pool exists (may be filtered out by whitelist)
+  const pool = Pool.load(event.address)
+  if (pool === null) {
+    return
+  }
+
   const bundle = Bundle.load('1')!
   const factory = Factory.load(factoryAddress.toHexString())!
-  const pool = Pool.load(event.address)!
 
   // hot fix for bad pricing
   if (pool.id.toHexString().toLowerCase() == '0x9663f2ca0454accad3e094448ea6f77443880454') {

@@ -6,8 +6,13 @@ import { findEthPerToken, getEthPriceInUSD } from '../../common/pricing'
 import { updatePoolDayData, updatePoolHourData } from './intervalUpdates'
 
 export function handleInitialize(event: Initialize): void {
+  // Check if pool exists (may be filtered out by whitelist)
+  const pool = Pool.load(event.address)
+  if (pool === null) {
+    return
+  }
+
   // update pool sqrt price and tick
-  const pool = Pool.load(event.address)!
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   pool.save()

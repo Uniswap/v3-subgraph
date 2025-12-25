@@ -4,7 +4,7 @@ import { PoolCreated } from '../../../generated/Factory/Factory'
 import { Bundle, Factory, Pool, Token } from '../../../generated/schema'
 import { Pool as PoolTemplate } from '../../../generated/templates'
 import { populateEmptyPools } from '../../common/backfill'
-import { FACTORY_ADDRESS, POOL_MAPINGS, SKIP_POOLS, WHITELIST_TOKENS } from '../../common/chain'
+import { AAVE_ARBITRUM_TOKENS, FACTORY_ADDRESS, POOL_MAPINGS, SKIP_POOLS, WHITELIST_TOKENS } from '../../common/chain'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from '../../common/token'
 import { ADDRESS_ZERO, ONE_BI, ZERO_BD, ZERO_BI } from './../../common/constants'
 
@@ -101,6 +101,13 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.txCount = ZERO_BI
     token1.poolCount = ZERO_BI
     token1.whitelistPools = []
+  }
+
+  // Filter: Only track pools where BOTH tokens are in AAVE whitelist
+  const token0Addr = token0.id.toHexString().toLowerCase()
+  const token1Addr = token1.id.toHexString().toLowerCase()
+  if (!AAVE_ARBITRUM_TOKENS.includes(token0Addr) || !AAVE_ARBITRUM_TOKENS.includes(token1Addr)) {
+    return
   }
 
   // update white listed pools

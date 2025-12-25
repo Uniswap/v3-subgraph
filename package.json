@@ -5,7 +5,10 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "build": "cross-env ts-node ./script/build",
-    "lint": "eslint . --ext .ts --fix"
+    "lint": "eslint . --ext .ts --fix",
+    "deploy:arbitrum-one": "source .env && graph deploy --node https://subgraph.0xnode.cloud/deploy/ --ipfs https://ipfs.0xnode.cloud -l 0.0.1 --network arbitrum-one kittycorn-arbitrum-one/v3-subgraph-filtered v3-subgraph.yaml --access-token $DEPLOY_KEY",
+    "create:arbitrum-one": "source .env && graph create --node https://subgraph.0xnode.cloud/deploy/ kittycorn-arbitrum-one/v3-subgraph-filtered --access-token $DEPLOY_KEY",
+    "remove:arbitrum-one": "source .env && graph remove --node https://subgraph.0xnode.cloud/deploy/ kittycorn-arbitrum-one/v3-subgraph-filtered --access-token $DEPLOY_KEY"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.64.1",
