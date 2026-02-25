@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
-
 const WETH = '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f'.toLowerCase()
 const USDC = '0x176211869cA2b568f2A7D4EE941E073a821EE1ff'.toLowerCase()
 const MUSD = '0xacA92E438df0B2401fF60dA7E4337B687a2435DA'.toLowerCase()
