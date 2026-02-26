@@ -17,6 +17,7 @@ export enum NETWORK {
   MONAD = 'monad',
   OPTIMISM = 'optimism',
   SONEIUM = 'soneium-mainnet',
+  TEMPO = 'tempo',
   UNICHAIN = 'unichain-mainnet',
   WORLDCHAIN = 'worldchain-mainnet',
   XLAYER = 'xlayer-mainnet',
