@@ -8,6 +8,8 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   lint:
     name: lint
@@ -19,6 +21,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref || '' }}
           token: ${{ secrets.github_token }}
+          persist-credentials: false
 
       - name: Set up node
         uses: actions/setup-node@v3
@@ -47,11 +50,13 @@ jobs:
       - name: Commit lint fixes
         if: github.event_name == 'pull_request'
         run: |
-          git config --global user.name "${{ github.event.pull_request.user.login }}"
-          git config --global user.email "${{ github.event.pull_request.user.login }}@users.noreply.github.com"
+          git config --global user.name "${GITHUB_EVENT_PULL_REQUEST_USER_LOGIN}"
+          git config --global user.email "${GITHUB_EVENT_PULL_REQUEST_USER_LOGIN}@users.noreply.github.com"
           if [ -z "$(git diff)" ]; then exit; fi
           git commit -a -m "fix(lint): auto-fix [ci]"
           git push
+        env:
+          GITHUB_EVENT_PULL_REQUEST_USER_LOGIN: ${{ github.event.pull_request.user.login }}
 
   # TODO: remove this check, this job was previously removed here https://github.com/Uniswap/v3-subgraph/pull/259/files#diff-3ab46ee209a127470fce3c2cf106b1a1dbadbb929a4b5b13656a4bc4ce19c0b8
   build-and-test:
