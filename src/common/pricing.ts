@@ -23,6 +23,13 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let stablePool = STABLE_TOKEN_POOL
+  // On chains where the reference token is itself a USD stablecoin (e.g. Arc, whose native
+  // gas token is USDC and which has no wrapped-native / reference-stable pool), the reference
+  // token's USD price is 1 by definition. Such chains opt in by setting
+  // STABLE_TOKEN_POOL = REFERENCE_TOKEN in their config.
+  if (stablePool == REFERENCE_TOKEN) {
+    return ONE_BD
+  }
   let usdcPool = Pool.load(Address.fromString(stablePool)) // dai is token0
   if (usdcPool) {
     if (usdcPool.token0 == Address.fromString(REFERENCE_TOKEN)) return usdcPool.token1Price
