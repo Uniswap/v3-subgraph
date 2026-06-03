@@ -7,6 +7,7 @@ import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 const USDC = '0x3600000000000000000000000000000000000000'.toLowerCase()
 const EURC = '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a'.toLowerCase()
 const USYC = '0xe9185F0c5F296Ed1797AaE4238D26CCaBEadb86C'.toLowerCase()
+const CIRBTC = '0x171A4217b86A807A64eB94757Db6849fb4bDbAA0'.toLowerCase() // cirBTC (BTC-pegged) — whitelist only, not a USD stable
 
 export const FACTORY_ADDRESS = '0xf0db7b58379503491d857db50ac9ece64c653918'
 
@@ -26,7 +27,7 @@ export const ROLL_DELETE_HOUR_LIMITER = BigInt.fromI32(500)
 export const ROLL_DELETE_MINUTE_LIMITER = BigInt.fromI32(1000)
 
 // tokens whose amounts contribute to tracked volume and liquidity (common pairing tokens)
-export const WHITELIST_TOKENS: string[] = [USDC, EURC, USYC]
+export const WHITELIST_TOKENS: string[] = [USDC, EURC, USYC, CIRBTC]
 
 // USD-pegged stablecoins only: EURC is EUR-pegged (~$1.08) and USYC is yield-bearing, so both
 // are whitelisted for pricing but excluded from STABLE_COINS (which are treated as exactly $1).
