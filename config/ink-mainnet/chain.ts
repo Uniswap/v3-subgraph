@@ -10,7 +10,7 @@ export const FACTORY_ADDRESS = '0x640887a9ba3a9c53ed27d0f7e8246a4f933f3424'
 export const REFERENCE_TOKEN = WETH
 export const STABLE_TOKEN_POOL = WETH_USDCE_POOL
 
-export const TVL_MULTIPLIER_THRESHOLD = '2'
+export const TVL_MULTIPLIER_THRESHOLD = '1'
 export const MATURE_MARKET = '1000000'
 export const MINIMUM_NATIVE_LOCKED = BigDecimal.fromString('1')
 
