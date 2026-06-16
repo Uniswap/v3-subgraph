@@ -21,10 +21,13 @@ export const WHITELIST_TOKENS: string[] = [
   REFERENCE_TOKEN, // WETH
   '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', // USDC
   '0x1111111111166b7fe7bd91427724b487980afc69', // ZORA
+  '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', // USDT
+  '0x31705474c1f2de7f738e34233c49522ca1e3c53c', // PBTC
 ]
 
 export const STABLE_COINS: string[] = [
   '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', // USDC
+  '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', // USDT
 ]
 
 export const SKIP_POOLS: string[] = []
