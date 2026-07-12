@@ -4,7 +4,7 @@ import { Bundle, Collect, Factory, Pool, Token } from '../../../generated/schema
 import { Collect as CollectEvent } from '../../../generated/templates/Pool/Pool'
 import { FACTORY_ADDRESS } from '../../common/chain'
 import { ONE_BI } from '../../common/constants'
-import { getTrackedAmountUSD } from '../../common/pricing'
+import { getTrackedAmountUSD, invalidateTokenPricingPool } from '../../common/pricing'
 import { convertTokenToDecimal } from '../../common/utils'
 import {
   updatePoolDayData,
@@ -95,6 +95,8 @@ export function handleCollect(event: CollectEvent): void {
   updateTokenDayData(token1 as Token, event, bundle)
   updateTokenHourData(token0 as Token, event, bundle)
   updateTokenHourData(token1 as Token, event, bundle)
+  invalidateTokenPricingPool(token0 as Token, pool)
+  invalidateTokenPricingPool(token1 as Token, pool)
 
   token0.save()
   token1.save()

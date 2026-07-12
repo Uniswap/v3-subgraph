@@ -5,7 +5,14 @@ import { Swap as SwapEvent } from '../../../generated/templates/Pool/Pool'
 import { MATURE_MARKET, TVL_MULTIPLIER_THRESHOLD, WHITELIST_TOKENS } from '../../common/chain'
 import { ONE_BI, ZERO_BD } from '../../common/constants'
 import { getBundle, getFactory, getPool } from '../../common/entityGetters'
-import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../../common/pricing'
+import {
+  findEthPerToken,
+  getEthPriceInUSD,
+  getTrackedAmountUSD,
+  PricingContext,
+  sqrtPriceX96ToTokenPrices,
+  updatePricingRevision,
+} from '../../common/pricing'
 import { convertTokenToDecimal, safeDiv } from '../../common/utils'
 import { updateTokenDayData, updateTokenHourData, updateTokenMinuteData } from './intervalUpdates'
 
@@ -109,9 +116,19 @@ export function handleSwap(event: SwapEvent): void {
 
       // update USD pricing
       bundle.ethPriceUSD = getEthPriceInUSD()
+      const pricingContext = new PricingContext(pool, token0 as Token, token1 as Token)
+      const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pricingContext)
+      const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pricingContext)
+      updatePricingRevision(
+        bundle,
+        token0 as Token,
+        token0.derivedETH,
+        token0DerivedETH,
+        token1 as Token,
+        token1.derivedETH,
+        token1DerivedETH
+      )
       bundle.save()
-      const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pool, token0 as Token, token1 as Token)
-      const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pool, token0 as Token, token1 as Token)
       token0.derivedETH = token0DerivedETH
       token1.derivedETH = token1DerivedETH
 

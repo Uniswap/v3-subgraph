@@ -5,6 +5,7 @@ import { Mint as MintEvent } from '../../../generated/templates/Pool/Pool'
 import { MATURE_MARKET, TVL_MULTIPLIER_THRESHOLD, WHITELIST_TOKENS } from '../../common/chain'
 import { ONE_BI } from '../../common/constants'
 import { getBundle, getFactory, getPool } from '../../common/entityGetters'
+import { invalidateTokenPricingPool } from '../../common/pricing'
 import { convertTokenToDecimal } from '../../common/utils'
 
 export function handleMint(event: MintEvent): void {
@@ -98,6 +99,9 @@ export function handleMint(event: MintEvent): void {
     // updateTokenHourData(token1 as Token, event)
     // updateTokenMinuteData(token0 as Token, event)
     // updateTokenMinuteData(token1 as Token, event)
+
+    invalidateTokenPricingPool(token0 as Token, pool)
+    invalidateTokenPricingPool(token1 as Token, pool)
 
     token0.save()
     token1.save()

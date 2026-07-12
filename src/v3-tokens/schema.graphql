@@ -33,6 +33,8 @@ type Bundle @entity(immutable: false) {
   id: ID!
   # price of ETH in usd
   ethPriceUSD: BigDecimal!
+  # invalidates cached pricing pools when a whitelist token's native price changes
+  pricingRevision: BigInt
 }
 
 type Token @entity(immutable: false) {
@@ -70,6 +72,10 @@ type Token @entity(immutable: false) {
   derivedETH: BigDecimal!
   # pools token is in that are white listed for USD pricing
   whitelistPools: [Pool!]!
+  # cached highest-liquidity pool used to derive the token's native price
+  pricingPool: Pool
+  # bundle pricing revision used when pricingPool was selected
+  pricingRevision: BigInt
   # derived fields
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
   tokenHourData: [TokenHourData!]! @derivedFrom(field: "token")

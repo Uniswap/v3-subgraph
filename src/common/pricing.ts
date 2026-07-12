@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
-import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, Bytes, TypedMap } from '@graphprotocol/graph-ts'
 
 import { Bundle, Pool, Token } from '../../generated/schema'
 import { MINIMUM_NATIVE_LOCKED, REFERENCE_TOKEN, STABLE_COINS, STABLE_TOKEN_POOL, WHITELIST_TOKENS } from './chain'
-import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
+import { ONE_BD, ONE_BI, ZERO_BD, ZERO_BI } from './constants'
 import { exponentToBigDecimal, safeDiv } from './utils'
 
 let Q192 = BigInt.fromI32(2).pow(192 as u8)
@@ -39,76 +39,181 @@ export function getEthPriceInUSD(): BigDecimal {
   }
 }
 
-function loadPricingToken(tokenAddress: Bytes, token0: Token, token1: Token): Token | null {
-  if (tokenAddress.equals(token0.id)) {
-    return token0
+export class PricingContext {
+  currentPool: Pool
+  pools: TypedMap<string, Pool>
+  tokens: TypedMap<string, Token>
+
+  constructor(currentPool: Pool, token0: Token, token1: Token) {
+    this.currentPool = currentPool
+    this.pools = new TypedMap<string, Pool>()
+    this.tokens = new TypedMap<string, Token>()
+    this.pools.set(currentPool.id.toHexString(), currentPool)
+    this.tokens.set(token0.id.toHexString(), token0)
+    this.tokens.set(token1.id.toHexString(), token1)
   }
-  if (tokenAddress.equals(token1.id)) {
-    return token1
+
+  loadPool(poolAddress: Bytes): Pool | null {
+    const key = poolAddress.toHexString()
+    const cached = this.pools.get(key)
+    if (cached) {
+      return cached
+    }
+    const pool = Pool.load(poolAddress)
+    if (pool) {
+      this.pools.set(key, pool)
+    }
+    return pool
   }
-  return Token.load(tokenAddress)
+
+  loadToken(tokenAddress: Bytes): Token | null {
+    const key = tokenAddress.toHexString()
+    const cached = this.tokens.get(key)
+    if (cached) {
+      return cached
+    }
+    const token = Token.load(tokenAddress)
+    if (token) {
+      this.tokens.set(key, token)
+    }
+    return token
+  }
+}
+
+class PriceCandidate {
+  pool: Pool
+  ethLocked: BigDecimal
+  price: BigDecimal
+
+  constructor(pool: Pool, ethLocked: BigDecimal, price: BigDecimal) {
+    this.pool = pool
+    this.ethLocked = ethLocked
+    this.price = price
+  }
+}
+
+function priceCandidate(token: Token, pool: Pool, context: PricingContext): PriceCandidate | null {
+  if (!pool.liquidity.gt(ZERO_BI)) {
+    return null
+  }
+  if (pool.token0.equals(token.id)) {
+    const pricingToken = context.loadToken(pool.token1)
+    if (pricingToken) {
+      const ethLocked = pool.totalValueLockedToken1.times(pricingToken.derivedETH)
+      if (ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
+        return new PriceCandidate(pool, ethLocked, pool.token1Price.times(pricingToken.derivedETH))
+      }
+    }
+  }
+  if (pool.token1.equals(token.id)) {
+    const pricingToken = context.loadToken(pool.token0)
+    if (pricingToken) {
+      const ethLocked = pool.totalValueLockedToken0.times(pricingToken.derivedETH)
+      if (ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
+        return new PriceCandidate(pool, ethLocked, pool.token0Price.times(pricingToken.derivedETH))
+      }
+    }
+  }
+  return null
+}
+
+function poolIndex(pools: Bytes[], poolAddress: Bytes): i32 {
+  for (let i = 0; i < pools.length; ++i) {
+    if (pools[i].equals(poolAddress)) {
+      return i
+    }
+  }
+  return -1
+}
+
+function isBetterCandidate(candidate: PriceCandidate, best: PriceCandidate, pools: Bytes[]): boolean {
+  if (candidate.ethLocked.gt(best.ethLocked)) {
+    return true
+  }
+  return (
+    candidate.ethLocked.equals(best.ethLocked) && poolIndex(pools, candidate.pool.id) < poolIndex(pools, best.pool.id)
+  )
+}
+
+export function invalidateTokenPricingPool(token: Token, pool: Pool): void {
+  if (poolIndex(token.whitelistPools, pool.id) >= 0) {
+    token.pricingPool = null
+  }
+}
+
+function pricingRevision(bundle: Bundle): BigInt {
+  return bundle.pricingRevision ? bundle.pricingRevision! : ZERO_BI
+}
+
+export function updatePricingRevision(
+  bundle: Bundle,
+  token0: Token,
+  oldToken0DerivedETH: BigDecimal,
+  newToken0DerivedETH: BigDecimal,
+  token1: Token,
+  oldToken1DerivedETH: BigDecimal,
+  newToken1DerivedETH: BigDecimal
+): void {
+  const token0PriceChanged =
+    WHITELIST_TOKENS.includes(token0.id.toHexString()) && !oldToken0DerivedETH.equals(newToken0DerivedETH)
+  const token1PriceChanged =
+    WHITELIST_TOKENS.includes(token1.id.toHexString()) && !oldToken1DerivedETH.equals(newToken1DerivedETH)
+  if (token0PriceChanged || token1PriceChanged) {
+    bundle.pricingRevision = pricingRevision(bundle).plus(ONE_BI)
+  }
 }
 
 /**
  * Search through graph to find derived Eth per token.
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
-export function findEthPerToken(
-  token: Token,
-  bundle: Bundle,
-  currentPool: Pool,
-  token0: Token,
-  token1: Token
-): BigDecimal {
+export function findEthPerToken(token: Token, bundle: Bundle, context: PricingContext): BigDecimal {
   if (token.id == Address.fromString(REFERENCE_TOKEN)) {
     return ONE_BD
   }
-  let whiteList = token.whitelistPools
-  // for now just take USD from pool with greatest TVL
-  // need to update this to actually detect best rate based on liquidity distribution
-  let largestLiquidityETH = ZERO_BD
-  let priceSoFar = ZERO_BD
-  // hardcoded fix for incorrect rates
-  // if whitelist includes token - get the safe price
+  const whitelistPools = token.whitelistPools
   if (STABLE_COINS.includes(token.id.toHexString())) {
-    priceSoFar = safeDiv(ONE_BD, bundle.ethPriceUSD)
-  } else {
-    for (let i = 0; i < whiteList.length; ++i) {
-      const poolAddress = whiteList[i]
-      const pool = poolAddress.equals(currentPool.id) ? currentPool : Pool.load(poolAddress)
+    return safeDiv(ONE_BD, bundle.ethPriceUSD)
+  }
 
-      if (pool) {
-        if (pool.liquidity.gt(ZERO_BI)) {
-          if (pool.token0 == token.id) {
-            // whitelist token is token1
-            const pricingToken1 = loadPricingToken(pool.token1, token0, token1)
-            // get the derived ETH in pool
-            if (pricingToken1) {
-              const ethLocked = pool.totalValueLockedToken1.times(pricingToken1.derivedETH)
-              if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
-                largestLiquidityETH = ethLocked
-                // token1 per our token * Eth per token1
-                priceSoFar = pool.token1Price.times(pricingToken1.derivedETH as BigDecimal)
-              }
-            }
-          }
-          if (pool.token1 == token.id) {
-            const pricingToken0 = loadPricingToken(pool.token0, token0, token1)
-            // get the derived ETH in pool
-            if (pricingToken0) {
-              const ethLocked = pool.totalValueLockedToken0.times(pricingToken0.derivedETH)
-              if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
-                largestLiquidityETH = ethLocked
-                // token0 per our token * ETH per token0
-                priceSoFar = pool.token0Price.times(pricingToken0.derivedETH as BigDecimal)
-              }
-            }
-          }
+  const currentPoolIndex = poolIndex(whitelistPools, context.currentPool.id)
+  const cachedPoolAddress = token.pricingPool
+  const bundlePricingRevision = pricingRevision(bundle)
+  const tokenPricingRevision = token.pricingRevision
+  if (
+    cachedPoolAddress &&
+    tokenPricingRevision &&
+    tokenPricingRevision.equals(bundlePricingRevision) &&
+    poolIndex(whitelistPools, cachedPoolAddress) >= 0 &&
+    !cachedPoolAddress.equals(context.currentPool.id)
+  ) {
+    const cachedPool = context.loadPool(cachedPoolAddress)
+    const cachedCandidate = cachedPool ? priceCandidate(token, cachedPool, context) : null
+    if (cachedCandidate) {
+      let best = cachedCandidate
+      if (currentPoolIndex >= 0) {
+        const currentCandidate = priceCandidate(token, context.currentPool, context)
+        if (currentCandidate && isBetterCandidate(currentCandidate, best, whitelistPools)) {
+          best = currentCandidate
         }
       }
+      token.pricingPool = best.pool.id
+      token.pricingRevision = bundlePricingRevision
+      return best.price
     }
   }
-  return priceSoFar // nothing was found return 0
+
+  let best: PriceCandidate | null = null
+  for (let i = 0; i < whitelistPools.length; ++i) {
+    const pool = context.loadPool(whitelistPools[i])
+    const candidate = pool ? priceCandidate(token, pool, context) : null
+    if (candidate && (!best || candidate.ethLocked.gt(best.ethLocked))) {
+      best = candidate
+    }
+  }
+  token.pricingPool = best ? best.pool.id : null
+  token.pricingRevision = bundlePricingRevision
+  return best ? best.price : ZERO_BD
 }
 
 /**

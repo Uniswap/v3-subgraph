@@ -3,7 +3,13 @@ import { BigInt } from '@graphprotocol/graph-ts'
 import { Bundle, Token } from '../../../generated/schema'
 import { Initialize } from '../../../generated/templates/Pool/Pool'
 import { getPool } from '../../common/entityGetters'
-import { findEthPerToken, getEthPriceInUSD, sqrtPriceX96ToTokenPrices } from '../../common/pricing'
+import {
+  findEthPerToken,
+  getEthPriceInUSD,
+  PricingContext,
+  sqrtPriceX96ToTokenPrices,
+  updatePricingRevision,
+} from '../../common/pricing'
 
 export function handleInitialize(event: Initialize): void {
   // update pool sqrt price and tick
@@ -26,16 +32,26 @@ export function handleInitialize(event: Initialize): void {
     const bundle = Bundle.load('1')
     if (bundle) {
       bundle.ethPriceUSD = getEthPriceInUSD()
-      bundle.save()
 
       if (token0 && token1) {
-        const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pool, token0 as Token, token1 as Token)
-        const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pool, token0 as Token, token1 as Token)
+        const pricingContext = new PricingContext(pool, token0 as Token, token1 as Token)
+        const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pricingContext)
+        const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pricingContext)
+        updatePricingRevision(
+          bundle,
+          token0 as Token,
+          token0.derivedETH,
+          token0DerivedETH,
+          token1 as Token,
+          token1.derivedETH,
+          token1DerivedETH
+        )
         token0.derivedETH = token0DerivedETH
         token1.derivedETH = token1DerivedETH
         token0.save()
         token1.save()
       }
+      bundle.save()
     }
   }
 }

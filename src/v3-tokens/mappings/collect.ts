@@ -6,6 +6,7 @@ import { Collect as CollectEvent } from '../../../generated/templates/Pool/Pool'
 import { MATURE_MARKET, TVL_MULTIPLIER_THRESHOLD, WHITELIST_TOKENS } from '../../common/chain'
 import { ONE_BI, ZERO_BD } from '../../common/constants'
 import { getBundle, getFactory, getPool, getToken } from '../../common/entityGetters'
+import { invalidateTokenPricingPool } from '../../common/pricing'
 import { convertTokenToDecimal } from '../../common/utils'
 
 // @TODO Prior NonfungiblePositionManager Collect code, to be updated to Pool collect code
@@ -86,6 +87,9 @@ export function handleCollect(event: CollectEvent): void {
 
   token1.totalValueLocked = token1.totalValueLocked.minus(amount1)
   token1.totalValueLockedUSD = token1.totalValueLocked.times(token1.derivedETH.times(bundle.ethPriceUSD))
+
+  invalidateTokenPricingPool(token0, pool)
+  invalidateTokenPricingPool(token1, pool)
 
   factory.save()
   pool.save()

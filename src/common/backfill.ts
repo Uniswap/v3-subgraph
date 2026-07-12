@@ -33,6 +33,8 @@ function populateToken(tokenAddress: Address): void {
   token.txCount = ZERO_BI
   token.poolCount = ZERO_BI
   token.whitelistPools = []
+  token.pricingPool = null
+  token.pricingRevision = null
   token.save()
 }
 
