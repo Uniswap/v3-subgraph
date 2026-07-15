@@ -70,3 +70,5 @@ templates:
         - event: Collect(indexed address,address,indexed int24,indexed
             int24,uint128,uint128)
           handler: handleCollect
+        - event: SetFeeProtocol(uint8,uint8,uint8,uint8)
+          handler: handleSetFeeProtocol

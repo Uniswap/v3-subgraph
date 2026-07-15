@@ -87,6 +87,13 @@ type Pool @entity(immutable: false) {
   token1: Token!
   # fee amount
   feeTier: BigInt!
+  # on-chain protocol fee: raw packed uint8 from the pool's SetFeeProtocol
+  # event (lower 4 bits = token0's fee denominator, upper 4 bits = token1's),
+  # identical to slot0's feeProtocol. 0 = protocol fee switch off. Nullable
+  # (rather than non-null with a default) to stay graft-compatible: pools
+  # indexed before this field existed keep null until their next
+  # SetFeeProtocol; consumers treat null as "not indexed".
+  feeProtocol: BigInt
   # in range liquidity
   liquidity: BigInt!
   # current price tracker

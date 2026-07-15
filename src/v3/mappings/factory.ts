@@ -118,6 +118,10 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.token0 = token0.id
   pool.token1 = token1.id
   pool.feeTier = BigInt.fromI32(event.params.fee)
+  // Pools deploy with the protocol fee switch off; the per-pool value is set
+  // by the factory owner via setFeeProtocol, which emits SetFeeProtocol
+  // (handled in ./feeProtocol.ts).
+  pool.feeProtocol = ZERO_BI
   pool.createdAtTimestamp = event.block.timestamp
   pool.createdAtBlockNumber = event.block.number
   pool.liquidityProviderCount = ZERO_BI
