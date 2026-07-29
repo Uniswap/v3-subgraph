@@ -2,13 +2,12 @@ import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
 // Robinhood chain (chainId 4663). Standard ETH-native config: the reference token is WETH, priced
 // via the WETH/USDG pool. USDG ("Global Dollar") is the USD stablecoin (6 decimals).
-// NOTE: STABLE_TOKEN_POOL is a zero-address placeholder until the WETH/USDG v3 pool is created and
-// seeded. Until it's set, getEthPriceInUSD() returns 0 (USD metrics read 0; indexing still works).
+// STABLE_TOKEN_POOL is the WETH/USDG pool used to derive the ETH price in USD.
 // This is NOT the Arc sentinel (which sets STABLE_TOKEN_POOL = REFERENCE_TOKEN to force a price of 1) —
 // here WETH is a volatile reference, so we must read a real pool.
 const WETH = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73'.toLowerCase()
 const USDG = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'.toLowerCase()
-const WETH_USDG_POOL = '0x0000000000000000000000000000000000000000' // TODO: WETH/USDG v3 pool address once seeded
+const WETH_USDG_POOL = '0x69bfaf19c9f377bb306a89aed9f6b07e2c1a8d9a' // WETH/USDG v3 pool (0.05%)
 
 export const FACTORY_ADDRESS = '0x1f7d7550b1b028f7571e69a784071f0205fd2efa'
 
