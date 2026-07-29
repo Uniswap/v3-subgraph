@@ -59,9 +59,13 @@ export function handleSwap(event: SwapEvent): void {
     const amount1USD = amount1ETH.times(bundle.ethPriceUSD)
 
     // get amount that should be tracked only - div 2 because cant count both input and output as volume
-    const amountTotalUSDTracked = getTrackedAmountUSD(amount0Abs, token0 as Token, amount1Abs, token1 as Token).div(
-      BigDecimal.fromString('2')
-    )
+    const amountTotalUSDTracked = getTrackedAmountUSD(
+      amount0Abs,
+      token0 as Token,
+      amount1Abs,
+      token1 as Token,
+      bundle
+    ).div(BigDecimal.fromString('2'))
     const amountTotalETHTracked = safeDiv(amountTotalUSDTracked, bundle.ethPriceUSD)
     const amountTotalUSDUntracked = amount0USD.plus(amount1USD).div(BigDecimal.fromString('2'))
 
@@ -120,8 +124,10 @@ export function handleSwap(event: SwapEvent): void {
     // update USD pricing
     bundle.ethPriceUSD = getEthPriceInUSD()
     bundle.save()
-    token0.derivedETH = findEthPerToken(token0 as Token)
-    token1.derivedETH = findEthPerToken(token1 as Token)
+    const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pool, token0 as Token, token1 as Token)
+    const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pool, token0 as Token, token1 as Token)
+    token0.derivedETH = token0DerivedETH
+    token1.derivedETH = token1DerivedETH
 
     /**
      * Things afffected by new USD rates
@@ -159,10 +165,10 @@ export function handleSwap(event: SwapEvent): void {
     const uniswapDayData = updateUniswapDayData(event, factoryAddress.toHexString())
     const poolDayData = updatePoolDayData(event)
     const poolHourData = updatePoolHourData(event)
-    const token0DayData = updateTokenDayData(token0 as Token, event)
-    const token1DayData = updateTokenDayData(token1 as Token, event)
-    const token0HourData = updateTokenHourData(token0 as Token, event)
-    const token1HourData = updateTokenHourData(token1 as Token, event)
+    const token0DayData = updateTokenDayData(token0 as Token, event, bundle)
+    const token1DayData = updateTokenDayData(token1 as Token, event, bundle)
+    const token0HourData = updateTokenHourData(token0 as Token, event, bundle)
+    const token1HourData = updateTokenHourData(token1 as Token, event, bundle)
 
     // update volume metrics
     uniswapDayData.volumeETH = uniswapDayData.volumeETH.plus(amountTotalETHTracked)

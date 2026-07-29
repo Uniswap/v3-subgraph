@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts'
 
 import { Bundle, Pool, Token } from '../../generated/schema'
 import { MINIMUM_NATIVE_LOCKED, REFERENCE_TOKEN, STABLE_COINS, STABLE_TOKEN_POOL, WHITELIST_TOKENS } from './chain'
@@ -39,11 +39,27 @@ export function getEthPriceInUSD(): BigDecimal {
   }
 }
 
+function loadPricingToken(tokenAddress: Bytes, token0: Token, token1: Token): Token | null {
+  if (tokenAddress.equals(token0.id)) {
+    return token0
+  }
+  if (tokenAddress.equals(token1.id)) {
+    return token1
+  }
+  return Token.load(tokenAddress)
+}
+
 /**
  * Search through graph to find derived Eth per token.
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
-export function findEthPerToken(token: Token): BigDecimal {
+export function findEthPerToken(
+  token: Token,
+  bundle: Bundle,
+  currentPool: Pool,
+  token0: Token,
+  token1: Token
+): BigDecimal {
   if (token.id == Address.fromString(REFERENCE_TOKEN)) {
     return ONE_BD
   }
@@ -52,7 +68,6 @@ export function findEthPerToken(token: Token): BigDecimal {
   // need to update this to actually detect best rate based on liquidity distribution
   let largestLiquidityETH = ZERO_BD
   let priceSoFar = ZERO_BD
-  let bundle = Bundle.load('1')!
   // hardcoded fix for incorrect rates
   // if whitelist includes token - get the safe price
   if (STABLE_COINS.includes(token.id.toHexString())) {
@@ -60,32 +75,32 @@ export function findEthPerToken(token: Token): BigDecimal {
   } else {
     for (let i = 0; i < whiteList.length; ++i) {
       const poolAddress = whiteList[i]
-      const pool = Pool.load(poolAddress)
+      const pool = poolAddress.equals(currentPool.id) ? currentPool : Pool.load(poolAddress)
 
       if (pool) {
         if (pool.liquidity.gt(ZERO_BI)) {
           if (pool.token0 == token.id) {
             // whitelist token is token1
-            const token1 = Token.load(pool.token1)
+            const pricingToken1 = loadPricingToken(pool.token1, token0, token1)
             // get the derived ETH in pool
-            if (token1) {
-              const ethLocked = pool.totalValueLockedToken1.times(token1.derivedETH)
+            if (pricingToken1) {
+              const ethLocked = pool.totalValueLockedToken1.times(pricingToken1.derivedETH)
               if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
                 largestLiquidityETH = ethLocked
                 // token1 per our token * Eth per token1
-                priceSoFar = pool.token1Price.times(token1.derivedETH as BigDecimal)
+                priceSoFar = pool.token1Price.times(pricingToken1.derivedETH as BigDecimal)
               }
             }
           }
           if (pool.token1 == token.id) {
-            const token0 = Token.load(pool.token0)
+            const pricingToken0 = loadPricingToken(pool.token0, token0, token1)
             // get the derived ETH in pool
-            if (token0) {
-              const ethLocked = pool.totalValueLockedToken0.times(token0.derivedETH)
+            if (pricingToken0) {
+              const ethLocked = pool.totalValueLockedToken0.times(pricingToken0.derivedETH)
               if (ethLocked.gt(largestLiquidityETH) && ethLocked.gt(MINIMUM_NATIVE_LOCKED)) {
                 largestLiquidityETH = ethLocked
                 // token0 per our token * ETH per token0
-                priceSoFar = pool.token0Price.times(token0.derivedETH as BigDecimal)
+                priceSoFar = pool.token0Price.times(pricingToken0.derivedETH as BigDecimal)
               }
             }
           }
@@ -106,9 +121,9 @@ export function getTrackedAmountUSD(
   tokenAmount0: BigDecimal,
   token0: Token,
   tokenAmount1: BigDecimal,
-  token1: Token
+  token1: Token,
+  bundle: Bundle
 ): BigDecimal {
-  let bundle = Bundle.load('1')!
   let price0USD = token0.derivedETH.times(bundle.ethPriceUSD)
   let price1USD = token1.derivedETH.times(bundle.ethPriceUSD)
 

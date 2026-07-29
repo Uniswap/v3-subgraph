@@ -75,8 +75,7 @@ function archiveHourData(token: Token, end: i32): void {
  * Tracks global aggregate data over daily windows
  * @param event
  */
-export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
-  const bundle = Bundle.load('1')!
+export function updateTokenDayData(token: Token, event: ethereum.Event, bundle: Bundle): TokenDayData {
   const timestamp = event.block.timestamp.toI32()
   const dayID = timestamp / 86400
   const dayStartTimestamp = dayID * 86400
@@ -114,8 +113,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   return tokenDayData as TokenDayData
 }
 
-export function updateTokenHourData(token: Token, event: ethereum.Event): TokenHourData {
-  const bundle = Bundle.load('1')!
+export function updateTokenHourData(token: Token, event: ethereum.Event, bundle: Bundle): TokenHourData {
   const timestamp = event.block.timestamp.toI32()
   const hourIndex = timestamp / 3600 // get unique hour within unix history
   const hourStartUnix = hourIndex * 3600 // want the rounded effect
@@ -174,8 +172,7 @@ export function updateTokenHourData(token: Token, event: ethereum.Event): TokenH
   return tokenHourData as TokenHourData
 }
 
-export function updateTokenMinuteData(token: Token, event: ethereum.Event): TokenMinuteData {
-  const bundle = Bundle.load('1')!
+export function updateTokenMinuteData(token: Token, event: ethereum.Event, bundle: Bundle): TokenMinuteData {
   const timestamp = event.block.timestamp.toI32()
   const minuteIndex = timestamp / 60 // get unique hour within unix history
   const minuteStartUnix = minuteIndex * 60 // want the rounded effect

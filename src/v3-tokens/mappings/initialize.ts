@@ -27,14 +27,15 @@ export function handleInitialize(event: Initialize): void {
     if (bundle) {
       bundle.ethPriceUSD = getEthPriceInUSD()
       bundle.save()
-    }
 
-    if (token0 && token1) {
-      // update token prices
-      token0.derivedETH = findEthPerToken(token0 as Token)
-      token1.derivedETH = findEthPerToken(token1 as Token)
-      token0.save()
-      token1.save()
+      if (token0 && token1) {
+        const token0DerivedETH = findEthPerToken(token0 as Token, bundle, pool, token0 as Token, token1 as Token)
+        const token1DerivedETH = findEthPerToken(token1 as Token, bundle, pool, token0 as Token, token1 as Token)
+        token0.derivedETH = token0DerivedETH
+        token1.derivedETH = token1DerivedETH
+        token0.save()
+        token1.save()
+      }
     }
   }
 }

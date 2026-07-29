@@ -39,7 +39,8 @@ export function handleCollect(event: CollectEvent): void {
     collectedAmountToken0,
     token0 as Token,
     collectedAmountToken1,
-    token1 as Token
+    token1 as Token,
+    bundle
   )
 
   // Reset tvl aggregates until new amounts calculated
@@ -90,10 +91,10 @@ export function handleCollect(event: CollectEvent): void {
   updateUniswapDayData(event, factoryAddress.toHexString())
   updatePoolDayData(event)
   updatePoolHourData(event)
-  updateTokenDayData(token0 as Token, event)
-  updateTokenDayData(token1 as Token, event)
-  updateTokenHourData(token0 as Token, event)
-  updateTokenHourData(token1 as Token, event)
+  updateTokenDayData(token0 as Token, event, bundle)
+  updateTokenDayData(token1 as Token, event, bundle)
+  updateTokenHourData(token0 as Token, event, bundle)
+  updateTokenHourData(token1 as Token, event, bundle)
 
   token0.save()
   token1.save()
