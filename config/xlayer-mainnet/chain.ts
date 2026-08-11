@@ -6,8 +6,9 @@ const USDT = '0x1E4a5963aBFD975d8c9021ce480b42188849D41d'.toLowerCase()
 const USDT0 = '0x779Ded0c9e1022225f8E0630b35a9b54bE713736'.toLowerCase()
 const USDC = '0x74b7F16337b8972027F6196A17a631aC6dE26d22'.toLowerCase()
 const USDCe = '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035'.toLowerCase()
+const USDG = '0x4AE46a509F6B1D9056937bA4500cb143933d2Dc8'.toLowerCase()
 const WBTC = '0xEA034fb02eB1808C2cc3adbC15f447B93CbE08e1'.toLowerCase()
-const DAI = ' 0xC5015b9d9161Dca7e18e32f6f25C4aD850731Fd4'.toLowerCase()
+const DAI = '0xC5015b9d9161Dca7e18e32f6f25C4aD850731Fd4'.toLowerCase()
 const xETH = '0xE7B000003A45145decf8a28FC755aD5eC5EA025A'.toLowerCase()
 const xSOL = '0x505000008DE8748DBd4422ff4687a4FC9bEba15b'.toLowerCase()
 const USDT0_WOKB = '0x63d62734847E55A266FCa4219A9aD0a02D5F6e02'.toLowerCase()
@@ -29,9 +30,9 @@ export const ROLL_DELETE_MINUTE_LIMITER = BigInt.fromI32(1000)
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
-export const WHITELIST_TOKENS: string[] = [WOKB, WETH, USDT, USDT0, USDC, USDCe, WBTC, DAI, xETH, xSOL]
+export const WHITELIST_TOKENS: string[] = [WOKB, WETH, USDT, USDT0, USDC, USDCe, USDG, WBTC, DAI, xETH, xSOL]
 
-export const STABLE_COINS: string[] = [USDC, USDT, DAI]
+export const STABLE_COINS: string[] = [USDC, USDT, DAI, USDG]
 
 export const SKIP_POOLS: string[] = []
 
