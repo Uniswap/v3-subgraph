@@ -103,6 +103,9 @@ export function handlePoolCreated(event: PoolCreated): void {
     token1.whitelistPools = []
   }
 
+  token0.poolCount = token0.poolCount.plus(ONE_BI)
+  token1.poolCount = token1.poolCount.plus(ONE_BI)
+
   // update white listed pools
   if (whitelistTokens.includes(token0.id.toHexString())) {
     const newPools = token1.whitelistPools

@@ -4,7 +4,7 @@ import { ERC20 } from '../../generated/Factory/ERC20'
 import { Pool as PoolABI } from '../../generated/Factory/Pool'
 import { Pool, Token } from '../../generated/schema'
 import { Pool as PoolTemplate } from '../../generated/templates'
-import { ZERO_BD, ZERO_BI } from './constants'
+import { ONE_BI, ZERO_BD, ZERO_BI } from './constants'
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol, fetchTokenTotalSupply } from './token'
 import { convertTokenToDecimal } from './utils'
 
@@ -90,6 +90,9 @@ export function populateEmptyPools(
     const token1 = Token.load(token1Address)
 
     if (token0 && token1) {
+      token0.poolCount = token0.poolCount.plus(ONE_BI)
+      token1.poolCount = token1.poolCount.plus(ONE_BI)
+
       if (whitelistTokens.includes(pool.token0.toHexString())) {
         const newPools = token1.whitelistPools
         newPools.push(pool.id)
