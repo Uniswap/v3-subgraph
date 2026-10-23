@@ -124,8 +124,7 @@ export function updatePoolHourData(event: ethereum.Event): PoolHourData {
   return poolHourData as PoolHourData
 }
 
-export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
-  const bundle = Bundle.load('1')!
+export function updateTokenDayData(token: Token, event: ethereum.Event, bundle: Bundle): TokenDayData {
   const timestamp = event.block.timestamp.toI32()
   const dayID = timestamp / 86400
   const dayStartTimestamp = dayID * 86400
@@ -164,8 +163,7 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   return tokenDayData as TokenDayData
 }
 
-export function updateTokenHourData(token: Token, event: ethereum.Event): TokenHourData {
-  const bundle = Bundle.load('1')!
+export function updateTokenHourData(token: Token, event: ethereum.Event, bundle: Bundle): TokenHourData {
   const timestamp = event.block.timestamp.toI32()
   const hourIndex = timestamp / 3600 // get unique hour within unix history
   const hourStartUnix = hourIndex * 3600 // want the rounded effect
